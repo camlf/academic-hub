@@ -1,0 +1,22 @@
+{
+    "Id": "pumpview",
+    "Name": "pumpview",
+    "Queries": [
+        {
+            "Id": "pump",
+            "Query":
+            {
+                "Type": "StreamTag",
+                "Value": "pump",
+                "Operator": "Contains"
+            }
+        }
+    ],
+    "GroupRules":
+    [
+        {
+            "Id": "StreamName",
+            "Type": "StreamName"
+        }
+    ]
+}
