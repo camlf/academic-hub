@@ -1,0 +1,224 @@
+import requests
+from typeguard import typechecked
+import pandas as pd
+from dateutil import parser
+from dateutil.tz import *
+
+requests.packages.urllib3.disable_warnings()
+
+# OMF_ENDPOINT = "http://httpbin.org/post"
+OMF_ENDPOINT = "https://academicpi.azure-api.net/csv-ingress/messages"
+API_KEY = "dummy"
+
+
+def omf_type(new_type):
+    return (
+        f"stream-{new_type}",
+        {
+            "id": f"stream-{new_type}",
+            "description": "Timestamp and real-time value",
+            "type": "object",
+            "classification": "dynamic",
+            "properties": {
+                "IndexedDateTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "isindex": True,
+                },
+                "value": {"type": f"{new_type}"},
+            },
+        },
+    )
+
+
+omf_number_typeid, omf_number_type = omf_type("number")
+
+
+def container_id(asset, name):
+    return f"{asset}.{name}"
+
+
+def omf_container(asset, name, typeid):
+    return {"id": container_id(asset, name), "typeid": f"{typeid}"}
+
+
+def omf_data(asset, name, timestamp, value):
+    ts = parser.parse(timestamp).astimezone(UTC)
+    return {
+        "containerid": container_id(asset, name),
+        "values": [{"IndexedDateTime": f"{ts.isoformat()}", "value": value}],
+    }
+
+
+def omf_headers(message_type, api_key=API_KEY, producer_token="-not-set-"):
+    # message_type is "type", "container" or "data"
+    return {
+        "producertoken": f"{producer_token}",
+        "messagetype": f"{message_type}",
+        "messageformat": "json",
+        "omfversion": "1.0",
+        "Ocp-Apim-Subscription-Key": api_key,
+    }
+
+
+def send_omf_message(
+    message_type, data, api_key, producer_token="-not-set-", debug=False
+):
+    if not isinstance(data, list):
+        data = [data]
+
+    if debug:
+        print(
+            ">>>",
+            OMF_ENDPOINT,
+            f"{omf_headers(message_type, api_key, producer_token)}",
+            f"{data}",
+        )
+        return
+
+    return requests.post(
+        OMF_ENDPOINT,
+        headers=omf_headers(message_type, api_key, producer_token),
+        json=data,
+    )
+
+
+class OMFClient:
+    @typechecked
+    def __init__(self, api_key: str, equipment: str, row_batch_size=10):
+        self._api_key = api_key
+        self._equipment = equipment
+        self._init_ok = False
+        self._row_batch_size = row_batch_size
+
+        r = requests.get(
+            f"https://data.academic.osisoft.com/omflistener/getconfig",
+            params=dict(token=f"{api_key}-producertoken"),
+            verify=False,
+        )
+        if r.status_code == 200:
+            self._producer_token = r.text
+        else:
+            print(f"@@ error from hub configuration server, please retry (error code {r.status_code})")
+            return
+        if "Unknown" in self._producer_token:
+            print("@@ bad API key {api_key}, please correct and retry")
+            return
+        r = send_omf_message(
+            "type", omf_number_type, api_key, self._producer_token, debug=False
+        )
+        if r.status_code != 200:
+            if r.status_code == 401:
+                print(f"@@ please correct API key: current key is {api_key}\n")
+            else:
+                print(
+                    f"\n\n !#!# error with type definition: status={r.status_code}\n\n >>> {r.text}\n\n"
+                )
+            return
+        else:
+            print(">> [OMF type definition OK]")
+        self._init_ok = True
+
+    def update_tags(self, df):
+        if not self._init_ok:
+            print("@@ error: OMFClient not correcly initialized, please recreate object")
+            return
+        if not isinstance(df, pd.core.frame.DataFrame):
+            print("@@ error: argument should be a Pandas dataframe")
+            return
+        first_column = [c for c in df.columns][0]
+        if first_column != "Timestamp":
+            print(
+                f"@@ error: first column of dataframe should be 'Timestamp', found {first_column}"
+            )
+            return
+
+        fixed_column_names = [
+            x.replace(".", "_").replace(" ", "_").replace("/", "_")
+            for x in list(df.columns)
+        ]
+        df.columns = fixed_column_names
+        containers = [
+            omf_container(self._equipment, sensor, omf_number_typeid)
+            for sensor in list(df.columns)[1:]
+        ]
+        # check column types
+        for c in list(df.columns)[1:]:
+            if str(df[c].dtype) not in ["float64", "int64"]:
+                print(f"@@ error: column name \"{c}\" has not type float64 or int64 (current type: {str(df[c].dtype)})")
+                return 
+        tags = [f"{self._producer_token}.{c['id']}" for c in containers]
+        print(f">> new tag(s): {tags}")
+        print(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}")
+        r = send_omf_message(
+            "container", containers, self._api_key, self._producer_token, debug=False
+        )
+        if r.status_code != 200:
+            print(
+                f"@@ error with column definition: status={r.status_code}\n\n >>> {r.text}\n\n"
+            )
+            return
+        else:
+            print(">> [column definitions OK]")
+
+        count = 0
+        print(">> processing row: ", end="")
+        row_batch_data = []
+        try:
+            for r in df.itertuples():
+                row_dict = r._asdict()
+                t = parser.parse(str(r.Timestamp))
+                # print(f"## {t.astimezone(UTC).isoformat()} \n")
+
+                row_omf_data = [
+                    omf_data(
+                        self._equipment,
+                        sensor,
+                        t.astimezone(UTC).isoformat(),
+                        row_dict[sensor],
+                    )
+                    for sensor in list(df.columns)[1:]
+                ]
+                # out.append_stdout(f"row omf data: {row_omf_data}\n")
+                count += 1
+                row_batch_data.extend(row_omf_data)
+                if count % self._row_batch_size == 0:
+                    print(f"[{count}]", end="")
+                    r = send_omf_message(
+                        "data",
+                        row_batch_data,
+                        self._api_key,
+                        self._producer_token,
+                        debug=False,
+                    )
+                    row_batch_data = []
+                    if r:
+                        if r.status_code != 200:
+                            print(
+                                f"\n\n@@ error with row #{count}: status={r.status_code}\n\n >>> {r.text}\n\n"
+                            )
+            print(f"[last rows {len(row_batch_data)}]")
+            if len(row_batch_data) > 0:
+                r = send_omf_message(
+                    "data",
+                    row_batch_data,
+                    self._api_key,
+                    self._producer_token,
+                    debug=False,
+                )
+                if r.status_code != 200:
+                    print(
+                        f"\n\n !#!# error with last rows #{count}: status={r.status_code}\n\n >>> {r.text}\n\n"
+                    )
+                    return
+
+            print(
+                f"\nLoading-Extract-Transfer to Hub done, status OK, #rows = {count}\n"
+            )
+
+        except Exception as e:
+            print(
+                f"\n\n!!! Error processing CSV, exception={e}, contact hubsupport@osisoft.com"
+            )
+        finally:
+            return

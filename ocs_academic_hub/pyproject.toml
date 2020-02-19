@@ -1,0 +1,2 @@
+[tool.portray]
+modules = ["ocs_academic_hub"]
