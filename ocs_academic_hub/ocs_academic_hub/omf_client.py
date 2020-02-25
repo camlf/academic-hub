@@ -159,8 +159,8 @@ class OMFClient:
                 )
                 return
         tags = [f"{self._producer_token}.{c['id']}" for c in containers]
-        printg(f">> new tag(s): {tags}")
-        printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}")
+        printg(f">> new tag(s): {tags}\n")
+        printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}\n")
         r = send_omf_message(
             "container", containers, self._api_key, self._producer_token, debug, printg
         )
