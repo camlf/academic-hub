@@ -101,7 +101,7 @@ class OMFClient:
             )
             return
         if "Unknown" in self._producer_token:
-            printg("@@ bad API key {api_key}, please correct and retry")
+            printg("@@ API key {api_key} is not registered, please correct and retry")
             return
         r = send_omf_message(
             "type",
@@ -126,7 +126,7 @@ class OMFClient:
     def is_ok(self):
         return self._init_ok
 
-    def update_tags(self, df, printg=print, debug=False):
+    def update_tags(self, df, printg=print, debug=False, info_only=False):
         if not self._init_ok:
             printg(
                 "@@ error: OMFClient not correcly initialized, please recreate object"
@@ -161,6 +161,9 @@ class OMFClient:
         tags = [f"{self._producer_token}.{c['id']}" for c in containers]
         printg(f">> new tag(s): {tags}\n")
         printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}\n")
+        if info_only: 
+            printg(f"\n>> @@ info only requested, stopping (NO UPLOAD)\n")
+            return
         r = send_omf_message(
             "container", containers, self._api_key, self._producer_token, debug, printg
         )
