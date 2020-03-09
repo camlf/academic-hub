@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ocs_academic_hub",
-    version="0.64.0",
+    version="0.65.0",
     author="Christian Foisy",
     author_email="cfoisy@osisoft.com",
     description="OSIsoft Academic Hub support package",
@@ -21,7 +21,7 @@ setuptools.setup(
     py_modules=["ocs_academic_hub"],
         install_requires=[
             "pandas>=0.24.2", 
-            "ocs-sample-library-preview==0.0.36rc0",
+            "ocs-sample-library-preview==0.1.4rc0",
             "numpy", 
             "python_dateutil>=2.8.0",
             "typeguard>=2.4.1"

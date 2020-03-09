@@ -82,7 +82,7 @@ def send_omf_message(
 
 class OMFClient:
     @typechecked
-    def __init__(self, api_key: str, equipment: str, printg=print, row_batch_size=10):
+    def __init__(self, api_key: str, equipment: str, printg=print, row_batch_size=50):
         self._api_key = api_key
         self._equipment = equipment
         self._init_ok = False
@@ -141,16 +141,25 @@ class OMFClient:
                 f"@@ error: first column of dataframe should be 'Timestamp', found {first_column}"
             )
             return
-
         fixed_column_names = [
-            x.replace(".", "_").replace(" ", "_").replace("/", "_")
+            x.strip()
+            .replace('"', "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace(".", "_")
+            .replace(" ", "_")
+            .replace("/", "_")
             for x in list(df.columns)
         ]
+        # if info_only:
+        #     printg(f"df.columns={list(df.columns)}, fixed_columns={fixed_column_names}")
         df.columns = fixed_column_names
         containers = [
             omf_container(self._equipment, sensor, omf_number_typeid)
             for sensor in list(df.columns)[1:]
         ]
+        # if info_only:
+        #    printg(f"containers={containers}")
         # check column types
         for c in list(df.columns)[1:]:
             if str(df[c].dtype) not in ["float64", "int64"]:
@@ -159,17 +168,17 @@ class OMFClient:
                 )
                 return
         tags = [f"{self._producer_token}.{c['id']}" for c in containers]
-        printg(f">> new tag(s): {tags}\n")
-        printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}\n")
-        if info_only: 
-            printg(f"\n>> @@ info only requested, stopping (NO UPLOAD)\n")
+        printg(f">> new tag(s): {tags}")
+        printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}")
+        if info_only:
+            printg(f"\n>> @@ info only requested, stopping (NO UPLOAD)")
             return
         r = send_omf_message(
             "container", containers, self._api_key, self._producer_token, debug, printg
         )
         if r.status_code != 200:
             printg(
-                f"@@ error with column definition: status={r.status_code}\n\n >>> {r.text}\n\n"
+                f"@@ error with column definition: status={r.status_code}\n\n >>> {r.text}\n"
             )
             return
         else:
