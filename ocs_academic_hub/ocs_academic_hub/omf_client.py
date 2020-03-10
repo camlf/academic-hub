@@ -62,17 +62,14 @@ def omf_headers(message_type, api_key=API_KEY, producer_token="-not-set-"):
 
 
 def send_omf_message(
-    message_type, data, api_key, producer_token="-not-set-", debug=False
+    message_type, data, api_key, producer_token, debug=False, printg=print
 ):
     if not isinstance(data, list):
         data = [data]
 
     if debug:
-        print(
-            ">>>",
-            OMF_ENDPOINT,
-            f"{omf_headers(message_type, api_key, producer_token)}",
-            f"{data}",
+        printg(
+            f"\nDBG>>> {OMF_ENDPOINT} {omf_headers(message_type, api_key, producer_token)} {data}\n"
         )
         return
 
@@ -85,7 +82,7 @@ def send_omf_message(
 
 class OMFClient:
     @typechecked
-    def __init__(self, api_key: str, equipment: str, row_batch_size=10):
+    def __init__(self, api_key: str, equipment: str, printg=print, row_batch_size=50):
         self._api_key = api_key
         self._equipment = equipment
         self._init_ok = False
@@ -99,70 +96,96 @@ class OMFClient:
         if r.status_code == 200:
             self._producer_token = r.text
         else:
-            print(f"@@ error from hub configuration server, please retry (error code {r.status_code})")
+            printg(
+                f"@@ error from hub configuration server, please retry (error code {r.status_code})"
+            )
             return
         if "Unknown" in self._producer_token:
-            print("@@ bad API key {api_key}, please correct and retry")
+            printg("@@ API key {api_key} is not registered, please correct and retry")
             return
         r = send_omf_message(
-            "type", omf_number_type, api_key, self._producer_token, debug=False
+            "type",
+            omf_number_type,
+            api_key,
+            self._producer_token,
+            debug=False,
+            printg=printg,
         )
         if r.status_code != 200:
             if r.status_code == 401:
-                print(f"@@ please correct API key: current key is {api_key}\n")
+                printg(f"@@ please correct API key: current key is {api_key}\n")
             else:
-                print(
+                printg(
                     f"\n\n !#!# error with type definition: status={r.status_code}\n\n >>> {r.text}\n\n"
                 )
             return
         else:
-            print(">> [OMF type definition OK]")
+            printg(">> [OMF type definition OK]\n")
         self._init_ok = True
 
-    def update_tags(self, df):
+    def is_ok(self):
+        return self._init_ok
+
+    def update_tags(self, df, printg=print, debug=False, info_only=False):
         if not self._init_ok:
-            print("@@ error: OMFClient not correcly initialized, please recreate object")
+            printg(
+                "@@ error: OMFClient not correcly initialized, please recreate object"
+            )
             return
         if not isinstance(df, pd.core.frame.DataFrame):
-            print("@@ error: argument should be a Pandas dataframe")
+            printg("@@ error: argument should be a Pandas dataframe")
             return
         first_column = [c for c in df.columns][0]
         if first_column != "Timestamp":
-            print(
+            printg(
                 f"@@ error: first column of dataframe should be 'Timestamp', found {first_column}"
             )
             return
-
         fixed_column_names = [
-            x.replace(".", "_").replace(" ", "_").replace("/", "_")
+            x.strip()
+            .replace('"', "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace(".", "_")
+            .replace(" ", "_")
+            .replace("/", "_")
             for x in list(df.columns)
         ]
+        # if info_only:
+        #     printg(f"df.columns={list(df.columns)}, fixed_columns={fixed_column_names}")
         df.columns = fixed_column_names
         containers = [
             omf_container(self._equipment, sensor, omf_number_typeid)
             for sensor in list(df.columns)[1:]
         ]
+        # if info_only:
+        #    printg(f"containers={containers}")
         # check column types
         for c in list(df.columns)[1:]:
             if str(df[c].dtype) not in ["float64", "int64"]:
-                print(f"@@ error: column name \"{c}\" has not type float64 or int64 (current type: {str(df[c].dtype)})")
-                return 
+                printg(
+                    f'@@ error: column name "{c}" has not type float64 or int64 (current type: {str(df[c].dtype)})'
+                )
+                return
         tags = [f"{self._producer_token}.{c['id']}" for c in containers]
-        print(f">> new tag(s): {tags}")
-        print(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}")
+        printg(f">> new tag(s): {tags}")
+        printg(f">> from {df.iloc[0].Timestamp} to {df.iloc[len(df)-1].Timestamp}")
+        if info_only:
+            printg(f"\n>> @@ info only requested, stopping (NO UPLOAD)")
+            return
         r = send_omf_message(
-            "container", containers, self._api_key, self._producer_token, debug=False
+            "container", containers, self._api_key, self._producer_token, debug, printg
         )
         if r.status_code != 200:
-            print(
-                f"@@ error with column definition: status={r.status_code}\n\n >>> {r.text}\n\n"
+            printg(
+                f"@@ error with column definition: status={r.status_code}\n\n >>> {r.text}\n"
             )
             return
         else:
-            print(">> [column definitions OK]")
+            printg(">> [column definitions OK]")
 
         count = 0
-        print(">> processing row: ", end="")
+        printg(">> processing row: ", end="")
         row_batch_data = []
         try:
             for r in df.itertuples():
@@ -183,41 +206,43 @@ class OMFClient:
                 count += 1
                 row_batch_data.extend(row_omf_data)
                 if count % self._row_batch_size == 0:
-                    print(f"[{count}]", end="")
+                    printg(f"[{count}]", end="")
                     r = send_omf_message(
                         "data",
                         row_batch_data,
                         self._api_key,
                         self._producer_token,
-                        debug=False,
+                        debug,
+                        printg,
                     )
                     row_batch_data = []
                     if r:
                         if r.status_code != 200:
-                            print(
+                            printg(
                                 f"\n\n@@ error with row #{count}: status={r.status_code}\n\n >>> {r.text}\n\n"
                             )
-            print(f"[last rows {len(row_batch_data)}]")
+            printg(f"[last rows {len(row_batch_data)}]")
             if len(row_batch_data) > 0:
                 r = send_omf_message(
                     "data",
                     row_batch_data,
                     self._api_key,
                     self._producer_token,
-                    debug=False,
+                    debug,
+                    printg,
                 )
                 if r.status_code != 200:
-                    print(
+                    printg(
                         f"\n\n !#!# error with last rows #{count}: status={r.status_code}\n\n >>> {r.text}\n\n"
                     )
                     return
 
-            print(
+            printg(
                 f"\nLoading-Extract-Transfer to Hub done, status OK, #rows = {count}\n"
             )
 
         except Exception as e:
-            print(
+            printg(
                 f"\n\n!!! Error processing CSV, exception={e}, contact hubsupport@osisoft.com"
             )
         finally:
