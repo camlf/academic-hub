@@ -10,6 +10,8 @@ requests.packages.urllib3.disable_warnings()
 OMF_ENDPOINT = "https://academicpi.azure-api.net/csv-ingress/messages"
 API_KEY = "dummy"
 
+# Ref for OMF approach: https://pisquare.osisoft.com/people/gmoffett/blog/2018/11/06/osisoft-message-format-what-to-type
+
 
 def omf_type(new_type):
     return (
@@ -80,11 +82,22 @@ def send_omf_message(
     )
 
 
+def normalize_for_omf(name):
+    return (
+        name.strip()
+        .replace('"', "")
+        .replace("(", "")
+        .replace(")", "")
+        .replace(".", "_")
+        .replace(" ", "_")
+        .replace("/", "_")
+    )
+
+
 class OMFClient:
     @typechecked
-    def __init__(self, api_key: str, equipment: str, printg=print, row_batch_size=50):
+    def __init__(self, api_key: str, printg=print, row_batch_size=50):
         self._api_key = api_key
-        self._equipment = equipment
         self._init_ok = False
         self._row_batch_size = row_batch_size
 
@@ -96,8 +109,11 @@ class OMFClient:
         if r.status_code == 200:
             self._producer_token = r.text
         else:
+            extra_message = (
+                f" (bad API key: {api_key})" if r.status_code == 400 else ""
+            )
             printg(
-                f"@@ error from hub configuration server, please retry (error code {r.status_code})"
+                f"@@ error from hub configuration server{extra_message}, please correct and retry (error code {r.status_code})"
             )
             return
         if "Unknown" in self._producer_token:
@@ -126,7 +142,9 @@ class OMFClient:
     def is_ok(self):
         return self._init_ok
 
-    def update_tags(self, df, printg=print, debug=False, info_only=False):
+    def update_tags(
+        self, df, asset_name: str, printg=print, info_only=False, debug=False
+    ):
         if not self._init_ok:
             printg(
                 "@@ error: OMFClient not correcly initialized, please recreate object"
@@ -141,21 +159,12 @@ class OMFClient:
                 f"@@ error: first column of dataframe should be 'Timestamp', found {first_column}"
             )
             return
-        fixed_column_names = [
-            x.strip()
-            .replace('"', "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace(".", "_")
-            .replace(" ", "_")
-            .replace("/", "_")
-            for x in list(df.columns)
-        ]
+        fixed_column_names = [normalize_for_omf(column) for column in list(df.columns)]
         # if info_only:
         #     printg(f"df.columns={list(df.columns)}, fixed_columns={fixed_column_names}")
         df.columns = fixed_column_names
         containers = [
-            omf_container(self._equipment, sensor, omf_number_typeid)
+            omf_container(normalize_for_omf(asset_name), sensor, omf_number_typeid)
             for sensor in list(df.columns)[1:]
         ]
         # if info_only:
