@@ -32,31 +32,34 @@ class HubClient(OCSClient):
         return requests.request(method, url, params=params, headers=headers, **kwargs)
 
     @typechecked
-    def dataview_definition(self, namespace_id: str, dataview_id: str):
-        meta_key = (
-            dataview_id[
-                dataview_id.find("HubDV_") + 6 : dataview_id.find("_fv")
-            ].lower()
-            + "_column"
-        )
+    def dataview_definition(
+        self, namespace_id: str, dataview_id: str, version: str = ""
+    ):
+        if version == "":
+            column_key = (
+                dataview_id[
+                    dataview_id.find("HubDV_") + 6 : dataview_id.find("_fv")
+                ].lower()
+                + "_column"
+            )
+        else:
+            column_key = "column_name"
         df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
         i = 0
         for query in ["Asset_value", "Asset_digital"]:
-            url = f"/api/v1-preview/Tenants/{self._OCSClient__baseClient.tenant}/Namespaces/{namespace_id}/DataViews/{dataview_id}/Resolved/DataItems/{query}"
-            response = self.request("get", url)
-            if response.status_code == 200:
-                for stream in response.json()["Items"]:
-                    df.loc[i] = [
-                        stream["Name"],
-                        stream["Metadata"][meta_key],
-                        "Float" if query == "Asset_value" else "Category",
-                    ]
-                    i += 1
-            else:
-                print(
-                    f"@@@@ Error getting definition of data view ID: {dataview_id}, (http code: {response.status_code})"
-                )
-                break
+            data_items = self._OCSClient__DataViews.getResolvedDataItems(
+                namespace_id, dataview_id, query
+            )
+            for item in data_items.Items:
+                # print(it.Name, it.Metadata["value_path"], it.Metadata[meta_key])
+                df.loc[i] = [
+                    item.Name,
+                    item.Metadata[column_key],
+                    f"Category"
+                    if query == "Asset_digital"
+                    else ("String" if item.TypeId == "PI-String" else "Float"),
+                ]
+                i += 1
         return df
 
     @typechecked
@@ -67,9 +70,10 @@ class HubClient(OCSClient):
         fv_id: int = 0,
         first_fv: int = 0,
         last_fv: int = 0,
+        version: str = "",
     ):
         dvs = self._OCSClient__DataViews.getDataViews(namespace_id, count=1000)
-        dv_ids = [dv.Id for dv in dvs if "HubDV" in dv.Id]
+        dv_ids = [dv.Id for dv in dvs if f"hub{version}dv" in dv.Id.lower()]
         if len(filter) > 0:
             dv_ids = [dv_id for dv_id in dv_ids if filter.lower() in dv_id.lower()]
         if fv_id > 0:
@@ -89,17 +93,17 @@ class HubClient(OCSClient):
         end_index,
         interval,
         count,
-        token,
+        next_page,
     ):
         return self._OCSClient__DataViews.getDataInterpolated(
             namespace_id,
             dataview_id,
+            count=count,
             form=form,
             startIndex=start_index,
             endIndex=end_index,
             interval=interval,
-            count=count,
-            continuationToken=token,
+            url=next_page,
         )
 
     @tracer.wrap("dataview_interpolated_pd", "dataview")
@@ -134,17 +138,17 @@ class HubClient(OCSClient):
             if span:
                 summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
                 span.set_tag("summary", summary)
-        token = None
+        next_page = None
         while True:
-            csv, token = self.__get_data_interpolated(
-                namespace_id,
-                dataview_id,
-                "csvh",
-                start_index,
-                end_index,
-                interval,
-                count,
-                token,
+            csv, next_page, _ = self.__get_data_interpolated(
+                namespace_id=namespace_id,
+                dataview_id=dataview_id,
+                count=count,
+                form="csvh",
+                start_index=start_index,
+                end_index=end_index,
+                interval=interval,
+                next_page=next_page,
                 no_timer=not verbose,
             )
             with tracer.trace("append_df") as span:
@@ -155,31 +159,14 @@ class HubClient(OCSClient):
                     ),
                     ignore_index=True,
                 )
-            if token is None:
+            if next_page is None:
+                if count != MAX_COUNT:
+                    print()
                 break
-            else:
-                print("+", end="", flush=True)
-        with tracer.trace("merge_df") as span:
-            span.service = "merge"
-            cols = [c for c in df.columns if c + "__ds" in df.columns]
-            if not raw:
-                for col in cols:
-                    col_ds = col + "__ds"
-                    mask = df[col].isnull()
-                    ds_num = np.sum(mask)
-                    if ds_num > 0:
-                        df[col] = df[col].astype("object")
-                        for i in np.nditer(np.where(mask)):
-                            try:
-                                df.at[int(i), col] = df.at[int(i), col_ds]
-                            except KeyError:
-                                print(f"KeyError: {i}, col:{col}")
-                                assert False, "Should not happen"
-                df.drop([c + "__ds" for c in cols], axis=1, inplace=True)
-            if add_dv_column:
-                df["Dataview_ID"] = pd.Series(
-                    [dataview_id] * len(df.index), index=df.index
-                )
+            print("+", end="", flush=True)
+
+        if add_dv_column:
+            df["Dataview_ID"] = pd.Series([dataview_id] * len(df.index), index=df.index)
         return df
 
     @tracer.wrap("dataviews_interpolated_pd", "dataviews")
@@ -192,7 +179,8 @@ class HubClient(OCSClient):
         start_index: str,
         end_index: str,
         interval: str,
-        workers: int = 2,
+        count: int = MAX_COUNT,
+        workers: int = 3,
         verbose: bool = False,
         raw: bool = False,
         skip_sort: bool = False,
@@ -200,7 +188,7 @@ class HubClient(OCSClient):
     ):
 
         df = pd.DataFrame()
-        dv_ids_counts = [(dv_id, MAX_COUNT) for dv_id in dv_ids]
+        dv_ids_counts = [(dv_id, count) for dv_id in dv_ids]
         if verbose:
             summary = f"<@dataviews_interpolated_pd/{start_index}/{end_index}/{interval}/w{workers}/raw={raw} t={datetime.now().isoformat()}"
             dvs_info = f"dv_ids={dv_ids_counts}"
