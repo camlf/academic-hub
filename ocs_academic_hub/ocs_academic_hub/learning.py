@@ -2,40 +2,53 @@
 import nbformat
 
 
+def point_bad_line(bad_line, source):
+    result = ""
+    for i, s in enumerate(source.split("\n")):
+        result += (">>>" if i == bad_line else "   ") + s + "\n"
+    return result
+
+
 def _compute_sources(cell, k=None):
     if k is not None:
         print(f"Student code block(s) in cell {k}")
     exercise = []
     solution = []
     section = 0  # 0 == common, 1 == exercise, 2 == solution
-    for s in cell.source.split("\n"):
+    indent = 0
+    for i, s in enumerate(cell.source.split("\n")):
         solution.append(s)
         if "STUDENT" in s:
             if "BEGIN" in s:
                 exercise.append(s)
+                indent = s.find("#")
                 assert (
                     section == 0
-                ), '@@@ BAD SEQUENCE - "STUDENT BEGIN" NOT EXPECTED @@@'
+                ), f'@@@ BAD SEQUENCE - "STUDENT BEGIN" NOT EXPECTED @@@:\n\n{point_bad_line(i, cell.source)}'
                 section = 1
             elif "END" in s:
                 exercise.append(s)
-                assert section == 1, '@@@ BAD SEQUENCE - "STUDENT END" NOT EXPECTED @@@'
+                assert (
+                    section == 1
+                ), f'@@@ BAD SEQUENCE - "STUDENT END" NOT EXPECTED @@@:\n{point_bad_line(i, cell.source)}'
                 section = 2
             elif "SOLUTION" in s:
                 assert (
                     section == 2
-                ), '@@@ BAD SEQUENCE - "STUDENT SOLUTION" NOT EXPECTED @@@'
+                ), f'@@@ BAD SEQUENCE - "STUDENT SOLUTION" NOT EXPECTED @@@:\n{point_bad_line(i, cell.source)}'
                 section = 0
-                print("[block processed ok]", end='', flush=True)
+                print("[block processed ok]", end="", flush=True)
             else:
                 assert (
                     1 == 0
-                ), '@@@ ERROR: "STUDENT" FOUND WITH NO KEYWORD (BEGIN, END or SOLUTION) @@@'
+                ), f'@@@ ERROR: "STUDENT" FOUND WITH NO KEYWORD (BEGIN, END or SOLUTION) @@@:\n{point_bad_line(i, cell.source)}'
                 pass
         else:
-            if section < 2:
-                first = 0 if section == 0 else 2
-                exercise.append(s[first:])
+            if section == 1:
+                exercise.append((" " * indent) + s[indent + 2 :])
+            elif section == 0:
+                exercise.append(s)
+
     assert section == 0, "@@@ SEQUENCE OF STUDENT BEGIN/END/SOLUTION NOT RESPECTED @@@"
     print()
     return "\n".join(exercise), "\n".join(solution)
@@ -52,6 +65,13 @@ def generate_exercise_notebook(source, exercise=None):
 
     if exercise is None:
         exercise = source.replace("SOLUTION", "EXERCISE")
+        print(
+            f'>> No exercise filename specified, replace "SOLUTION" with "EXERCISE" in {source}: {exercise}'
+        )
+
+    assert (
+        exercise != source
+    ), f"@@@ exercise notebook filename ({exercise}) must be different than solution ({solution}) @@@ "
 
     # exercise notebook now strict copy of solution notebook
     enb = nb.copy()
