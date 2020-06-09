@@ -23,10 +23,18 @@ except ImportError:
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
 MAX_COUNT = 250 * 1000
+DESCHUTES_DB = "Deschutes"
+DESCHUTES_NAMESPACE = "fermenter_vessels"
+UCDAVIS_FACILITIES_DB = "UCDavis.Facilities"
+UCDAVIS_FACILITIES_NAMESPACE = "UC__Davis"
+
+hub_db_namespaces = {
+    DESCHUTES_DB: DESCHUTES_NAMESPACE,
+    UCDAVIS_FACILITIES_DB: UCDAVIS_FACILITIES_NAMESPACE,
+}
 
 
 class HubClient(OCSClient):
-
     def __init__(self):
         config_file = os.environ.get("OCS_HUB_CONFIG", None)
         if config_file:
@@ -41,8 +49,23 @@ class HubClient(OCSClient):
                 config.get("Credentials", "ClientSecret"),
             )
         else:
-            super().__init__("v1", "65292b6c-ec16-414a-b583-ce7ae04046d4", "https://dat-b.osisoft.com", "422e6002-9c5a-4651-b986-c7295bcf376c")
+            super().__init__(
+                "v1",
+                "65292b6c-ec16-414a-b583-ce7ae04046d4",
+                "https://dat-b.osisoft.com",
+                "422e6002-9c5a-4651-b986-c7295bcf376c",
+            )
 
+    @typechecked
+    def datasets(self) -> List[str]:
+        return list(hub_db_namespaces.keys())
+
+    @typechecked
+    def namespace_of(self, dataset: str):
+        try:
+            return hub_db_namespaces[dataset]
+        except KeyError:
+            print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
 
     @typechecked
     def dataview_definition(
@@ -65,21 +88,23 @@ class HubClient(OCSClient):
             )
             for item in data_items.Items:
                 # print(it.Name, it.Metadata["value_path"], it.Metadata[meta_key])
-                df.loc[i] = [
-                    item.Name,
-                    item.Metadata[column_key],
-                    f"Category"
-                    if query == "Asset_digital"
-                    else ("String" if item.TypeId == "PI-String" else "Float"),
-                ]
-                i += 1
+                try:
+                    df.loc[i] = [
+                        item.Name,
+                        item.Metadata[column_key],
+                        f"Category"
+                        if query == "Asset_digital"
+                        else ("String" if item.TypeId == "PI-String" else "Float"),
+                    ]
+                    i += 1
+                except KeyError:
+                    return self.dataview_definition_v2(
+                        namespace_id, dataview_id, version
+                    )
         return df
 
-
     @typechecked
-    def dataview_definition_v2(
-        self, namespace_id: str, dataview_id: str, version: str
-    ):
+    def dataview_definition_v2(self, namespace_id: str, dataview_id: str, version: str):
         df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
         i = 0
         data_items = super().DataViews.getResolvedDataItems(
@@ -94,8 +119,7 @@ class HubClient(OCSClient):
                 else ("String" if item.TypeId == "PI-String" else "Float"),
             ]
             i += 1
-        return df        
-
+        return df
 
     @typechecked
     def fermenter_dataview_ids(
@@ -126,8 +150,8 @@ class HubClient(OCSClient):
                 index = df[val_col].index[df[val_col].apply(np.isnan)]
                 df.loc[index, [ds_col]] = ""
             df = df.drop(columns=[ds_col[:-4] for ds_col in ds_columns])
-            df = df.rename(columns={ds_col:ds_col[:-4] for ds_col in ds_columns})
-        return df 
+            df = df.rename(columns={ds_col: ds_col[:-4] for ds_col in ds_columns})
+        return df
 
     @timer
     def __get_data_interpolated(
