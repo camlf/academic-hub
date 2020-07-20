@@ -4,6 +4,8 @@ import configparser
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 import requests
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
 import io
 import json
 import os
@@ -14,7 +16,9 @@ import traceback
 from typeguard import typechecked
 from typing import List, Union
 import pkg_resources
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 try:
     from ddtrace import tracer
@@ -51,10 +55,10 @@ def initialize_hub_data(data_file):
     with open(data_file) as f:
         gqlh = json.loads(f.read())
     db_index = {}
-    for i, database in enumerate(gqlh["data"]["Database"]):
+    for i, database in enumerate(gqlh["Database"]):
         db_index[database["asset_db"]] = i
         hub_db_namespaces[database["name"]] = database["namespace"]
-    return gqlh, gqlh["data"]["Database"][0]["asset_db"], db_index
+    return gqlh, gqlh["Database"][0]["asset_db"], db_index
 
 
 class HubClient(OCSClient):
@@ -88,7 +92,7 @@ class HubClient(OCSClient):
 
     @typechecked
     def current_dataset(self) -> str:
-        return self.__gqlh["data"]["Database"][self.__current_db_index]["name"]
+        return self.__gqlh["Database"][self.__current_db_index]["name"]
 
     @typechecked
     def namespace_of(self, dataset: str):
@@ -101,9 +105,9 @@ class HubClient(OCSClient):
     def assets(self, filter: str = "") -> List[str]:
         assets = [
             (i["name"])
-            for i in self.__gqlh["data"]["Database"][
-                self.__db_index[self.__current_db]
-            ]["asset_with_dv"]
+            for i in self.__gqlh["Database"][self.__db_index[self.__current_db]][
+                "asset_with_dv"
+            ]
         ]
         return sorted([i for i in set(assets) if filter.lower() in i.lower()])
 
@@ -129,7 +133,7 @@ class HubClient(OCSClient):
             ]
 
         dataviews = []
-        for j in self.__gqlh["data"]["Database"][self.__db_index[self.__current_db]][
+        for j in self.__gqlh["Database"][self.__db_index[self.__current_db]][
             "asset_with_dv"
         ]:
             dataviews.extend(j["has_dataview"])
@@ -273,6 +277,43 @@ class HubClient(OCSClient):
         if add_dv_column:
             df["Dataview_ID"] = pd.Series([dataview_id] * len(df.index), index=df.index)
         return self.__process_digital_states(df)
+
+    # EXPERIMENTAL
+
+    def refresh_datasets(self, hub_data="hub_datasets.json"):
+        sample_transport = RequestsHTTPTransport(
+            url="https://data.academic.osisoft.com/hubgraphql", verify=False, retries=3
+        )
+        client = Client(transport=sample_transport, fetch_schema_from_transport=True)
+        db_query = gql(
+            """
+query {
+  Database(status: "production") {
+    name
+    asset_db
+    description
+    informationURL
+    status
+    namespace
+    version
+    id
+    asset_with_dv {
+      name
+      has_dataview {
+        name
+        description
+        id
+        asset_id
+        columns
+      }
+    }
+  }
+}
+            """
+        )
+        db = client.execute(db_query)
+        with open(hub_data, "w") as f:
+            f.write(json.dumps(db, indent=2))
 
     # DEPRECATED
 

@@ -12,11 +12,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/osisoft/OSI-Samples",
-    packages=['ocs_academic_hub'],
-    package_dir={'ocs_academic_hub': 'ocs_academic_hub'},
-    package_data={
-        'ocs_academic_hub': ['*.json'],
-    },
+    packages=["ocs_academic_hub"],
+    package_dir={"ocs_academic_hub": "ocs_academic_hub"},
+    package_data={"ocs_academic_hub": ["*.json"]},
     include_package_data=True,
     # packages=setuptools.find_packages(),
     classifiers=[
@@ -25,12 +23,13 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     py_modules=["ocs_academic_hub"],
-        install_requires=[
-            "pandas>=0.24.2", 
-            "ocs-sample-library-preview>=0.1.10rc0",
-            "numpy", 
-            "python_dateutil>=2.8.0",
-            "typeguard>=2.4.1"
+    install_requires=[
+        "pandas>=0.24.2",
+        "ocs-sample-library-preview>=0.1.10rc0",
+        "numpy",
+        "python_dateutil>=2.8.0",
+        "typeguard>=2.4.1",
+        "gql",
     ],
-    python_requires='>=3.6'
+    python_requires=">=3.6",
 )
