@@ -4,3 +4,4 @@
 build/
 dist/
 FeatureDF.csv
+__pycache__/
