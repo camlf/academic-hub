@@ -12,7 +12,8 @@ import pandas as pd
 import concurrent.futures
 import traceback
 from typeguard import typechecked
-from typing import List
+from typing import List, Union
+import pkg_resources
 
 
 try:
@@ -23,7 +24,7 @@ except ImportError:
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
 MAX_COUNT = 250 * 1000
-DESCHUTES_DB = "Deschutes"
+DESCHUTES_DB = "Deschutes-v1"
 DESCHUTES_NAMESPACE = "fermenter_vessels"
 UCDAVIS_FACILITIES_DB = "UCDavis.Facilities"
 UCDAVIS_FACILITIES_NAMESPACE = "UC__Davis"
@@ -33,9 +34,31 @@ hub_db_namespaces = {
     UCDAVIS_FACILITIES_DB: UCDAVIS_FACILITIES_NAMESPACE,
 }
 
+ocstype2hub = {
+    "PI-Digital": "Category",
+    "PI-String": "String",
+    "PI-Timestamp": "Timestamp",
+    "PI-Int16": "Integer",
+    "PI-Int32": "Integer",
+}
+
+resource_package = __name__
+resource_path = "/".join((".", "hub_datasets.json"))
+default_hub_data = pkg_resources.resource_filename(resource_package, resource_path)
+
+
+def initialize_hub_data(data_file):
+    with open(data_file) as f:
+        gqlh = json.loads(f.read())
+    db_index = {}
+    for i, database in enumerate(gqlh["data"]["Database"]):
+        db_index[database["asset_db"]] = i
+        hub_db_namespaces[database["name"]] = database["namespace"]
+    return gqlh, gqlh["data"]["Database"][0]["asset_db"], db_index
+
 
 class HubClient(OCSClient):
-    def __init__(self):
+    def __init__(self, hub_data="hub_datasets.json"):
         config_file = os.environ.get("OCS_HUB_CONFIG", None)
         if config_file:
             config = configparser.ConfigParser()
@@ -55,10 +78,17 @@ class HubClient(OCSClient):
                 "https://dat-b.osisoft.com",
                 "422e6002-9c5a-4651-b986-c7295bcf376c",
             )
+        data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
+        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
+        self.__current_db_index = 0
 
     @typechecked
     def datasets(self) -> List[str]:
         return list(hub_db_namespaces.keys())
+
+    @typechecked
+    def current_dataset(self) -> str:
+        return self.__gqlh["data"]["Database"][self.__current_db_index]["name"]
 
     @typechecked
     def namespace_of(self, dataset: str):
@@ -68,79 +98,84 @@ class HubClient(OCSClient):
             print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
 
     @typechecked
-    def dataview_definition(
-        self, namespace_id: str, dataview_id: str, version: str = ""
-    ):
-        if version == "":
-            column_key = (
-                dataview_id[
-                    dataview_id.find("HubDV_") + 6 : dataview_id.find("_fv")
-                ].lower()
-                + "_column"
-            )
+    def assets(self, filter: str = "") -> List[str]:
+        assets = [
+            (i["name"])
+            for i in self.__gqlh["data"]["Database"][
+                self.__db_index[self.__current_db]
+            ]["asset_with_dv"]
+        ]
+        return sorted([i for i in set(assets) if filter.lower() in i.lower()])
+
+    @typechecked
+    def asset_dataviews(
+        self, filter: str = "", asset: str = "", single_asset=True
+    ) -> Union[None, List[str]]:
+        if len(asset) > 0:
+            if asset.lower() not in [i.lower() for i in self.assets()]:
+                print(
+                    f"@@ error: asset {asset} not in dataset asset list, check hub.assets()"
+                )
+                return
+        if single_asset:
+            len_test = lambda l: len(l) == 1
         else:
-            return self.dataview_definition_v2(namespace_id, dataview_id, version)
-        df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
-        i = 0
-        for query in ["Asset_value", "Asset_digital"]:
-            data_items = self.DataViews.getResolvedDataItems(
-                namespace_id, dataview_id, query
-            )
-            for item in data_items.Items:
-                # print(it.Name, it.Metadata["value_path"], it.Metadata[meta_key])
-                try:
-                    df.loc[i] = [
-                        item.Name,
-                        item.Metadata[column_key],
-                        f"Category"
-                        if query == "Asset_digital"
-                        else ("String" if item.TypeId == "PI-String" else "Float"),
+            len_test = lambda l: len(l) > 1
+        if asset == "":
+            asset_test = lambda x, y: True
+        else:
+            asset_test = lambda asset, asset_list: asset.lower() in [
+                i.lower() for i in asset_list
+            ]
+
+        dataviews = []
+        for j in self.__gqlh["data"]["Database"][self.__db_index[self.__current_db]][
+            "asset_with_dv"
+        ]:
+            dataviews.extend(j["has_dataview"])
+
+        return sorted(
+            list(
+                set(
+                    [
+                        i["id"]
+                        for i in dataviews
+                        if (
+                            filter.lower() in i["id"]
+                            or filter.lower() in i["description"].lower()
+                        )
+                        and asset_test(asset, i["asset_id"])
+                        and len_test(i["asset_id"])
                     ]
-                    i += 1
-                except KeyError:
-                    return self.dataview_definition_v2(
-                        namespace_id, dataview_id, version
-                    )
-        return df
+                )
+            )
+        )
 
     @typechecked
     def dataview_definition_v2(self, namespace_id: str, dataview_id: str, version: str):
-        df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
+        df = pd.DataFrame(
+            columns=(
+                "Asset_Id",
+                "OCS_StreamName",
+                "DV_Column",
+                "Value_Type",
+                "EngUnits",
+            )
+        )
         i = 0
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value"
         )
         for item in data_items.Items:
             df.loc[i] = [
+                item.Metadata["asset_id"],
                 item.Name,
                 item.Metadata["column_name"],
-                f"Category"
-                if item.TypeId == "PI-Digital"
-                else ("String" if item.TypeId == "PI-String" else "Float"),
+                ocstype2hub.get(item.TypeId, "Float"),
+                item.Metadata.get("engunits", "-n/a-"),
             ]
             i += 1
         return df
-
-    @typechecked
-    def fermenter_dataview_ids(
-        self,
-        namespace_id: str,
-        filter: str = "",
-        fv_id: int = 0,
-        first_fv: int = 0,
-        last_fv: int = 0,
-        version: str = "",
-    ):
-        dvs = super().DataViews.getDataViews(namespace_id, count=1000)
-        dv_ids = [dv.Id for dv in dvs if f"hub{version}dv" in dv.Id.lower()]
-        if len(filter) > 0:
-            dv_ids = [dv_id for dv_id in dv_ids if filter.lower() in dv_id.lower()]
-        if fv_id > 0:
-            dv_ids = [dv_id for dv_id in dv_ids if f"fv{fv_id:02}" in dv_id]
-        elif first_fv > 0 and last_fv > 0:
-            fv_ids = [f"fv{fv_id:02}" for fv_id in range(first_fv, last_fv + 1)]
-            dv_ids = [dv_id for dv_id in dv_ids if dv_id[-4:] in fv_ids]
-        return dv_ids
 
     def __process_digital_states(self, df):
         ds_columns = [col for col in list(df.columns) if col[-4:] == "__ds"]
@@ -210,7 +245,7 @@ class HubClient(OCSClient):
                 span.set_tag("summary", summary)
         next_page = None
         while True:
-            csv, next_page, _ = self.__get_data_interpolated(
+            csv, next_page, x = self.__get_data_interpolated(
                 namespace_id=namespace_id,
                 dataview_id=dataview_id,
                 count=count,
@@ -238,6 +273,64 @@ class HubClient(OCSClient):
         if add_dv_column:
             df["Dataview_ID"] = pd.Series([dataview_id] * len(df.index), index=df.index)
         return self.__process_digital_states(df)
+
+    # DEPRECATED
+
+    @typechecked
+    def dataview_definition(
+        self, namespace_id: str, dataview_id: str, version: str = ""
+    ):
+        if version == "":
+            column_key = (
+                dataview_id[
+                    dataview_id.find("HubDV_") + 6 : dataview_id.find("_fv")
+                ].lower()
+                + "_column"
+            )
+        else:
+            return self.dataview_definition_v2(namespace_id, dataview_id, version)
+        df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
+        i = 0
+        for query in ["Asset_value", "Asset_digital"]:
+            data_items = self.DataViews.getResolvedDataItems(
+                namespace_id, dataview_id, query
+            )
+            for item in data_items.Items:
+                try:
+                    df.loc[i] = [
+                        item.Name,
+                        item.Metadata[column_key],
+                        f"Category"
+                        if query == "Asset_digital"
+                        else ("String" if item.TypeId == "PI-String" else "Float"),
+                    ]
+                    i += 1
+                except KeyError:
+                    return self.dataview_definition_v2(
+                        namespace_id, dataview_id, version
+                    )
+        return df
+
+    @typechecked
+    def fermenter_dataview_ids(
+        self,
+        namespace_id: str,
+        filter: str = "",
+        fv_id: int = 0,
+        first_fv: int = 0,
+        last_fv: int = 0,
+        version: str = "",
+    ):
+        dvs = super().DataViews.getDataViews(namespace_id, count=1000)
+        dv_ids = [dv.Id for dv in dvs if f"hub{version}dv" in dv.Id.lower()]
+        if len(filter) > 0:
+            dv_ids = [dv_id for dv_id in dv_ids if filter.lower() in dv_id.lower()]
+        if fv_id > 0:
+            dv_ids = [dv_id for dv_id in dv_ids if f"fv{fv_id:02}" in dv_id]
+        elif first_fv > 0 and last_fv > 0:
+            fv_ids = [f"fv{fv_id:02}" for fv_id in range(first_fv, last_fv + 1)]
+            dv_ids = [dv_id for dv_id in dv_ids if dv_id[-4:] in fv_ids]
+        return dv_ids
 
     @tracer.wrap("dataviews_interpolated_pd", "dataviews")
     @timer
