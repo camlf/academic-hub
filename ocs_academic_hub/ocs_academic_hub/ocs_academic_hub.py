@@ -166,11 +166,10 @@ class HubClient(OCSClient):
                 "EngUnits",
             )
         )
-        i = 0
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value"
         )
-        for item in data_items.Items:
+        for i, item in enumerate(data_items.Items):
             df.loc[i] = [
                 item.Metadata["asset_id"],
                 item.Name,
@@ -178,7 +177,6 @@ class HubClient(OCSClient):
                 ocstype2hub.get(item.TypeId, "Float"),
                 item.Metadata.get("engunits", "-n/a-"),
             ]
-            i += 1
         return df
 
     def __process_digital_states(self, df):
@@ -299,7 +297,7 @@ query {
     id
     asset_with_dv {
       name
-      has_dataview {
+      has_dataview(filter: { ocs_sync: true }) {
         name
         description
         id

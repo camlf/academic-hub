@@ -1,7 +1,7 @@
   {
     "Database": [
       {
-        "name": "Deschutes Brewery",
+        "name": "Deschutes.Brewery",
         "asset_db": "deschutes",
         "description": "Deschutes Beer Fermenter Vessels - v2",
         "informationURL": "https://www.osisoft.com/presentations/introduction-to-time-series-analysis-with-pi-system-data/",
