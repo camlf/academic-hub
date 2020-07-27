@@ -167,7 +167,7 @@ class HubClient(OCSClient):
             )
         )
         data_items = super().DataViews.getResolvedDataItems(
-            namespace_id, dataview_id, "Asset_value"
+            namespace_id, dataview_id, "Asset_value?count=1000"
         )
         for i, item in enumerate(data_items.Items):
             df.loc[i] = [
@@ -278,15 +278,17 @@ class HubClient(OCSClient):
 
     # EXPERIMENTAL
 
-    def refresh_datasets(self, hub_data="hub_datasets.json"):
+    def refresh_datasets(
+        self, hub_data="hub_datasets.json", additional_status="production"
+    ):
         sample_transport = RequestsHTTPTransport(
-            url="https://data.academic.osisoft.com/hubgraphql", verify=False, retries=3
+            url="https://data.academic.osisoft.com/graphql", verify=False, retries=3
         )
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
         db_query = gql(
             """
-query {
-  Database(status: "production") {
+query Database($status: String) {
+  Database(filter: { OR: [{ status: "production" }, { status: $status }] }) {
     name
     asset_db
     description
@@ -309,7 +311,7 @@ query {
 }
             """
         )
-        db = client.execute(db_query)
+        db = client.execute(db_query, variable_values={"status": additional_status})
         with open(hub_data, "w") as f:
             f.write(json.dumps(db, indent=2))
 
