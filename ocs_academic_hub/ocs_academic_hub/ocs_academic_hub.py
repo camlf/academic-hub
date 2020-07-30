@@ -297,7 +297,7 @@ query Database($status: String) {
     namespace
     version
     id
-    asset_with_dv {
+    asset_with_dv(orderBy: name_asc) {
       name
       has_dataview(filter: { ocs_sync: true }) {
         name
@@ -314,6 +314,8 @@ query Database($status: String) {
         db = client.execute(db_query, variable_values={"status": additional_status})
         with open(hub_data, "w") as f:
             f.write(json.dumps(db, indent=2))
+        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
+        self.__current_db_index = 0
 
     # DEPRECATED
 
