@@ -20,10 +20,6 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-try:
-    from ddtrace import tracer
-except ImportError:
-    from .dddummy import tracer
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
@@ -83,6 +79,8 @@ class HubClient(OCSClient):
                 "422e6002-9c5a-4651-b986-c7295bcf376c",
             )
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
+        if data_file != default_hub_data:
+            print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
 
@@ -202,18 +200,19 @@ class HubClient(OCSClient):
         count,
         next_page,
     ):
+        count_arg = {} if count is None else {"count": count}
         return super().DataViews.getDataInterpolated(
             namespace_id,
             dataview_id,
-            count=count,
+            # count=count,
             form=form,
             startIndex=start_index,
             endIndex=end_index,
             interval=interval,
             url=next_page,
+            **count_arg,
         )
 
-    @tracer.wrap("dataview_interpolated_pd", "dataview")
     @timer
     @typechecked
     def dataview_interpolated_pd(
@@ -223,7 +222,7 @@ class HubClient(OCSClient):
         start_index: str,
         end_index: str,
         interval: str,
-        count: int = MAX_COUNT,
+        count: int = None,
         add_dv_column: bool = False,
         raw: bool = False,
         verbose: bool = False,
@@ -241,13 +240,11 @@ class HubClient(OCSClient):
             print(f"@Error: start_index and/or end_index has invalid format: {e}")
             return df
         if verbose:
-            span = tracer.current_span()
-            if span:
-                summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
-                span.set_tag("summary", summary)
+            summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
+            print(summary)
         next_page = None
         while True:
-            csv, next_page, x = self.__get_data_interpolated(
+            csv, next_page, _ = self.__get_data_interpolated(
                 namespace_id=namespace_id,
                 dataview_id=dataview_id,
                 count=count,
@@ -258,17 +255,12 @@ class HubClient(OCSClient):
                 next_page=next_page,
                 no_timer=not verbose,
             )
-            with tracer.trace("append_df") as span:
-                span.service = "append"
-                df = df.append(
-                    pd.read_csv(
-                        io.StringIO(csv[csv.find("Time") :]), parse_dates=["Timestamp"]
-                    ),
-                    ignore_index=True,
-                )
+            df = df.append(
+                pd.read_csv(io.StringIO(csv), parse_dates=["Timestamp"]),
+                ignore_index=True,
+            )
             if next_page is None:
-                if count != MAX_COUNT:
-                    print()
+                print()
                 break
             print("+", end="", flush=True)
 
@@ -314,8 +306,9 @@ query Database($status: String) {
         db = client.execute(db_query, variable_values={"status": additional_status})
         with open(hub_data, "w") as f:
             f.write(json.dumps(db, indent=2))
+        print(f"@ Hub data file: {hub_data}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
-        self.__current_db_index = 0
+        print(f"@ Current dataset: {self.current_dataset()}")
 
     # DEPRECATED
 
@@ -375,7 +368,6 @@ query Database($status: String) {
             dv_ids = [dv_id for dv_id in dv_ids if dv_id[-4:] in fv_ids]
         return dv_ids
 
-    @tracer.wrap("dataviews_interpolated_pd", "dataviews")
     @timer
     @typechecked
     def dataviews_interpolated_pd(
@@ -397,13 +389,7 @@ query Database($status: String) {
         dv_ids_counts = [(dv_id, count) for dv_id in dv_ids]
         if verbose:
             summary = f"<@dataviews_interpolated_pd/{start_index}/{end_index}/{interval}/w{workers}/raw={raw} t={datetime.now().isoformat()}"
-            dvs_info = f"dv_ids={dv_ids_counts}"
             print(summary)
-            print(dvs_info)
-            current_span = tracer.current_span()
-            if current_span:
-                current_span.set_tag("summary", summary)
-                current_span.set_tag("dvs_info", dvs_info)
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
             future_to_dv = {
                 executor.submit(
@@ -425,9 +411,7 @@ query Database($status: String) {
                 dv_id, count = future_to_dv[future]
                 try:
                     dv_df = future.result()
-                    with tracer.trace("append_df") as span:
-                        span.service = "append"
-                        df = df.append(dv_df, sort=False)
+                    df = df.append(dv_df, sort=False)
                 except Exception as exc:
                     tb = traceback.format_exc()
                     print(
@@ -448,12 +432,5 @@ query Database($status: String) {
                     pass
         if len(df) == 0 or skip_sort:
             return df
-        with tracer.trace("sort_df") as span:
-            span.service = "sort"
-            df = df.sort_values(["Dataview_ID", "Timestamp"]).reset_index(drop=True)
-        if verbose:
-            buf = io.StringIO()
-            df.info(max_cols=3, buf=buf)
-            if current_span:
-                current_span.set_tag("df_info", buf.getvalue())
+        df = df.sort_values(["Dataview_ID", "Timestamp"]).reset_index(drop=True)
         return df
