@@ -1,0 +1,1803 @@
+ARC Pavilion:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_448
+    Cumulative Use: PI_uni-pida-vm0_445
+    Demand: PI_uni-pida-vm0_535_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_449
+    Electricity_EUI: PI_uni-pida-vm0_626
+    MonthlyUsage: PI_uni-pida-vm0_447
+    Rollover Check: PI_uni-pida-vm0_627
+    Rollover Count Month: PI_uni-pida-vm0_629
+    Rollover Count Year: PI_uni-pida-vm0_632
+Academic Surge Building:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_117
+    Cumulative Use: PI_uni-pida-vm0_115
+    Demand: PI_uni-pida-vm0_156
+    Demand_kBtu: PI_uni-pida-vm0_118
+    Electricity_EUI: PI_uni-pida-vm0_175
+    MonthlyUsage: PI_uni-pida-vm0_116
+    Rollover Check: PI_uni-pida-vm0_176
+    Rollover Count Month: PI_uni-pida-vm0_178
+    Rollover Count Year: PI_uni-pida-vm0_181
+Activities and Recreation Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_403
+    AnnualUsage: PI_uni-pida-vm0_418
+    Cumulative Use: PI_uni-pida-vm0_415
+    Demand: PI_uni-pida-vm0_532_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_419
+    EUI: PI_uni-pida-vm0_182
+    Electricity_EUI: PI_uni-pida-vm0_238
+    MonthlyUsage: PI_uni-pida-vm0_417
+    Rollover Check: PI_uni-pida-vm0_239
+    Rollover Count Month: PI_uni-pida-vm0_241
+    Rollover Count Year: PI_uni-pida-vm0_242
+Advanced Materials Research Laboratory:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_195
+    Cumulative Use: PI_uni-pida-vm0_193
+    Demand: PI_uni-pida-vm0_252
+    Demand_kBtu: PI_uni-pida-vm0_196
+    Electricity_EUI: PI_uni-pida-vm0_313
+    MonthlyUsage: PI_uni-pida-vm0_194
+    Rollover Check: PI_uni-pida-vm0_314
+    Rollover Count Month: PI_uni-pida-vm0_315
+    Rollover Count Year: PI_uni-pida-vm0_316
+Advanced Transportation Infrastructure Research Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_439
+    Cumulative Use: PI_uni-pida-vm0_436
+    Demand: PI_uni-pida-vm0_564_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_441_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_675
+    MonthlyUsage: PI_uni-pida-vm0_438
+    Rollover Check: PI_uni-pida-vm0_676
+    Rollover Count Month: PI_uni-pida-vm0_677
+    Rollover Count Year: PI_uni-pida-vm0_678
+Aggie Stadium:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_321
+    Cumulative Use: PI_uni-pida-vm0_319
+    Demand: PI_uni-pida-vm0_336
+    Demand_kBtu: PI_uni-pida-vm0_322
+    Electricity_EUI: PI_uni-pida-vm0_350
+    MonthlyUsage: PI_uni-pida-vm0_320
+    Rollover Check: PI_uni-pida-vm0_352
+    Rollover Count Month: PI_uni-pida-vm0_354
+    Rollover Count Year: PI_uni-pida-vm0_356
+Agronomy Field Laboratory:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11706
+    Cumulative Use: PI_uni-pida-vm0_420
+    Demand: PI_uni-pida-vm0_471
+    EUI: PI_uni-pida-vm0_357
+Animal Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11688
+    AnnualUsage: PI_uni-pida-vm0_109
+    Cumulative Use: PI_uni-pida-vm0_107
+    Demand: PI_uni-pida-vm0_124
+    Demand_kBtu: PI_uni-pida-vm0_110
+    EUI: PI_uni-pida-vm0_35
+    Electricity_EUI: PI_uni-pida-vm0_125
+    MonthlyUsage: PI_uni-pida-vm0_108
+    Rollover Check: PI_uni-pida-vm0_126
+    Rollover Count Month: PI_uni-pida-vm0_127
+    Rollover Count Year: PI_uni-pida-vm0_128
+Animal Resource Service J1:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11709
+    AnnualUsage: PI_uni-pida-vm0_395
+    Cumulative Use: PI_uni-pida-vm0_391
+    Demand: PI_uni-pida-vm0_463
+    Demand_kBtu: PI_uni-pida-vm0_396
+    EUI: PI_uni-pida-vm0_129
+    Electricity_EUI: PI_uni-pida-vm0_631
+    MonthlyUsage: PI_uni-pida-vm0_393
+    Rollover Check: PI_uni-pida-vm0_633
+    Rollover Count Month: PI_uni-pida-vm0_635
+    Rollover Count Year: PI_uni-pida-vm0_636
+Animal Resource Service M3:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11870
+    Demand_kBtu: PI_uni-pida-vm0_11889
+    Electricity_EUI: PI_uni-pida-vm0_11906
+    MonthlyUsage: PI_uni-pida-vm0_11853
+    Rollover Check: PI_uni-pida-vm0_11916
+Animal Resource Service N1:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11938
+    Cumulative Use: PI_uni-pida-vm0_11730
+    Demand: PI_uni-pida-vm0_11744
+    Demand_kBtu: PI_uni-pida-vm0_11790
+    Electricity_EUI: PI_uni-pida-vm0_11806
+    MonthlyUsage: PI_uni-pida-vm0_11927
+    Rollover Check: PI_uni-pida-vm0_11824
+Ann E. Pitzer Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2925
+    AnnualUsage: PI_uni-pida-vm0_370
+    Cumulative Use: PI_uni-pida-vm0_367
+    Demand: PI_uni-pida-vm0_416
+    Demand_kBtu: PI_uni-pida-vm0_371
+    EUI: PI_uni-pida-vm0_2924
+    Electricity_EUI: PI_uni-pida-vm0_454
+    MonthlyUsage: PI_uni-pida-vm0_369
+    Rollover Check: PI_uni-pida-vm0_455
+    Rollover Count Month: PI_uni-pida-vm0_456
+    Rollover Count Year: PI_uni-pida-vm0_457
+Antique Mechanics Trailer:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11847
+    Cumulative Use: PI_uni-pida-vm0_11749
+    Demand: PI_uni-pida-vm0_11729
+    Demand_kBtu: PI_uni-pida-vm0_11862
+    Electricity_EUI: PI_uni-pida-vm0_11877
+    MonthlyUsage: PI_uni-pida-vm0_11834
+    Rollover Check: PI_uni-pida-vm0_11890
+Aquatic Biology & Environmental Science Bldg:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11711
+    AnnualUsage: PI_uni-pida-vm0_274
+    Cumulative Use: PI_uni-pida-vm0_270
+    Demand: PI_uni-pida-vm0_409_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_275
+    EUI: PI_uni-pida-vm0_65
+    Electricity_EUI: PI_uni-pida-vm0_375
+    MonthlyUsage: PI_uni-pida-vm0_273
+    Rollover Check: PI_uni-pida-vm0_376
+    Rollover Count Month: PI_uni-pida-vm0_377
+    Rollover Count Year: PI_uni-pida-vm0_379
+Art Building:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_461
+    Cumulative Use: PI_uni-pida-vm0_459
+    Demand: PI_uni-pida-vm0_576_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_462_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_667
+    MonthlyUsage: PI_uni-pida-vm0_460
+    Rollover Check: PI_uni-pida-vm0_668
+    Rollover Count Month: PI_uni-pida-vm0_669
+    Rollover Count Year: PI_uni-pida-vm0_670
+Art Building Annex:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_30
+    Cumulative Use: PI_uni-pida-vm0_684
+    Demand: PI_uni-pida-vm0_231
+    Demand_kBtu: PI_uni-pida-vm0_41
+    Electricity_EUI: PI_uni-pida-vm0_342
+    MonthlyUsage: PI_uni-pida-vm0_13
+    Rollover Check: PI_uni-pida-vm0_343
+    Rollover Count Month: PI_uni-pida-vm0_344
+    Rollover Count Year: PI_uni-pida-vm0_345
+Art, Music, Wright Halls:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11725
+    AnnualUsage: PI_uni-pida-vm0_11915
+    Cumulative Use: PI_uni-pida-vm0_11745
+    Demand: PI_uni-pida-vm0_11757
+    Demand_kBtu: PI_uni-pida-vm0_11926
+    EUI: PI_uni-pida-vm0_11686
+    Electricity_EUI: PI_uni-pida-vm0_11791
+    MonthlyUsage: PI_uni-pida-vm0_11905
+    Rollover Check: PI_uni-pida-vm0_11809
+    Rollover Count Month: PI_uni-pida-vm0_12434
+    Rollover Count Year: PI_uni-pida-vm0_12435
+Asmundson Annex:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11721
+    AnnualUsage: PI_uni-pida-vm0_452
+    Cumulative Use: PI_uni-pida-vm0_450
+    Demand: PI_uni-pida-vm0_541_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_453
+    EUI: PI_uni-pida-vm0_347
+    Electricity_EUI: PI_uni-pida-vm0_465
+    MonthlyUsage: PI_uni-pida-vm0_451
+    Rollover Check: PI_uni-pida-vm0_466
+    Rollover Count Month: PI_uni-pida-vm0_467
+    Rollover Count Year: PI_uni-pida-vm0_468
+Asmundson Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11702
+    AnnualUsage: PI_uni-pida-vm0_2615
+    Cumulative Use: PI_uni-pida-vm0_2623
+    Demand: PI_uni-pida-vm0_2624_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2618
+    EUI: PI_uni-pida-vm0_2539
+    Electricity_EUI: PI_uni-pida-vm0_2617
+    MonthlyUsage: PI_uni-pida-vm0_2616
+    Rollover Check: PI_uni-pida-vm0_2619
+    Rollover Count Month: PI_uni-pida-vm0_2620
+    Rollover Count Year: PI_uni-pida-vm0_2621
+Bainer Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11710
+    AnnualUsage: PI_uni-pida-vm0_517
+    Cumulative Use: PI_uni-pida-vm0_515
+    Demand: PI_uni-pida-vm0_533
+    Demand_kBtu: PI_uni-pida-vm0_518
+    EUI: PI_uni-pida-vm0_469
+    Electricity_EUI: PI_uni-pida-vm0_548
+    MonthlyUsage: PI_uni-pida-vm0_516
+    Rollover Check: PI_uni-pida-vm0_549
+    Rollover Count Month: PI_uni-pida-vm0_17
+    Rollover Count Year: PI_uni-pida-vm0_34
+Bowley Head House:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11727
+    AnnualUsage: PI_uni-pida-vm0_271
+    Cumulative Use: PI_uni-pida-vm0_268
+    Demand: PI_uni-pida-vm0_404_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_272
+    EUI: PI_uni-pida-vm0_42
+    Electricity_EUI: PI_uni-pida-vm0_481
+    MonthlyUsage: PI_uni-pida-vm0_269
+    Rollover Check: PI_uni-pida-vm0_483
+    Rollover Count Month: PI_uni-pida-vm0_484
+    Rollover Count Year: PI_uni-pida-vm0_486
+Briggs Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11728
+    AnnualUsage: PI_uni-pida-vm0_526
+    Cumulative Use: PI_uni-pida-vm0_523
+    Demand: PI_uni-pida-vm0_534
+    Demand_kBtu: PI_uni-pida-vm0_527
+    EUI: PI_uni-pida-vm0_488
+    Electricity_EUI: PI_uni-pida-vm0_550
+    MonthlyUsage: PI_uni-pida-vm0_524
+    Rollover Check: PI_uni-pida-vm0_552
+    Rollover Count Month: PI_uni-pida-vm0_553
+    Rollover Count Year: PI_uni-pida-vm0_555
+California Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_12399
+    AnnualUsage: PI_uni-pida-vm0_12408
+    Cumulative Use: PI_uni-pida-vm0_12407
+    Demand: PI_uni-pida-vm0_12405
+    Demand_kBtu: PI_uni-pida-vm0_12409
+    EUI: PI_uni-pida-vm0_12398
+    Electricity_EUI: PI_uni-pida-vm0_12411
+    MonthlyUsage: PI_uni-pida-vm0_12406
+    Rollover Check: PI_uni-pida-vm0_12410
+Campus Data Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11723
+    AnnualUsage: PI_uni-pida-vm0_287
+    Cumulative Use: PI_uni-pida-vm0_285
+    Demand: PI_uni-pida-vm0_437_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_288
+    EUI: PI_uni-pida-vm0_557
+    Electricity_EUI: PI_uni-pida-vm0_542
+    MonthlyUsage: PI_uni-pida-vm0_286
+    Rollover Check: PI_uni-pida-vm0_282
+    Rollover Count Month: PI_uni-pida-vm0_283
+    Rollover Count Year: PI_uni-pida-vm0_284
+Cellular Biology Laboratory:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11846
+    Cumulative Use: PI_uni-pida-vm0_615
+    Demand: PI_uni-pida-vm0_672
+    Demand_kBtu: PI_uni-pida-vm0_11868
+    Electricity_EUI: PI_uni-pida-vm0_11882
+    MonthlyUsage: PI_uni-pida-vm0_11830
+    Rollover Check: PI_uni-pida-vm0_11899
+Center for Companion Animal Health:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_700
+    Cumulative Use: PI_uni-pida-vm0_12479
+    Demand: PI_uni-pida-vm0_12478
+    Demand_kBtu: PI_uni-pida-vm0_543_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_706
+    MonthlyUsage: PI_uni-pida-vm0_699
+    Rollover Check: PI_uni-pida-vm0_707
+    Rollover Count Month: PI_uni-pida-vm0_708
+    Rollover Count Year: PI_uni-pida-vm0_709
+Center for Comparative Medicine:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11699
+    AnnualUsage: PI_uni-pida-vm0_94
+    Cumulative Use: PI_uni-pida-vm0_86
+    Demand: PI_uni-pida-vm0_293_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_98
+    EUI: PI_uni-pida-vm0_710
+    Electricity_EUI: PI_uni-pida-vm0_472
+    MonthlyUsage: PI_uni-pida-vm0_91
+    Rollover Check: PI_uni-pida-vm0_473
+    Rollover Count Month: PI_uni-pida-vm0_474
+    Rollover Count Year: PI_uni-pida-vm0_475
+Center for Health & Environment Clinical Medicine:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11703
+    AnnualUsage: PI_uni-pida-vm0_546
+    Cumulative Use: PI_uni-pida-vm0_544
+    Demand: PI_uni-pida-vm0_607
+    Demand_kBtu: PI_uni-pida-vm0_547_ds2m
+    EUI: PI_uni-pida-vm0_477
+    Electricity_EUI: PI_uni-pida-vm0_679
+    MonthlyUsage: PI_uni-pida-vm0_545
+    Rollover Check: PI_uni-pida-vm0_681
+    Rollover Count Month: PI_uni-pida-vm0_682
+    Rollover Count Year: PI_uni-pida-vm0_551
+Center for Health & Environment Office & Laboratory:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11719
+    AnnualUsage: PI_uni-pida-vm0_664
+    Cumulative Use: PI_uni-pida-vm0_662
+    Demand: PI_uni-pida-vm0_680
+    Demand_kBtu: PI_uni-pida-vm0_665
+    EUI: PI_uni-pida-vm0_554
+    Electricity_EUI: PI_uni-pida-vm0_701
+    MonthlyUsage: PI_uni-pida-vm0_663
+    Rollover Check: PI_uni-pida-vm0_702
+    Rollover Count Month: PI_uni-pida-vm0_703
+    Rollover Count Year: PI_uni-pida-vm0_704
+Center for Health & Environment Toxic Pollutant Laboratory:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11708
+    AnnualUsage: PI_uni-pida-vm0_308
+    Cumulative Use: PI_uni-pida-vm0_306
+    Demand: PI_uni-pida-vm0_431
+    Demand_kBtu: PI_uni-pida-vm0_309
+    EUI: PI_uni-pida-vm0_705
+    Electricity_EUI: PI_uni-pida-vm0_559
+    MonthlyUsage: PI_uni-pida-vm0_307
+    Rollover Check: PI_uni-pida-vm0_560
+    Rollover Count Month: PI_uni-pida-vm0_561
+    Rollover Count Year: PI_uni-pida-vm0_562
+Central Cage Wash Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11921
+    Cumulative Use: PI_uni-pida-vm0_11751
+    Demand: PI_uni-pida-vm0_11733
+    Demand_kBtu: PI_uni-pida-vm0_11932
+    Electricity_EUI: PI_uni-pida-vm0_11943
+    MonthlyUsage: PI_uni-pida-vm0_11910
+    Rollover Check: PI_uni-pida-vm0_11796
+Chemistry:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_574
+    Cumulative Use: PI_uni-pida-vm0_570
+    Demand: PI_uni-pida-vm0_606
+    Demand_kBtu: PI_uni-pida-vm0_575
+    Electricity_EUI: PI_uni-pida-vm0_609
+    MonthlyUsage: PI_uni-pida-vm0_573
+    Rollover Check: PI_uni-pida-vm0_610
+    Rollover Count Month: PI_uni-pida-vm0_611
+    Rollover Count Year: PI_uni-pida-vm0_612
+Chemistry Annex:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_692
+    AnnualUsage: PI_uni-pida-vm0_648
+    Cumulative Use: PI_uni-pida-vm0_643
+    Demand: PI_uni-pida-vm0_19_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_650_ds2m
+    EUI: PI_uni-pida-vm0_613
+    Electricity_EUI: PI_uni-pida-vm0_382
+    MonthlyUsage: PI_uni-pida-vm0_644
+    Rollover Check: PI_uni-pida-vm0_384
+    Rollover Count Month: PI_uni-pida-vm0_385
+    Rollover Count Year: PI_uni-pida-vm0_386
+Cole A:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11687
+    AnnualUsage: PI_uni-pida-vm0_444
+    Cumulative Use: PI_uni-pida-vm0_440
+    Demand: PI_uni-pida-vm0_495_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_446
+    EUI: PI_uni-pida-vm0_401
+    Electricity_EUI: PI_uni-pida-vm0_565
+    MonthlyUsage: PI_uni-pida-vm0_442
+    Rollover Check: PI_uni-pida-vm0_566
+    Rollover Count Month: PI_uni-pida-vm0_567
+    Rollover Count Year: PI_uni-pida-vm0_569
+Cole B:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11720
+    AnnualUsage: PI_uni-pida-vm0_20
+    Cumulative Use: PI_uni-pida-vm0_658
+    Demand: PI_uni-pida-vm0_218
+    Demand_kBtu: PI_uni-pida-vm0_27
+    EUI: PI_uni-pida-vm0_571
+    Electricity_EUI: PI_uni-pida-vm0_276
+    MonthlyUsage: PI_uni-pida-vm0_660
+    Rollover Check: PI_uni-pida-vm0_277
+    Rollover Count Month: PI_uni-pida-vm0_278
+    Rollover Count Year: PI_uni-pida-vm0_279
+Conference Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_311
+    Cumulative Use: PI_uni-pida-vm0_305
+    Demand: PI_uni-pida-vm0_323
+    Demand_kBtu: PI_uni-pida-vm0_312
+    Electricity_EUI: PI_uni-pida-vm0_332
+    MonthlyUsage: PI_uni-pida-vm0_310
+    Rollover Check: PI_uni-pida-vm0_333
+    Rollover Count Month: PI_uni-pida-vm0_334
+    Rollover Count Year: PI_uni-pida-vm0_335
+Contained Research Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11828
+    Cumulative Use: PI_uni-pida-vm0_11755
+    Demand: PI_uni-pida-vm0_11759
+    Demand_kBtu: PI_uni-pida-vm0_11841
+    Electricity_EUI: PI_uni-pida-vm0_11857
+    MonthlyUsage: PI_uni-pida-vm0_11812
+    Rollover Check: PI_uni-pida-vm0_11875
+Cruess Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_428
+    Cumulative Use: PI_uni-pida-vm0_425
+    Demand: PI_uni-pida-vm0_505_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_433
+    Electricity_EUI: PI_uni-pida-vm0_577
+    MonthlyUsage: PI_uni-pida-vm0_426
+    Rollover Check: PI_uni-pida-vm0_578
+    Rollover Count Month: PI_uni-pida-vm0_579
+    Rollover Count Year: PI_uni-pida-vm0_580
+Dairy Cattle Feed:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11692
+    AnnualUsage: PI_uni-pida-vm0_657
+    Cumulative Use: PI_uni-pida-vm0_655
+    Demand: PI_uni-pida-vm0_673
+    Demand_kBtu: PI_uni-pida-vm0_659
+    EUI: PI_uni-pida-vm0_583
+    Electricity_EUI: PI_uni-pida-vm0_685
+    MonthlyUsage: PI_uni-pida-vm0_656
+    Rollover Check: PI_uni-pida-vm0_686
+    Rollover Count Month: PI_uni-pida-vm0_687
+    Rollover Count Year: PI_uni-pida-vm0_688
+Dairy Cattle Shed:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11697
+    AnnualUsage: PI_uni-pida-vm0_45
+    Cumulative Use: PI_uni-pida-vm0_24
+    Demand: PI_uni-pida-vm0_74
+    Demand_kBtu: PI_uni-pida-vm0_51
+    EUI: PI_uni-pida-vm0_689
+    Electricity_EUI: PI_uni-pida-vm0_88
+    MonthlyUsage: PI_uni-pida-vm0_38
+    Rollover Check: PI_uni-pida-vm0_89
+    Rollover Count Month: PI_uni-pida-vm0_92
+    Rollover Count Year: PI_uni-pida-vm0_95
+Dairy Tower:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11694
+    AnnualUsage: PI_uni-pida-vm0_122
+    Cumulative Use: PI_uni-pida-vm0_119
+    Demand: PI_uni-pida-vm0_153
+    Demand_kBtu: PI_uni-pida-vm0_123
+    EUI: PI_uni-pida-vm0_97
+    Electricity_EUI: PI_uni-pida-vm0_177
+    MonthlyUsage: PI_uni-pida-vm0_120
+    Rollover Check: PI_uni-pida-vm0_180
+    Rollover Count Month: PI_uni-pida-vm0_183
+    Rollover Count Year: PI_uni-pida-vm0_185
+Earth and Physical Sciences Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_591
+    AnnualUsage: PI_uni-pida-vm0_22
+    Cumulative Use: PI_uni-pida-vm0_600
+    Demand: PI_uni-pida-vm0_112
+    Demand_kBtu: PI_uni-pida-vm0_32
+    EUI: PI_uni-pida-vm0_589
+    Electricity_EUI: PI_uni-pida-vm0_131
+    MonthlyUsage: PI_uni-pida-vm0_601
+    Rollover Check: PI_uni-pida-vm0_132
+    Rollover Count Month: PI_uni-pida-vm0_133
+    Rollover Count Year: PI_uni-pida-vm0_134
+Environmental Services Facility Headquarters:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11904
+    Cumulative Use: PI_uni-pida-vm0_11731
+    Demand: PI_uni-pida-vm0_11747
+    Demand_kBtu: PI_uni-pida-vm0_11914
+    Electricity_EUI: PI_uni-pida-vm0_11925
+    MonthlyUsage: PI_uni-pida-vm0_11884
+    Rollover Check: PI_uni-pida-vm0_11937
+Equestrian Center Caretaker Trailer:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11701
+    AnnualUsage: PI_uni-pida-vm0_172
+    Cumulative Use: PI_uni-pida-vm0_169
+    Demand: PI_uni-pida-vm0_191
+    Demand_kBtu: PI_uni-pida-vm0_174
+    EUI: PI_uni-pida-vm0_149
+    Electricity_EUI: PI_uni-pida-vm0_197
+    MonthlyUsage: PI_uni-pida-vm0_171
+    Rollover Check: PI_uni-pida-vm0_198
+    Rollover Count Month: PI_uni-pida-vm0_199
+    Rollover Count Year: PI_uni-pida-vm0_200
+Equestrian Center Covered Arena:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11698
+    AnnualUsage: PI_uni-pida-vm0_205
+    Cumulative Use: PI_uni-pida-vm0_203
+    Demand: PI_uni-pida-vm0_207
+    Demand_kBtu: PI_uni-pida-vm0_206
+    EUI: PI_uni-pida-vm0_201
+    Electricity_EUI: PI_uni-pida-vm0_208
+    MonthlyUsage: PI_uni-pida-vm0_204
+    Rollover Check: PI_uni-pida-vm0_210
+    Rollover Count Month: PI_uni-pida-vm0_212
+    Rollover Count Year: PI_uni-pida-vm0_214
+Everson Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_3006
+    Cumulative Use: PI_uni-pida-vm0_3009
+    Demand: PI_uni-pida-vm0_3010_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_3008
+    Electricity_EUI: PI_uni-pida-vm0_3007
+    MonthlyUsage: PI_uni-pida-vm0_3005
+    Rollover Check: PI_uni-pida-vm0_3012
+    Rollover Count Month: PI_uni-pida-vm0_3013
+    Rollover Count Year: PI_uni-pida-vm0_3011
+FPS Trinchero Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_253
+    AnnualUsage: PI_uni-pida-vm0_84
+    Cumulative Use: PI_uni-pida-vm0_79
+    Demand: PI_uni-pida-vm0_148
+    Demand_kBtu: PI_uni-pida-vm0_87
+    EUI: PI_uni-pida-vm0_216
+    Electricity_EUI: PI_uni-pida-vm0_209
+    MonthlyUsage: PI_uni-pida-vm0_81
+    Rollover Check: PI_uni-pida-vm0_211
+    Rollover Count Month: PI_uni-pida-vm0_213
+    Rollover Count Year: PI_uni-pida-vm0_215
+Facilities Electrical Annex:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11894
+    Cumulative Use: PI_uni-pida-vm0_11786
+    Demand: PI_uni-pida-vm0_11732
+    Demand_kBtu: PI_uni-pida-vm0_11936
+    Electricity_EUI: PI_uni-pida-vm0_11947
+    MonthlyUsage: PI_uni-pida-vm0_11873
+    Rollover Check: PI_uni-pida-vm0_11953
+Freeborn Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_260
+    Cumulative Use: PI_uni-pida-vm0_258
+    Demand: PI_uni-pida-vm0_400
+    Demand_kBtu: PI_uni-pida-vm0_263
+    Electricity_EUI: PI_uni-pida-vm0_427
+    MonthlyUsage: PI_uni-pida-vm0_259
+    Rollover Check: PI_uni-pida-vm0_429
+    Rollover Count Month: PI_uni-pida-vm0_430
+    Rollover Count Year: PI_uni-pida-vm0_432
+Gallagher Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_530
+    Cumulative Use: PI_uni-pida-vm0_528
+    Demand: PI_uni-pida-vm0_666_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_531_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_325
+    MonthlyUsage: PI_uni-pida-vm0_529
+    Rollover Check: PI_uni-pida-vm0_326
+    Rollover Count Month: PI_uni-pida-vm0_327
+    Rollover Count Year: PI_uni-pida-vm0_329
+Genome & Biomedical Sciences Facility:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_362
+    AnnualUsage: PI_uni-pida-vm0_72
+    Cumulative Use: PI_uni-pida-vm0_54
+    Demand: PI_uni-pida-vm0_121
+    Demand_kBtu: PI_uni-pida-vm0_77
+    EUI: PI_uni-pida-vm0_330
+    Electricity_EUI: PI_uni-pida-vm0_154
+    MonthlyUsage: PI_uni-pida-vm0_69
+    Rollover Check: PI_uni-pida-vm0_157
+    Rollover Count Month: PI_uni-pida-vm0_160
+    Rollover Count Year: PI_uni-pida-vm0_161
+Geotechnical Modeling Facility:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11714
+    AnnualUsage: PI_uni-pida-vm0_224
+    Cumulative Use: PI_uni-pida-vm0_221
+    Demand: PI_uni-pida-vm0_240
+    Demand_kBtu: PI_uni-pida-vm0_225
+    EUI: PI_uni-pida-vm0_189
+    Electricity_EUI: PI_uni-pida-vm0_261
+    MonthlyUsage: PI_uni-pida-vm0_222
+    Rollover Check: PI_uni-pida-vm0_262
+    Rollover Count Month: PI_uni-pida-vm0_264
+    Rollover Count Year: PI_uni-pida-vm0_265
+Ghausi Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_290
+    AnnualUsage: PI_uni-pida-vm0_296
+    Cumulative Use: PI_uni-pida-vm0_292
+    Demand: PI_uni-pida-vm0_328
+    Demand_kBtu: PI_uni-pida-vm0_299
+    EUI: PI_uni-pida-vm0_266
+    Electricity_EUI: PI_uni-pida-vm0_346
+    MonthlyUsage: PI_uni-pida-vm0_294
+    Rollover Check: PI_uni-pida-vm0_348
+    Rollover Count Month: PI_uni-pida-vm0_351
+    Rollover Count Year: PI_uni-pida-vm0_353
+Giedt Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_138
+    AnnualUsage: PI_uni-pida-vm0_167
+    Cumulative Use: PI_uni-pida-vm0_165
+    Demand: PI_uni-pida-vm0_220
+    Demand_kBtu: PI_uni-pida-vm0_168
+    EUI: PI_uni-pida-vm0_105
+    Electricity_EUI: PI_uni-pida-vm0_226
+    MonthlyUsage: PI_uni-pida-vm0_166
+    Rollover Check: PI_uni-pida-vm0_227
+    Rollover Count Month: PI_uni-pida-vm0_228
+    Rollover Count Year: PI_uni-pida-vm0_229
+Gourley Clinical Teaching Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11946
+    Cumulative Use: PI_uni-pida-vm0_11777
+    Demand: PI_uni-pida-vm0_11778
+    Demand_kBtu: PI_uni-pida-vm0_11792
+    Electricity_EUI: PI_uni-pida-vm0_11808
+    MonthlyUsage: PI_uni-pida-vm0_11934
+    Rollover Check: PI_uni-pida-vm0_11823
+Growth Chamber Building T1:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11850
+    Cumulative Use: PI_uni-pida-vm0_11789
+    Demand: PI_uni-pida-vm0_11735_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_11865
+    Electricity_EUI: PI_uni-pida-vm0_11879
+    MonthlyUsage: PI_uni-pida-vm0_11835
+    Rollover Check: PI_uni-pida-vm0_11895
+Growth Chamber Building T2:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11964
+    Cumulative Use: PI_uni-pida-vm0_11769
+    Demand: PI_uni-pida-vm0_11773
+    Demand_kBtu: PI_uni-pida-vm0_11966
+    Electricity_EUI: PI_uni-pida-vm0_11794
+    MonthlyUsage: PI_uni-pida-vm0_11956
+    Rollover Check: PI_uni-pida-vm0_11810
+Haring Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_758
+    Cumulative Use: PI_uni-pida-vm0_749
+    Demand: PI_uni-pida-vm0_818
+    Demand_kBtu: PI_uni-pida-vm0_761
+    Electricity_EUI: PI_uni-pida-vm0_826
+    MonthlyUsage: PI_uni-pida-vm0_757
+    Rollover Check: PI_uni-pida-vm0_827
+    Rollover Count Month: PI_uni-pida-vm0_829
+    Rollover Count Year: PI_uni-pida-vm0_831
+Hart Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_929
+    Cumulative Use: PI_uni-pida-vm0_922
+    Demand: PI_uni-pida-vm0_1006_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_932_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_1117
+    MonthlyUsage: PI_uni-pida-vm0_926
+    Rollover Check: PI_uni-pida-vm0_1118
+    Rollover Count Month: PI_uni-pida-vm0_1119
+    Rollover Count Year: PI_uni-pida-vm0_1120
+Heitman Staff Learning Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1157
+    Cumulative Use: PI_uni-pida-vm0_1155
+    Demand: PI_uni-pida-vm0_1160
+    Demand_kBtu: PI_uni-pida-vm0_1159
+    Electricity_EUI: PI_uni-pida-vm0_1174
+    MonthlyUsage: PI_uni-pida-vm0_1156
+    Rollover Check: PI_uni-pida-vm0_1176
+    Rollover Count Month: PI_uni-pida-vm0_1177
+    Rollover Count Year: PI_uni-pida-vm0_1179
+Hickey Gym:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1185
+    Cumulative Use: PI_uni-pida-vm0_1181
+    Demand: PI_uni-pida-vm0_1245_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1188
+    Electricity_EUI: PI_uni-pida-vm0_1357
+    MonthlyUsage: PI_uni-pida-vm0_1183
+    Rollover Check: PI_uni-pida-vm0_1358
+    Rollover Count Month: PI_uni-pida-vm0_1359
+    Rollover Count Year: PI_uni-pida-vm0_1361
+Hickey Pool:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11724
+    AnnualUsage: PI_uni-pida-vm0_1526
+    Cumulative Use: PI_uni-pida-vm0_1524
+    Demand: PI_uni-pida-vm0_1632
+    Demand_kBtu: PI_uni-pida-vm0_1527_ds2m
+    EUI: PI_uni-pida-vm0_1362
+    Electricity_EUI: PI_uni-pida-vm0_1685
+    MonthlyUsage: PI_uni-pida-vm0_1525
+    Rollover Check: PI_uni-pida-vm0_1686
+    Rollover Count Month: PI_uni-pida-vm0_1687
+    Rollover Count Year: PI_uni-pida-vm0_1688
+Hoagland Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1849
+    AnnualUsage: PI_uni-pida-vm0_1926
+    Cumulative Use: PI_uni-pida-vm0_1924
+    Demand: PI_uni-pida-vm0_2015_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1927
+    EUI: PI_uni-pida-vm0_1689
+    Electricity_EUI: PI_uni-pida-vm0_2224
+    MonthlyUsage: PI_uni-pida-vm0_1925
+    Rollover Check: PI_uni-pida-vm0_2226
+    Rollover Count Month: PI_uni-pida-vm0_2227
+    Rollover Count Year: PI_uni-pida-vm0_2228
+Hopkins Services Center Parking Lot:
+  Electricity:
+    Cumulative Use: PI_uni-pida-vm0_2247
+    Demand: PI_uni-pida-vm0_2250_ds2m
+Hopkins Services Complex:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2183
+    Cumulative Use: PI_uni-pida-vm0_2247
+    Demand: PI_uni-pida-vm0_2250_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2184_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_2286
+    MonthlyUsage: PI_uni-pida-vm0_2182
+    Rollover Check: PI_uni-pida-vm0_2288
+    Rollover Count Month: PI_uni-pida-vm0_2289
+    Rollover Count Year: PI_uni-pida-vm0_2290
+Hopkins Services Complex Auxiliary Receiving:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11821
+    Cumulative Use: PI_uni-pida-vm0_2247
+    Demand: PI_uni-pida-vm0_2250_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_11836
+    Electricity_EUI: PI_uni-pida-vm0_11849
+    MonthlyUsage: PI_uni-pida-vm0_11805
+    Rollover Check: PI_uni-pida-vm0_11867
+Housing Administration:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_723
+    Cumulative Use: PI_uni-pida-vm0_719
+    Demand: PI_uni-pida-vm0_730
+    Demand_kBtu: PI_uni-pida-vm0_724
+    Electricity_EUI: PI_uni-pida-vm0_732
+    MonthlyUsage: PI_uni-pida-vm0_722
+    Rollover Check: PI_uni-pida-vm0_734
+    Rollover Count Month: PI_uni-pida-vm0_736
+    Rollover Count Year: PI_uni-pida-vm0_738
+Hunt Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_921
+    Cumulative Use: PI_uni-pida-vm0_917
+    Demand: PI_uni-pida-vm0_1033_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_925
+    Electricity_EUI: PI_uni-pida-vm0_1161
+    MonthlyUsage: PI_uni-pida-vm0_920
+    Rollover Check: PI_uni-pida-vm0_1162
+    Rollover Count Month: PI_uni-pida-vm0_1163
+    Rollover Count Year: PI_uni-pida-vm0_1164
+Hutchison Child Development Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1166
+    AnnualUsage: PI_uni-pida-vm0_1170
+    Cumulative Use: PI_uni-pida-vm0_1168
+    Demand: PI_uni-pida-vm0_1217
+    Demand_kBtu: PI_uni-pida-vm0_1171
+    EUI: PI_uni-pida-vm0_1165
+    Electricity_EUI: PI_uni-pida-vm0_1246
+    MonthlyUsage: PI_uni-pida-vm0_1169
+    Rollover Check: PI_uni-pida-vm0_1247
+    Rollover Count Month: PI_uni-pida-vm0_1248
+    Rollover Count Year: PI_uni-pida-vm0_1249
+Hutchison Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1269
+    AnnualUsage: PI_uni-pida-vm0_1300
+    Cumulative Use: PI_uni-pida-vm0_1292
+    Demand: PI_uni-pida-vm0_1356
+    Demand_kBtu: PI_uni-pida-vm0_1303
+    EUI: PI_uni-pida-vm0_1267
+    Electricity_EUI: PI_uni-pida-vm0_1375
+    MonthlyUsage: PI_uni-pida-vm0_1297
+    Rollover Check: PI_uni-pida-vm0_1376
+    Rollover Count Month: PI_uni-pida-vm0_1377
+    Rollover Count Year: PI_uni-pida-vm0_1378
+Hutchison Recreation Field Lights:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11840
+    Cumulative Use: PI_uni-pida-vm0_11737
+    Demand: PI_uni-pida-vm0_11746
+    Demand_kBtu: PI_uni-pida-vm0_11854
+    Electricity_EUI: PI_uni-pida-vm0_11872
+    MonthlyUsage: PI_uni-pida-vm0_11825
+    Rollover Check: PI_uni-pida-vm0_11883
+IET Communications Resources:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1625
+    Cumulative Use: PI_uni-pida-vm0_1623
+    Demand: PI_uni-pida-vm0_1691
+    Demand_kBtu: PI_uni-pida-vm0_1626
+    Electricity_EUI: PI_uni-pida-vm0_1839
+    MonthlyUsage: PI_uni-pida-vm0_1624
+    Rollover Check: PI_uni-pida-vm0_1841
+    Rollover Count Month: PI_uni-pida-vm0_1842
+    Rollover Count Year: PI_uni-pida-vm0_1844
+International Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1881
+    AnnualUsage: PI_uni-pida-vm0_1893
+    Cumulative Use: PI_uni-pida-vm0_1884
+    Demand: PI_uni-pida-vm0_1922
+    Demand_kBtu: PI_uni-pida-vm0_1896
+    EUI: PI_uni-pida-vm0_1845
+    Electricity_EUI: PI_uni-pida-vm0_1931
+    MonthlyUsage: PI_uni-pida-vm0_1890
+    Rollover Check: PI_uni-pida-vm0_1932
+    Rollover Count Month: PI_uni-pida-vm0_1934
+    Rollover Count Year: PI_uni-pida-vm0_1936
+Jackson Sustainable Winery:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11903
+    Demand: PI_uni-pida-vm0_11787
+    Demand_kBtu: PI_uni-pida-vm0_11913
+    Electricity_EUI: PI_uni-pida-vm0_11924
+    MonthlyUsage: PI_uni-pida-vm0_11888
+    Rollover Check: PI_uni-pida-vm0_11935
+Jungerman Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_721
+    Cumulative Use: PI_uni-pida-vm0_1958
+    Demand: PI_uni-pida-vm0_783
+    Demand_kBtu: PI_uni-pida-vm0_728
+    Electricity_EUI: PI_uni-pida-vm0_813
+    MonthlyUsage: PI_uni-pida-vm0_1963
+    Rollover Check: PI_uni-pida-vm0_814
+    Rollover Count Month: PI_uni-pida-vm0_815
+    Rollover Count Year: PI_uni-pida-vm0_816
+Kemper Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_859
+    Cumulative Use: PI_uni-pida-vm0_838
+    Demand: PI_uni-pida-vm0_883
+    Demand_kBtu: PI_uni-pida-vm0_860
+    Electricity_EUI: PI_uni-pida-vm0_895
+    MonthlyUsage: PI_uni-pida-vm0_858
+    Rollover Check: PI_uni-pida-vm0_896
+    Rollover Count Month: PI_uni-pida-vm0_897
+    Rollover Count Year: PI_uni-pida-vm0_898
+Kerr Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_991
+    Cumulative Use: PI_uni-pida-vm0_986
+    Demand: PI_uni-pida-vm0_1112_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_993
+    Electricity_EUI: PI_uni-pida-vm0_1222
+    MonthlyUsage: PI_uni-pida-vm0_989
+    Rollover Check: PI_uni-pida-vm0_1224
+    Rollover Count Month: PI_uni-pida-vm0_1225
+    Rollover Count Year: PI_uni-pida-vm0_1227
+King Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1409
+    Cumulative Use: PI_uni-pida-vm0_1405
+    Demand: PI_uni-pida-vm0_1601_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1410
+    Electricity_EUI: PI_uni-pida-vm0_1697
+    MonthlyUsage: PI_uni-pida-vm0_1407
+    Rollover Check: PI_uni-pida-vm0_1698
+    Rollover Count Month: PI_uni-pida-vm0_1699
+    Rollover Count Year: PI_uni-pida-vm0_1700
+Leukemia Barn:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11689
+    AnnualUsage: PI_uni-pida-vm0_1707
+    Cumulative Use: PI_uni-pida-vm0_1705
+    Demand: PI_uni-pida-vm0_1737
+    Demand_kBtu: PI_uni-pida-vm0_1708
+    EUI: PI_uni-pida-vm0_1701
+    Electricity_EUI: PI_uni-pida-vm0_1749
+    MonthlyUsage: PI_uni-pida-vm0_1706
+    Rollover Check: PI_uni-pida-vm0_1750
+    Rollover Count Month: PI_uni-pida-vm0_1751
+    Rollover Count Year: PI_uni-pida-vm0_1752
+Leukemia Lab:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11705
+    AnnualUsage: PI_uni-pida-vm0_1781
+    Cumulative Use: PI_uni-pida-vm0_1779
+    Demand: PI_uni-pida-vm0_1795
+    Demand_kBtu: PI_uni-pida-vm0_1782
+    EUI: PI_uni-pida-vm0_1753
+    Electricity_EUI: PI_uni-pida-vm0_1800
+    MonthlyUsage: PI_uni-pida-vm0_1780
+    Rollover Check: PI_uni-pida-vm0_1801
+    Rollover Count Month: PI_uni-pida-vm0_1802
+    Rollover Count Year: PI_uni-pida-vm0_1803
+Life Sciences:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1806
+    AnnualUsage: PI_uni-pida-vm0_1828
+    Cumulative Use: PI_uni-pida-vm0_1821
+    Demand: PI_uni-pida-vm0_1854
+    Demand_kBtu: PI_uni-pida-vm0_1829
+    EUI: PI_uni-pida-vm0_1804
+    Electricity_EUI: PI_uni-pida-vm0_1885
+    MonthlyUsage: PI_uni-pida-vm0_1827
+    Rollover Check: PI_uni-pida-vm0_1887
+    Rollover Count Month: PI_uni-pida-vm0_1889
+    Rollover Count Year: PI_uni-pida-vm0_1892
+Maddy Lab:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1964
+    Cumulative Use: PI_uni-pida-vm0_2025
+    Demand: PI_uni-pida-vm0_2191_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1966
+    Electricity_EUI: PI_uni-pida-vm0_2377
+    MonthlyUsage: PI_uni-pida-vm0_2034
+    Rollover Check: PI_uni-pida-vm0_2378
+    Rollover Count Month: PI_uni-pida-vm0_2379
+    Rollover Count Year: PI_uni-pida-vm0_2380
+Mann Laboratory:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11726
+    AnnualUsage: PI_uni-pida-vm0_727
+    Cumulative Use: PI_uni-pida-vm0_725
+    Demand: PI_uni-pida-vm0_880_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_729_ds2m
+    EUI: PI_uni-pida-vm0_2381
+    Electricity_EUI: PI_uni-pida-vm0_985
+    MonthlyUsage: PI_uni-pida-vm0_726
+    Rollover Check: PI_uni-pida-vm0_987
+    Rollover Count Month: PI_uni-pida-vm0_988
+    Rollover Count Year: PI_uni-pida-vm0_990
+Mathematical Sciences Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1122
+    AnnualUsage: PI_uni-pida-vm0_1134
+    Cumulative Use: PI_uni-pida-vm0_1132
+    Demand: PI_uni-pida-vm0_1256_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1135
+    EUI: PI_uni-pida-vm0_992
+    Electricity_EUI: PI_uni-pida-vm0_1439
+    MonthlyUsage: PI_uni-pida-vm0_1133
+    Rollover Check: PI_uni-pida-vm0_1442
+    Rollover Count Month: PI_uni-pida-vm0_1444
+    Rollover Count Year: PI_uni-pida-vm0_1446
+Medical Sciences I B:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11908
+    Cumulative Use: PI_uni-pida-vm0_11764
+    Demand: PI_uni-pida-vm0_11738
+    Demand_kBtu: PI_uni-pida-vm0_11919
+    Electricity_EUI: PI_uni-pida-vm0_11929
+    MonthlyUsage: PI_uni-pida-vm0_11898
+    Rollover Check: PI_uni-pida-vm0_11798
+Medical Sciences I D:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1618
+    Cumulative Use: PI_uni-pida-vm0_1614
+    Demand: PI_uni-pida-vm0_1696_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1620_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_1992
+    MonthlyUsage: PI_uni-pida-vm0_1617
+    Rollover Check: PI_uni-pida-vm0_1993
+    Rollover Count Month: PI_uni-pida-vm0_1995
+    Rollover Count Year: PI_uni-pida-vm0_1996
+Memorial Union:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2192
+    AnnualUsage: PI_uni-pida-vm0_2037
+    Cumulative Use: PI_uni-pida-vm0_12476
+    Demand: PI_uni-pida-vm0_12477
+    Demand_kBtu: PI_uni-pida-vm0_2039_ds2m
+    EUI: PI_uni-pida-vm0_1997
+    Electricity_EUI: PI_uni-pida-vm0_2350
+    MonthlyUsage: PI_uni-pida-vm0_2211
+    Rollover Check: PI_uni-pida-vm0_2351
+    Rollover Count Month: PI_uni-pida-vm0_2352
+    Rollover Count Year: PI_uni-pida-vm0_2353
+Meyer Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2221
+    AnnualUsage: PI_uni-pida-vm0_2268
+    Cumulative Use: PI_uni-pida-vm0_2261
+    Demand: PI_uni-pida-vm0_2285
+    Demand_kBtu: PI_uni-pida-vm0_2269
+    EUI: PI_uni-pida-vm0_2366
+    Electricity_EUI: PI_uni-pida-vm0_2210
+    MonthlyUsage: PI_uni-pida-vm0_2267
+    Rollover Check: PI_uni-pida-vm0_2212
+    Rollover Count Month: PI_uni-pida-vm0_2214
+    Rollover Count Year: PI_uni-pida-vm0_2216
+Mrak Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_927
+    AnnualUsage: PI_uni-pida-vm0_945
+    Cumulative Use: PI_uni-pida-vm0_943
+    Demand: PI_uni-pida-vm0_1029_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_946
+    EUI: PI_uni-pida-vm0_745
+    Electricity_EUI: PI_uni-pida-vm0_1200
+    MonthlyUsage: PI_uni-pida-vm0_944
+    Rollover Check: PI_uni-pida-vm0_1201
+    Rollover Count Month: PI_uni-pida-vm0_1202
+    Rollover Count Year: PI_uni-pida-vm0_1203
+Music Building:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1287
+    Cumulative Use: PI_uni-pida-vm0_1281
+    Demand: PI_uni-pida-vm0_1382
+    Demand_kBtu: PI_uni-pida-vm0_1289
+    Electricity_EUI: PI_uni-pida-vm0_1398
+    MonthlyUsage: PI_uni-pida-vm0_1284
+    Rollover Check: PI_uni-pida-vm0_1399
+    Rollover Count Month: PI_uni-pida-vm0_1400
+    Rollover Count Year: PI_uni-pida-vm0_1401
+Office of Research (1850 Research Park Drive):
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1403
+    MonthlyUsage: PI_uni-pida-vm0_1402
+Olson Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1590
+    Cumulative Use: PI_uni-pida-vm0_1588
+    Demand: PI_uni-pida-vm0_1657_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1592
+    Electricity_EUI: PI_uni-pida-vm0_1757
+    MonthlyUsage: PI_uni-pida-vm0_1589
+    Rollover Check: PI_uni-pida-vm0_1759
+    Rollover Count Month: PI_uni-pida-vm0_1761
+    Rollover Count Year: PI_uni-pida-vm0_1763
+PES Tennis Courts:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11827
+    Cumulative Use: PI_uni-pida-vm0_11765
+    Demand: PI_uni-pida-vm0_11766
+    Demand_kBtu: PI_uni-pida-vm0_11843
+    Electricity_EUI: PI_uni-pida-vm0_11861
+    MonthlyUsage: PI_uni-pida-vm0_11814
+    Rollover Check: PI_uni-pida-vm0_11880
+Parsons Seed Certification Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1846
+    Cumulative Use: PI_uni-pida-vm0_1840
+    Demand: PI_uni-pida-vm0_1949
+    Demand_kBtu: PI_uni-pida-vm0_1848
+    Electricity_EUI: PI_uni-pida-vm0_1977
+    MonthlyUsage: PI_uni-pida-vm0_1843
+    Rollover Check: PI_uni-pida-vm0_1978
+    Rollover Count Month: PI_uni-pida-vm0_1979
+    Rollover Count Year: PI_uni-pida-vm0_1980
+Pavilion Parking Structure:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2060
+    Cumulative Use: PI_uni-pida-vm0_2058
+    Demand: PI_uni-pida-vm0_2154_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2061
+    Electricity_EUI: PI_uni-pida-vm0_2302
+    MonthlyUsage: PI_uni-pida-vm0_2059
+    Rollover Check: PI_uni-pida-vm0_2303
+    Rollover Count Month: PI_uni-pida-vm0_2304
+    Rollover Count Year: PI_uni-pida-vm0_2305
+Physical Sciences & Engineering Library:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2213
+    Cumulative Use: PI_uni-pida-vm0_2335
+    Demand: PI_uni-pida-vm0_2278
+    Demand_kBtu: PI_uni-pida-vm0_2215
+    Electricity_EUI: PI_uni-pida-vm0_2318
+    MonthlyUsage: PI_uni-pida-vm0_2337
+    Rollover Check: PI_uni-pida-vm0_2319
+    Rollover Count Month: PI_uni-pida-vm0_2320
+    Rollover Count Year: PI_uni-pida-vm0_2321
+Physics Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_733
+    AnnualUsage: PI_uni-pida-vm0_764
+    Cumulative Use: PI_uni-pida-vm0_755
+    Demand: PI_uni-pida-vm0_948_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_768
+    EUI: PI_uni-pida-vm0_2322
+    Electricity_EUI: PI_uni-pida-vm0_1184
+    MonthlyUsage: PI_uni-pida-vm0_760
+    Rollover Check: PI_uni-pida-vm0_1186
+    Rollover Count Month: PI_uni-pida-vm0_1189
+    Rollover Count Year: PI_uni-pida-vm0_1190
+Plant & Environmental Sciences:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1218
+    AnnualUsage: PI_uni-pida-vm0_1236
+    Cumulative Use: PI_uni-pida-vm0_1233
+    Demand: PI_uni-pida-vm0_1252
+    Demand_kBtu: PI_uni-pida-vm0_1237
+    EUI: PI_uni-pida-vm0_1198
+    Electricity_EUI: PI_uni-pida-vm0_1308
+    MonthlyUsage: PI_uni-pida-vm0_1235
+    Rollover Check: PI_uni-pida-vm0_1310
+    Rollover Count Month: PI_uni-pida-vm0_1312
+    Rollover Count Year: PI_uni-pida-vm0_1314
+Plant Reproductive Biology Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11917
+    Cumulative Use: PI_uni-pida-vm0_11740
+    Demand: PI_uni-pida-vm0_11753
+    Demand_kBtu: PI_uni-pida-vm0_11928
+    Electricity_EUI: PI_uni-pida-vm0_11940
+    MonthlyUsage: PI_uni-pida-vm0_11896
+    Rollover Check: PI_uni-pida-vm0_11950
+Primate Childhood Health & Disease Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1389
+    Cumulative Use: PI_uni-pida-vm0_1387
+    Demand: PI_uni-pida-vm0_1455
+    Demand_kBtu: PI_uni-pida-vm0_1390
+    Electricity_EUI: PI_uni-pida-vm0_1546
+    MonthlyUsage: PI_uni-pida-vm0_1388
+    Rollover Check: PI_uni-pida-vm0_1548
+    Rollover Count Month: PI_uni-pida-vm0_1549
+    Rollover Count Year: PI_uni-pida-vm0_1552
+Primate Controlled Environment Facility (CEF):
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11816
+    Cumulative Use: PI_uni-pida-vm0_11788
+    Demand: PI_uni-pida-vm0_11736
+    Demand_kBtu: PI_uni-pida-vm0_11826
+    Electricity_EUI: PI_uni-pida-vm0_11842
+    MonthlyUsage: PI_uni-pida-vm0_11799
+    Rollover Check: PI_uni-pida-vm0_11858
+Primate Quarantine:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11881
+    Cumulative Use: PI_uni-pida-vm0_11767
+    Demand: PI_uni-pida-vm0_11768
+    Demand_kBtu: PI_uni-pida-vm0_11897
+    Electricity_EUI: PI_uni-pida-vm0_11907
+    MonthlyUsage: PI_uni-pida-vm0_11871
+    Rollover Check: PI_uni-pida-vm0_11918
+Primate Respiratory Disease Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1651
+    AnnualUsage: PI_uni-pida-vm0_1655
+    Cumulative Use: PI_uni-pida-vm0_1653
+    Demand: PI_uni-pida-vm0_1876
+    Demand_kBtu: PI_uni-pida-vm0_1656_ds2m
+    EUI: PI_uni-pida-vm0_1555
+    Electricity_EUI: PI_uni-pida-vm0_2001
+    MonthlyUsage: PI_uni-pida-vm0_1654
+    Rollover Check: PI_uni-pida-vm0_2002
+    Rollover Count Month: PI_uni-pida-vm0_2003
+    Rollover Count Year: PI_uni-pida-vm0_2004
+Primate Shop Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11797
+    Cumulative Use: PI_uni-pida-vm0_11743
+    Demand: PI_uni-pida-vm0_11752
+    Demand_kBtu: PI_uni-pida-vm0_11813
+    Electricity_EUI: PI_uni-pida-vm0_11829
+    MonthlyUsage: PI_uni-pida-vm0_11931
+    Rollover Check: PI_uni-pida-vm0_11845
+Primate Virology & Immunology Laboratory:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2122
+    Cumulative Use: PI_uni-pida-vm0_2120
+    Demand: PI_uni-pida-vm0_2263_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2123
+    Electricity_EUI: PI_uni-pida-vm0_2345
+    MonthlyUsage: PI_uni-pida-vm0_2121
+    Rollover Check: PI_uni-pida-vm0_2346
+    Rollover Count Month: PI_uni-pida-vm0_2347
+    Rollover Count Year: PI_uni-pida-vm0_2233
+Pritchard VMTH:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_770
+    Cumulative Use: PI_uni-pida-vm0_2688
+    Demand: PI_uni-pida-vm0_2687_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_773
+    Electricity_EUI: PI_uni-pida-vm0_1172
+    MonthlyUsage: PI_uni-pida-vm0_766
+    Rollover Check: PI_uni-pida-vm0_1173
+    Rollover Count Month: PI_uni-pida-vm0_1175
+    Rollover Count Year: PI_uni-pida-vm0_1178
+Quad Parking Structure:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1212
+    Cumulative Use: PI_uni-pida-vm0_1209
+    Demand: PI_uni-pida-vm0_1238
+    Demand_kBtu: PI_uni-pida-vm0_1214
+    Electricity_EUI: PI_uni-pida-vm0_1296
+    MonthlyUsage: PI_uni-pida-vm0_1210
+    Rollover Check: PI_uni-pida-vm0_1299
+    Rollover Count Month: PI_uni-pida-vm0_1301
+    Rollover Count Year: PI_uni-pida-vm0_1304
+RMI Brewery, Winery, and Food Pilot Facility:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2235
+    AnnualUsage: PI_uni-pida-vm0_2255
+    Cumulative Use: PI_uni-pida-vm0_2253
+    Demand: PI_uni-pida-vm0_2373_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2256_ds2m
+    EUI: PI_uni-pida-vm0_2272
+    Electricity_EUI: PI_uni-pida-vm0_2387
+    MonthlyUsage: PI_uni-pida-vm0_2254
+    Rollover Check: PI_uni-pida-vm0_2388
+    Rollover Count Month: PI_uni-pida-vm0_2273
+    Rollover Count Year: PI_uni-pida-vm0_2274
+Roessler Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1542
+    AnnualUsage: PI_uni-pida-vm0_1563
+    Cumulative Use: PI_uni-pida-vm0_1561
+    Demand: PI_uni-pida-vm0_1595
+    Demand_kBtu: PI_uni-pida-vm0_1565
+    EUI: PI_uni-pida-vm0_1541
+    Electricity_EUI: PI_uni-pida-vm0_1605
+    MonthlyUsage: PI_uni-pida-vm0_1562
+    Rollover Check: PI_uni-pida-vm0_1608
+    Rollover Count Month: PI_uni-pida-vm0_1609
+    Rollover Count Year: PI_uni-pida-vm0_1610
+Schaal Aquatic Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1619
+    Cumulative Use: PI_uni-pida-vm0_1615
+    Demand: PI_uni-pida-vm0_1647
+    Demand_kBtu: PI_uni-pida-vm0_1621
+    EUI: PI_uni-pida-vm0_1611
+    Electricity_EUI: PI_uni-pida-vm0_1659
+    MonthlyUsage: PI_uni-pida-vm0_1616
+    Rollover Check: PI_uni-pida-vm0_1660
+    Rollover Count Month: PI_uni-pida-vm0_1661
+    Rollover Count Year: PI_uni-pida-vm0_1662
+School of Education Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11716
+    AnnualUsage: PI_uni-pida-vm0_1825
+    Cumulative Use: PI_uni-pida-vm0_1823
+    Demand: PI_uni-pida-vm0_1976_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1826_ds2m
+    EUI: PI_uni-pida-vm0_1703
+    Electricity_EUI: PI_uni-pida-vm0_2072
+    MonthlyUsage: PI_uni-pida-vm0_1824
+    Rollover Check: PI_uni-pida-vm0_2073
+    Rollover Count Month: PI_uni-pida-vm0_2074
+    Rollover Count Year: PI_uni-pida-vm0_2075
+Sciences Lab Building:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11700
+    AnnualUsage: PI_uni-pida-vm0_763
+    Cumulative Use: PI_uni-pida-vm0_2092
+    Demand: PI_uni-pida-vm0_822
+    Demand_kBtu: PI_uni-pida-vm0_767
+    EUI: PI_uni-pida-vm0_2076
+    Electricity_EUI: PI_uni-pida-vm0_839
+    MonthlyUsage: PI_uni-pida-vm0_759
+    Rollover Check: PI_uni-pida-vm0_840
+    Rollover Count Month: PI_uni-pida-vm0_841
+    Rollover Count Year: PI_uni-pida-vm0_842
+Segundo Dining Commons:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11696
+    AnnualUsage: PI_uni-pida-vm0_1031
+    Cumulative Use: PI_uni-pida-vm0_1028
+    Demand: PI_uni-pida-vm0_1158_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1032
+    EUI: PI_uni-pida-vm0_890
+    Electricity_EUI: PI_uni-pida-vm0_1421
+    MonthlyUsage: PI_uni-pida-vm0_1030
+    Rollover Check: PI_uni-pida-vm0_1423
+    Rollover Count Month: PI_uni-pida-vm0_1425
+    Rollover Count Year: PI_uni-pida-vm0_1427
+Segundo High Rises:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1604
+    AnnualUsage: PI_uni-pida-vm0_1682
+    Cumulative Use: PI_uni-pida-vm0_2573
+    Demand: PI_uni-pida-vm0_1607_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1683_ds2m
+    EUI: PI_uni-pida-vm0_1603
+    Electricity_EUI: PI_uni-pida-vm0_1830
+    MonthlyUsage: PI_uni-pida-vm0_1681
+    Rollover Check: PI_uni-pida-vm0_1831
+    Rollover Count Month: PI_uni-pida-vm0_1832
+    Rollover Count Year: PI_uni-pida-vm0_1833
+Segundo Regan:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2102
+    AnnualUsage: PI_uni-pida-vm0_2117
+    Cumulative Use: PI_uni-pida-vm0_2115
+    Demand: PI_uni-pida-vm0_2124
+    Demand_kBtu: PI_uni-pida-vm0_2118
+    EUI: PI_uni-pida-vm0_2101
+    Electricity_EUI: PI_uni-pida-vm0_2126
+    MonthlyUsage: PI_uni-pida-vm0_2116
+    Rollover Check: PI_uni-pida-vm0_2127
+    Rollover Count Month: PI_uni-pida-vm0_2128
+    Rollover Count Year: PI_uni-pida-vm0_2129
+Segundo Services Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11707
+    AnnualUsage: PI_uni-pida-vm0_968
+    Cumulative Use: PI_uni-pida-vm0_966
+    Demand: PI_uni-pida-vm0_1087_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_969
+    EUI: PI_uni-pida-vm0_778
+    Electricity_EUI: PI_uni-pida-vm0_1258
+    MonthlyUsage: PI_uni-pida-vm0_967
+    Rollover Check: PI_uni-pida-vm0_1259
+    Rollover Count Month: PI_uni-pida-vm0_1260
+    Rollover Count Year: PI_uni-pida-vm0_1261
+Shields Library:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11704
+    AnnualUsage: PI_uni-pida-vm0_1384
+    Cumulative Use: PI_uni-pida-vm0_1374
+    Demand: PI_uni-pida-vm0_1397
+    Demand_kBtu: PI_uni-pida-vm0_1385
+    EUI: PI_uni-pida-vm0_1354
+    Electricity_EUI: PI_uni-pida-vm0_1411
+    MonthlyUsage: PI_uni-pida-vm0_1383
+    Rollover Check: PI_uni-pida-vm0_1412
+    Rollover Count Month: PI_uni-pida-vm0_1413
+    Rollover Count Year: PI_uni-pida-vm0_1414
+Shrem Museum of Art:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1633
+    AnnualUsage: PI_uni-pida-vm0_1645
+    Cumulative Use: PI_uni-pida-vm0_1643
+    Demand: PI_uni-pida-vm0_1732
+    Demand_kBtu: PI_uni-pida-vm0_1646
+    EUI: PI_uni-pida-vm0_1437
+    Electricity_EUI: PI_uni-pida-vm0_2014
+    MonthlyUsage: PI_uni-pida-vm0_1644
+    Rollover Check: PI_uni-pida-vm0_2016
+    Rollover Count Month: PI_uni-pida-vm0_2018
+    Rollover Count Year: PI_uni-pida-vm0_2024
+Silo Bike Barn:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11874
+    Cumulative Use: PI_uni-pida-vm0_11775
+    Demand: PI_uni-pida-vm0_11741
+    Demand_kBtu: PI_uni-pida-vm0_11892
+    Electricity_EUI: PI_uni-pida-vm0_11909
+    MonthlyUsage: PI_uni-pida-vm0_11860
+    Rollover Check: PI_uni-pida-vm0_11920
+Social Sciences & Humanities:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2113
+    Cumulative Use: PI_uni-pida-vm0_2097
+    Demand: PI_uni-pida-vm0_2125
+    Demand_kBtu: PI_uni-pida-vm0_2114
+    Electricity_EUI: PI_uni-pida-vm0_2137
+    MonthlyUsage: PI_uni-pida-vm0_2111
+    Rollover Check: PI_uni-pida-vm0_2139
+    Rollover Count Month: PI_uni-pida-vm0_2140
+    Rollover Count Year: PI_uni-pida-vm0_2142
+Sprocket Building:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11795
+    Cumulative Use: PI_uni-pida-vm0_12480
+    Demand: PI_uni-pida-vm0_12481
+    Demand_kBtu: PI_uni-pida-vm0_11811
+    Electricity_EUI: PI_uni-pida-vm0_11832
+    MonthlyUsage: PI_uni-pida-vm0_11961
+    Rollover Check: PI_uni-pida-vm0_11848
+Sproul Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_774
+    AnnualUsage: PI_uni-pida-vm0_792
+    Cumulative Use: PI_uni-pida-vm0_789
+    Demand: PI_uni-pida-vm0_900
+    Demand_kBtu: PI_uni-pida-vm0_794
+    EUI: PI_uni-pida-vm0_2147
+    Electricity_EUI: PI_uni-pida-vm0_1007
+    MonthlyUsage: PI_uni-pida-vm0_790
+    Rollover Check: PI_uni-pida-vm0_1008
+    Rollover Count Month: PI_uni-pida-vm0_1009
+    Rollover Count Year: PI_uni-pida-vm0_1010
+Storer Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1037
+    Cumulative Use: PI_uni-pida-vm0_1035
+    Demand: PI_uni-pida-vm0_1053
+    Demand_kBtu: PI_uni-pida-vm0_1038
+    Electricity_EUI: PI_uni-pida-vm0_1061
+    MonthlyUsage: PI_uni-pida-vm0_1036
+    Rollover Check: PI_uni-pida-vm0_1062
+    Rollover Count Month: PI_uni-pida-vm0_1063
+    Rollover Count Year: PI_uni-pida-vm0_1064
+Student Affairs Annex:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11941
+    Cumulative Use: PI_uni-pida-vm0_11770
+    Demand: PI_uni-pida-vm0_11771
+    Demand_kBtu: PI_uni-pida-vm0_11803
+    Electricity_EUI: PI_uni-pida-vm0_11820
+    MonthlyUsage: PI_uni-pida-vm0_11930
+    Rollover Check: PI_uni-pida-vm0_11833
+Student Community Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1273
+    AnnualUsage: PI_uni-pida-vm0_1305
+    Cumulative Use: PI_uni-pida-vm0_1298
+    Demand: PI_uni-pida-vm0_1585_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1307_ds2m
+    EUI: PI_uni-pida-vm0_1066
+    Electricity_EUI: PI_uni-pida-vm0_1764
+    MonthlyUsage: PI_uni-pida-vm0_1302
+    Rollover Check: PI_uni-pida-vm0_1766
+    Rollover Count Month: PI_uni-pida-vm0_1767
+    Rollover Count Year: PI_uni-pida-vm0_1769
+Student Health & Wellness Center:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2017
+    AnnualUsage: PI_uni-pida-vm0_2055
+    Cumulative Use: PI_uni-pida-vm0_2053
+    Demand: PI_uni-pida-vm0_2220_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2056_ds2m
+    EUI: PI_uni-pida-vm0_1793
+    Electricity_EUI: PI_uni-pida-vm0_2338
+    MonthlyUsage: PI_uni-pida-vm0_2054
+    Rollover Check: PI_uni-pida-vm0_2339
+    Rollover Count Month: PI_uni-pida-vm0_2340
+    Rollover Count Year: PI_uni-pida-vm0_2341
+Swine Teaching and Research Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11866
+    Cumulative Use: PI_uni-pida-vm0_11742
+    Demand: PI_uni-pida-vm0_11750
+    Demand_kBtu: PI_uni-pida-vm0_11887
+    Electricity_EUI: PI_uni-pida-vm0_11901
+    MonthlyUsage: PI_uni-pida-vm0_11851
+    Rollover Check: PI_uni-pida-vm0_11911
+TAPS C&E:
+  Electricity:
+    Demand: PI_uni-pida-vm0_12505
+    Demand_kBtu: PI_uni-pida-vm0_12506
+Temporary Building 144:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11804
+    Cumulative Use: PI_uni-pida-vm0_11774
+    Demand: PI_uni-pida-vm0_11776
+    Demand_kBtu: PI_uni-pida-vm0_11818
+    Electricity_EUI: PI_uni-pida-vm0_11838
+    MonthlyUsage: PI_uni-pida-vm0_11945
+    Rollover Check: PI_uni-pida-vm0_11855
+Temporary Building 178:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11891
+    Cumulative Use: PI_uni-pida-vm0_11781
+    Demand: PI_uni-pida-vm0_11783
+    Demand_kBtu: PI_uni-pida-vm0_11957
+    Electricity_EUI: PI_uni-pida-vm0_11942
+    MonthlyUsage: PI_uni-pida-vm0_11876
+    Rollover Check: PI_uni-pida-vm0_11952
+Temporary Building 184:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11962
+    Cumulative Use: PI_uni-pida-vm0_11784
+    Demand: PI_uni-pida-vm0_11779
+    Demand_kBtu: PI_uni-pida-vm0_11949
+    Electricity_EUI: PI_uni-pida-vm0_11963
+    MonthlyUsage: PI_uni-pida-vm0_11958
+    Rollover Check: PI_uni-pida-vm0_11967
+Tercero 1:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2130
+    AnnualUsage: PI_uni-pida-vm0_821
+    Cumulative Use: PI_uni-pida-vm0_779
+    Demand: PI_uni-pida-vm0_952_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_823
+    EUI: PI_uni-pida-vm0_2360
+    Electricity_EUI: PI_uni-pida-vm0_1054
+    MonthlyUsage: PI_uni-pida-vm0_819
+    Rollover Check: PI_uni-pida-vm0_1055
+    Rollover Count Month: PI_uni-pida-vm0_1056
+    Rollover Count Year: PI_uni-pida-vm0_1057
+Tercero 3:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1511
+    AnnualUsage: PI_uni-pida-vm0_1597
+    Cumulative Use: PI_uni-pida-vm0_1570
+    Demand: PI_uni-pida-vm0_1650
+    Demand_kBtu: PI_uni-pida-vm0_1598_ds2m
+    EUI: PI_uni-pida-vm0_1510
+    Electricity_EUI: PI_uni-pida-vm0_1734
+    MonthlyUsage: PI_uni-pida-vm0_1596
+    Rollover Check: PI_uni-pida-vm0_1735
+    Rollover Count Month: PI_uni-pida-vm0_1736
+    Rollover Count Year: PI_uni-pida-vm0_1738
+Tercero 4:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11691
+    AnnualUsage: PI_uni-pida-vm0_2583
+    Cumulative Use: PI_uni-pida-vm0_2596
+    Demand: PI_uni-pida-vm0_2597
+    Demand_kBtu: PI_uni-pida-vm0_2586
+    EUI: PI_uni-pida-vm0_2576
+    Electricity_EUI: PI_uni-pida-vm0_2585
+    MonthlyUsage: PI_uni-pida-vm0_2584
+    Rollover Check: PI_uni-pida-vm0_2587
+    Rollover Count Month: PI_uni-pida-vm0_2588
+    Rollover Count Year: PI_uni-pida-vm0_2589
+Tercero Dining Commons:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11718
+    AnnualUsage: PI_uni-pida-vm0_1945
+    Cumulative Use: PI_uni-pida-vm0_1943
+    Demand: PI_uni-pida-vm0_2021_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1946
+    EUI: PI_uni-pida-vm0_1747
+    Electricity_EUI: PI_uni-pida-vm0_2280
+    MonthlyUsage: PI_uni-pida-vm0_1944
+    Rollover Check: PI_uni-pida-vm0_2281
+    Rollover Count Month: PI_uni-pida-vm0_2282
+    Rollover Count Year: PI_uni-pida-vm0_2283
+The Barn:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11933
+    Cumulative Use: PI_uni-pida-vm0_11754
+    Demand: PI_uni-pida-vm0_11739
+    Demand_kBtu: PI_uni-pida-vm0_11944
+    Electricity_EUI: PI_uni-pida-vm0_11800
+    MonthlyUsage: PI_uni-pida-vm0_11922
+    Rollover Check: PI_uni-pida-vm0_11815
+The Grove:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11844
+    Cumulative Use: PI_uni-pida-vm0_11748
+    Demand: PI_uni-pida-vm0_11756
+    Demand_kBtu: PI_uni-pida-vm0_11859
+    Electricity_EUI: PI_uni-pida-vm0_11869
+    MonthlyUsage: PI_uni-pida-vm0_11831
+    Rollover Check: PI_uni-pida-vm0_11885
+Thurman Laboratory:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_2405
+    AnnualUsage: PI_uni-pida-vm0_808
+    Cumulative Use: PI_uni-pida-vm0_800
+    Demand: PI_uni-pida-vm0_836
+    Demand_kBtu: PI_uni-pida-vm0_810
+    EUI: PI_uni-pida-vm0_2409
+    Electricity_EUI: PI_uni-pida-vm0_853
+    MonthlyUsage: PI_uni-pida-vm0_805
+    Rollover Check: PI_uni-pida-vm0_854
+    Rollover Count Month: PI_uni-pida-vm0_855
+    Rollover Count Year: PI_uni-pida-vm0_856
+Translational Shared Research Facility:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_978
+    Cumulative Use: PI_uni-pida-vm0_976
+    Demand: PI_uni-pida-vm0_1113_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_979
+    Electricity_EUI: PI_uni-pida-vm0_1341
+    MonthlyUsage: PI_uni-pida-vm0_977
+    Rollover Check: PI_uni-pida-vm0_1344
+    Rollover Count Month: PI_uni-pida-vm0_1346
+    Rollover Count Year: PI_uni-pida-vm0_1347
+Transportation and Parking Services:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1476
+    AnnualUsage: PI_uni-pida-vm0_1503
+    Cumulative Use: PI_uni-pida-vm0_1500
+    Demand: PI_uni-pida-vm0_1648
+    Demand_kBtu: PI_uni-pida-vm0_1504
+    EUI: PI_uni-pida-vm0_1348
+    Electricity_EUI: PI_uni-pida-vm0_1709
+    MonthlyUsage: PI_uni-pida-vm0_1501
+    Rollover Check: PI_uni-pida-vm0_1710
+    Rollover Count Month: PI_uni-pida-vm0_1711
+    Rollover Count Year: PI_uni-pida-vm0_1712
+Tupper Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11713
+    AnnualUsage: PI_uni-pida-vm0_1798
+    Cumulative Use: PI_uni-pida-vm0_1792
+    Demand: PI_uni-pida-vm0_1836
+    Demand_kBtu: PI_uni-pida-vm0_1799
+    EUI: PI_uni-pida-vm0_2398
+    Electricity_EUI: PI_uni-pida-vm0_1868
+    MonthlyUsage: PI_uni-pida-vm0_1797
+    Rollover Check: PI_uni-pida-vm0_1869
+    Rollover Count Month: PI_uni-pida-vm0_1870
+    Rollover Count Year: PI_uni-pida-vm0_1871
+University Extension Building:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11807
+    Demand_kBtu: PI_uni-pida-vm0_11822
+    Electricity_EUI: PI_uni-pida-vm0_11839
+    MonthlyUsage: PI_uni-pida-vm0_11793
+    Rollover Check: PI_uni-pida-vm0_11856
+VMTH Surgical:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1336
+    Cumulative Use: PI_uni-pida-vm0_1330
+    Demand: PI_uni-pida-vm0_1367
+    Demand_kBtu: PI_uni-pida-vm0_1338
+    Electricity_EUI: PI_uni-pida-vm0_1391
+    MonthlyUsage: PI_uni-pida-vm0_1334
+    Rollover Check: PI_uni-pida-vm0_1393
+    Rollover Count Month: PI_uni-pida-vm0_1394
+    Rollover Count Year: PI_uni-pida-vm0_1395
+VMTH Ward:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1581
+    Cumulative Use: PI_uni-pida-vm0_1578
+    Demand: PI_uni-pida-vm0_1649
+    Demand_kBtu: PI_uni-pida-vm0_1583
+    Electricity_EUI: PI_uni-pida-vm0_1718
+    MonthlyUsage: PI_uni-pida-vm0_1579
+    Rollover Check: PI_uni-pida-vm0_1487
+    Rollover Count Month: PI_uni-pida-vm0_1489
+    Rollover Count Year: PI_uni-pida-vm0_1491
+Valley Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1900
+    AnnualUsage: PI_uni-pida-vm0_1917
+    Cumulative Use: PI_uni-pida-vm0_1912
+    Demand: PI_uni-pida-vm0_2013_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1918_ds2m
+    EUI: PI_uni-pida-vm0_1898
+    Electricity_EUI: PI_uni-pida-vm0_2172
+    MonthlyUsage: PI_uni-pida-vm0_1916
+    Rollover Check: PI_uni-pida-vm0_796
+    Rollover Count Month: PI_uni-pida-vm0_799
+    Rollover Count Year: PI_uni-pida-vm0_802
+Vet Med Equine Athletic Performance Lab:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1136
+    AnnualUsage: PI_uni-pida-vm0_1151
+    Cumulative Use: PI_uni-pida-vm0_1148
+    Demand: PI_uni-pida-vm0_1244
+    Demand_kBtu: PI_uni-pida-vm0_1152
+    EUI: PI_uni-pida-vm0_1051
+    Electricity_EUI: PI_uni-pida-vm0_1436
+    MonthlyUsage: PI_uni-pida-vm0_1150
+    Rollover Check: PI_uni-pida-vm0_1438
+    Rollover Count Month: PI_uni-pida-vm0_1441
+    Rollover Count Year: PI_uni-pida-vm0_1443
+Vet Med Lab Animal A Beach Lab:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11837
+    Cumulative Use: PI_uni-pida-vm0_107
+    Demand: PI_uni-pida-vm0_124
+    Demand_kBtu: PI_uni-pida-vm0_11852
+    Electricity_EUI: PI_uni-pida-vm0_11864
+    MonthlyUsage: PI_uni-pida-vm0_11817
+    Rollover Check: PI_uni-pida-vm0_11878
+Vet Med Large Animal Facility:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11722
+    AnnualUsage: PI_uni-pida-vm0_1470
+    Cumulative Use: PI_uni-pida-vm0_1468
+    Demand: PI_uni-pida-vm0_1473
+    Demand_kBtu: PI_uni-pida-vm0_1472
+    EUI: PI_uni-pida-vm0_1458
+    Electricity_EUI: PI_uni-pida-vm0_1477
+    MonthlyUsage: PI_uni-pida-vm0_1469
+    Rollover Check: PI_uni-pida-vm0_1480
+    Rollover Count Month: PI_uni-pida-vm0_1484
+    Rollover Count Year: PI_uni-pida-vm0_798
+Vet Med Student Services and Administration Center:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_11939
+    Cumulative Use: PI_uni-pida-vm0_11785
+    Demand: PI_uni-pida-vm0_11772
+    Demand_kBtu: PI_uni-pida-vm0_11948
+    Electricity_EUI: PI_uni-pida-vm0_11954
+    MonthlyUsage: PI_uni-pida-vm0_11893
+    Rollover Check: PI_uni-pida-vm0_11960
+Veterinary Medicine 2:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_973
+    Cumulative Use: PI_uni-pida-vm0_971
+    Demand: PI_uni-pida-vm0_1103
+    Demand_kBtu: PI_uni-pida-vm0_974_ds2m
+    Electricity_EUI: PI_uni-pida-vm0_1239
+    MonthlyUsage: PI_uni-pida-vm0_972
+    Rollover Check: PI_uni-pida-vm0_1240
+    Rollover Count Month: PI_uni-pida-vm0_1241
+    Rollover Count Year: PI_uni-pida-vm0_1242
+Voorhies Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1630
+    Cumulative Use: PI_uni-pida-vm0_1628
+    Demand: PI_uni-pida-vm0_1693_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1631
+    Electricity_EUI: PI_uni-pida-vm0_1850
+    MonthlyUsage: PI_uni-pida-vm0_1629
+    Rollover Check: PI_uni-pida-vm0_1851
+    Rollover Count Month: PI_uni-pida-vm0_1852
+    Rollover Count Year: PI_uni-pida-vm0_1855
+Walker Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_1721
+    Cumulative Use: PI_uni-pida-vm0_1719
+    Demand: PI_uni-pida-vm0_1723
+    Demand_kBtu: PI_uni-pida-vm0_1722
+    Electricity_EUI: PI_uni-pida-vm0_1724
+    MonthlyUsage: PI_uni-pida-vm0_1720
+    Rollover Check: PI_uni-pida-vm0_1725
+    Rollover Count Month: PI_uni-pida-vm0_1726
+    Rollover Count Year: PI_uni-pida-vm0_1727
+Water Science & Engineering Hydraulic L2:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11693
+    AnnualUsage: PI_uni-pida-vm0_1817
+    Cumulative Use: PI_uni-pida-vm0_1814
+    Demand: PI_uni-pida-vm0_1921
+    Demand_kBtu: PI_uni-pida-vm0_1818
+    EUI: PI_uni-pida-vm0_1728
+    Electricity_EUI: PI_uni-pida-vm0_1861
+    MonthlyUsage: PI_uni-pida-vm0_1815
+    Rollover Check: PI_uni-pida-vm0_1863
+    Rollover Count Month: PI_uni-pida-vm0_1864
+    Rollover Count Year: PI_uni-pida-vm0_1865
+Watershed Science Facility:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11695
+    AnnualUsage: PI_uni-pida-vm0_1955
+    Cumulative Use: PI_uni-pida-vm0_1991
+    Demand: PI_uni-pida-vm0_2020
+    Demand_kBtu: PI_uni-pida-vm0_1956
+    EUI: PI_uni-pida-vm0_1866
+    Electricity_EUI: PI_uni-pida-vm0_2149
+    MonthlyUsage: PI_uni-pida-vm0_1954
+    Rollover Check: PI_uni-pida-vm0_2150
+    Rollover Count Month: PI_uni-pida-vm0_2151
+    Rollover Count Year: PI_uni-pida-vm0_2152
+Wellman Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_811
+    Cumulative Use: PI_uni-pida-vm0_806
+    Demand: PI_uni-pida-vm0_882
+    Demand_kBtu: PI_uni-pida-vm0_812
+    Electricity_EUI: PI_uni-pida-vm0_908
+    MonthlyUsage: PI_uni-pida-vm0_809
+    Rollover Check: PI_uni-pida-vm0_909
+    Rollover Count Month: PI_uni-pida-vm0_910
+    Rollover Count Year: PI_uni-pida-vm0_911
+Western Human Nutrition Research Center (WHNRC):
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11712
+    AnnualUsage: PI_uni-pida-vm0_1090
+    Cumulative Use: PI_uni-pida-vm0_1085
+    Demand: PI_uni-pida-vm0_1187
+    Demand_kBtu: PI_uni-pida-vm0_1093
+    EUI: PI_uni-pida-vm0_933
+    Electricity_EUI: PI_uni-pida-vm0_1424
+    MonthlyUsage: PI_uni-pida-vm0_1089
+    Rollover Check: PI_uni-pida-vm0_1426
+    Rollover Count Month: PI_uni-pida-vm0_1428
+    Rollover Count Year: PI_uni-pida-vm0_1430
+Wickson Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_1666
+    AnnualUsage: PI_uni-pida-vm0_1678
+    Cumulative Use: PI_uni-pida-vm0_1676
+    Demand: PI_uni-pida-vm0_1822_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_1679
+    EUI: PI_uni-pida-vm0_1599
+    Electricity_EUI: PI_uni-pida-vm0_2019
+    MonthlyUsage: PI_uni-pida-vm0_1677
+    Rollover Check: PI_uni-pida-vm0_2023
+    Rollover Count Month: PI_uni-pida-vm0_2027
+    Rollover Count Year: PI_uni-pida-vm0_2031
+Wright Hall:
+  Electricity:
+    AnnualUsage: PI_uni-pida-vm0_2189
+    Cumulative Use: PI_uni-pida-vm0_2187
+    Demand: PI_uni-pida-vm0_2070_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2190
+    Electricity_EUI: PI_uni-pida-vm0_2310
+    MonthlyUsage: PI_uni-pida-vm0_2188
+    Rollover Check: PI_uni-pida-vm0_2311
+    Rollover Count Month: PI_uni-pida-vm0_2312
+    Rollover Count Year: PI_uni-pida-vm0_2313
+Young Hall:
+  Electricity:
+    AnnualCost: PI_uni-pida-vm0_11690
+    AnnualUsage: PI_uni-pida-vm0_2164
+    Cumulative Use: PI_uni-pida-vm0_2162
+    Demand: PI_uni-pida-vm0_2300_ds2m
+    Demand_kBtu: PI_uni-pida-vm0_2165
+    EUI: PI_uni-pida-vm0_2314
+    Electricity_EUI: PI_uni-pida-vm0_2369
+    MonthlyUsage: PI_uni-pida-vm0_2163
+    Rollover Check: PI_uni-pida-vm0_2370
+    Rollover Count Month: PI_uni-pida-vm0_2371
+    Rollover Count Year: PI_uni-pida-vm0_2372

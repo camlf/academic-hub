@@ -1,5 +1,5 @@
 #
-__version__ = "0.68.0"
+__version__ = "0.78.0"
 
 
 def version():
@@ -11,8 +11,3 @@ from .hub_dataview import HubDataview
 from .omf_client import OMFClient
 
 from .util import timer, get_last_runtime, debug_requests_on, debug_requests_off
-
-try:
-    from ddtrace import tracer
-except ImportError:
-    from .dddummy import tracer 
