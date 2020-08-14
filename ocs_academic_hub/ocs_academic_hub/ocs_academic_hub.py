@@ -83,6 +83,14 @@ class HubClient(OCSClient):
             print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
+        self.__assets = sorted(
+            [
+                i["name"].lower()
+                for i in self.__gqlh["Database"][self.__db_index[self.__current_db]][
+                    "asset_with_dv"
+                ]
+            ]
+        )
 
     @typechecked
     def datasets(self) -> List[str]:
@@ -92,6 +100,9 @@ class HubClient(OCSClient):
     def current_dataset(self) -> str:
         return self.__gqlh["Database"][self.__current_db_index]["name"]
 
+    # @typechecked
+    # def set_dataset(dataset: str):
+
     @typechecked
     def namespace_of(self, dataset: str):
         try:
@@ -100,26 +111,31 @@ class HubClient(OCSClient):
             print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
 
     @typechecked
-    def assets(self, filter: str = "") -> List[str]:
-        assets = [
-            (i["name"])
+    def assets(self, filter: str = ""):
+        df = pd.DataFrame(columns=("Asset_Id", "Description"))
+        asset_description = {
+            i["name"]: i["description"]
             for i in self.__gqlh["Database"][self.__db_index[self.__current_db]][
                 "asset_with_dv"
             ]
-        ]
-        return sorted([i for i in set(assets) if filter.lower() in i.lower()])
+            if filter.lower() in i["name"].lower()
+        }
+        sorted_assets = sorted(list(asset_description.keys()))
+        for i, asset in enumerate(sorted_assets):
+            df.loc[i] = [asset, asset_description[asset]]
+        return df
 
     @typechecked
     def asset_dataviews(
-        self, filter: str = "", asset: str = "", single_asset=True
+        self, filter: str = "default", asset: str = "", multiple_asset: bool = False
     ) -> Union[None, List[str]]:
         if len(asset) > 0:
-            if asset.lower() not in [i.lower() for i in self.assets()]:
+            if asset.lower() not in self.__assets:
                 print(
                     f"@@ error: asset {asset} not in dataset asset list, check hub.assets()"
                 )
                 return
-        if single_asset:
+        if not multiple_asset:
             len_test = lambda l: len(l) == 1
         else:
             len_test = lambda l: len(l) > 1
@@ -134,7 +150,11 @@ class HubClient(OCSClient):
         for j in self.__gqlh["Database"][self.__db_index[self.__current_db]][
             "asset_with_dv"
         ]:
-            dataviews.extend(j["has_dataview"])
+            if len(asset) > 0 and j["name"].lower() == asset.lower():
+                dataviews = j["has_dataview"]
+                break
+            else:
+                dataviews.extend(j["has_dataview"])
 
         return sorted(
             list(
@@ -271,11 +291,12 @@ class HubClient(OCSClient):
     # EXPERIMENTAL
 
     def refresh_datasets(
-        self, hub_data="hub_datasets.json", additional_status="production"
+        self,
+        hub_data="hub_datasets.json",
+        additional_status="production",
+        endpoint="https://data.academic.osisoft.com/graphql",
     ):
-        sample_transport = RequestsHTTPTransport(
-            url="https://data.academic.osisoft.com/graphql", verify=False, retries=3
-        )
+        sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
         db_query = gql(
             """
@@ -291,6 +312,7 @@ query Database($status: String) {
     id
     asset_with_dv(orderBy: name_asc) {
       name
+      description
       has_dataview(filter: { ocs_sync: true }) {
         name
         description
