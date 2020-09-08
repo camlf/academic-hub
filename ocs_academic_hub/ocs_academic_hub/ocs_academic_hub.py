@@ -17,22 +17,18 @@ from typeguard import typechecked
 from typing import List, Union
 import pkg_resources
 import urllib3
+import backoff
+import logging
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
-MAX_COUNT = 250 * 1000
-DESCHUTES_DB = "Deschutes-v1"
-DESCHUTES_NAMESPACE = "fermenter_vessels"
-UCDAVIS_FACILITIES_DB = "UCDavis.Facilities"
-UCDAVIS_FACILITIES_NAMESPACE = "UC__Davis"
 
-hub_db_namespaces = {
-    DESCHUTES_DB: DESCHUTES_NAMESPACE,
-    UCDAVIS_FACILITIES_DB: UCDAVIS_FACILITIES_NAMESPACE,
-}
+UXIE_CONSTANT = 100 * 1000
+
+hub_db_namespaces = {}
 
 ocstype2hub = {
     "PI-Digital": "Category",
@@ -57,8 +53,22 @@ def initialize_hub_data(data_file):
     return gqlh, gqlh["Database"][0]["asset_db"], db_index
 
 
+def assets_and_metadata(gqlh, db_index, current_db):
+    assets_info = gqlh["Database"][db_index[current_db]]["asset_with_dv"]
+    assets = sorted([i["name"].lower() for i in assets_info])
+    # h["Database"][0]["asset_with_dv"][0]["asset_metadata"]
+    metaf = lambda x: {} if x is None else eval(x)
+    metadata = {
+        assets_info[j]["name"]: metaf(assets_info[j]["asset_metadata"])
+        for j in range(len(assets_info))
+    }
+    return assets, metadata
+
+
 class HubClient(OCSClient):
-    def __init__(self, hub_data="hub_datasets.json"):
+    def __init__(self, hub_data="hub_datasets.json", debug=False):
+        if debug:
+            logging.getLogger("backoff").addHandler(logging.StreamHandler())
         config_file = os.environ.get("OCS_HUB_CONFIG", None)
         if config_file:
             config = configparser.ConfigParser()
@@ -83,14 +93,21 @@ class HubClient(OCSClient):
             print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
-        self.__assets = sorted(
-            [
-                i["name"].lower()
-                for i in self.__gqlh["Database"][self.__db_index[self.__current_db]][
-                    "asset_with_dv"
-                ]
-            ]
+        self.__assets, self.__assets_metadata = assets_and_metadata(
+            self.__gqlh, self.__db_index, self.__current_db
         )
+
+    def gqlh(self):
+        return self.__gqlh
+
+    @typechecked
+    def asset_metadata(self, asset: str):
+        if asset.lower() not in self.__assets:
+            print(
+                f"@@ error: asset {asset} not in dataset asset list, check hub.assets()"
+            )
+            return
+        return self.__assets_metadata[asset]
 
     @typechecked
     def datasets(self) -> List[str]:
@@ -100,8 +117,27 @@ class HubClient(OCSClient):
     def current_dataset(self) -> str:
         return self.__gqlh["Database"][self.__current_db_index]["name"]
 
-    # @typechecked
-    # def set_dataset(dataset: str):
+    @typechecked
+    def dataset_version(self) -> str:
+        return self.__gqlh["Database"][self.__current_db_index].get(
+            "version", "not available"
+        )
+
+    @typechecked
+    def set_dataset(self, dataset: str):
+        try:
+            hub_db_namespaces[dataset]
+        except KeyError:
+            print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+            return
+        for j in range(len(self.__gqlh["Database"])):
+            if self.__gqlh["Database"][j]["name"] == dataset:
+                self.__current_db_index = j
+                self.__current_db = self.__gqlh["Database"][j]["asset_db"]
+                self.__assets, self.__assets_metadata = assets_and_metadata(
+                    self.__gqlh, self.__db_index, self.__current_db
+                )
+                break
 
     @typechecked
     def namespace_of(self, dataset: str):
@@ -173,15 +209,20 @@ class HubClient(OCSClient):
             )
         )
 
+    @backoff.on_exception(
+        backoff.expo, SdsError, max_tries=6, jitter=backoff.full_jitter
+    )
     @typechecked
-    def dataview_definition_v2(self, namespace_id: str, dataview_id: str, version: str):
+    def dataview_definition(
+        self, namespace_id: str, dataview_id: str, version: str = ""
+    ):
         df = pd.DataFrame(
             columns=(
                 "Asset_Id",
-                "OCS_StreamName",
-                "DV_Column",
-                "Value_Type",
-                "EngUnits",
+                "Column_Name",
+                "Stream_Type",
+                "Stream_UOM",
+                "OCS_Stream_Name",
             )
         )
         data_items = super().DataViews.getResolvedDataItems(
@@ -190,12 +231,24 @@ class HubClient(OCSClient):
         for i, item in enumerate(data_items.Items):
             df.loc[i] = [
                 item.Metadata["asset_id"],
-                item.Name,
                 item.Metadata["column_name"],
                 ocstype2hub.get(item.TypeId, "Float"),
                 item.Metadata.get("engunits", "-n/a-"),
+                item.Name,
             ]
-        return df
+        return df.sort_values("Column_Name")
+
+    @backoff.on_exception(
+        backoff.expo, SdsError, max_tries=6, jitter=backoff.full_jitter
+    )
+    def dataview_columns(self, namespace_id: str, dataview_id: str):
+        data_items = super().DataViews.getResolvedDataItems(
+            namespace_id, dataview_id, "Asset_value?count=1000"
+        )
+        digital_items = super().DataViews.getResolvedDataItems(
+            namespace_id, dataview_id, "Asset_digital?count=1000"
+        )
+        return len(data_items.Items) + len(digital_items.Items) + 1
 
     def __process_digital_states(self, df):
         ds_columns = [col for col in list(df.columns) if col[-4:] == "__ds"]
@@ -208,6 +261,7 @@ class HubClient(OCSClient):
             df = df.rename(columns={ds_col: ds_col[:-4] for ds_col in ds_columns})
         return df
 
+    # @backoff.on_exception(backoff.expo, SdsError, max_tries=0, jitter=backoff.full_jitter)
     @timer
     def __get_data_interpolated(
         self,
@@ -243,7 +297,6 @@ class HubClient(OCSClient):
         end_index: str,
         interval: str,
         count: int = None,
-        add_dv_column: bool = False,
         raw: bool = False,
         verbose: bool = False,
     ):
@@ -264,29 +317,53 @@ class HubClient(OCSClient):
             print(summary)
         next_page = None
         while True:
-            csv, next_page, _ = self.__get_data_interpolated(
-                namespace_id=namespace_id,
-                dataview_id=dataview_id,
-                count=count,
-                form="csvh",
-                start_index=start_index,
-                end_index=end_index,
-                interval=interval,
-                next_page=next_page,
-                no_timer=not verbose,
-            )
-            df = df.append(
-                pd.read_csv(io.StringIO(csv), parse_dates=["Timestamp"]),
-                ignore_index=True,
-            )
-            if next_page is None:
-                print()
-                break
-            print("+", end="", flush=True)
+            try:
+                csv, next_page, _ = self.__get_data_interpolated(
+                    namespace_id=namespace_id,
+                    dataview_id=dataview_id,
+                    count=count,
+                    form="csvh",
+                    start_index=start_index,
+                    end_index=end_index,
+                    interval=interval,
+                    next_page=next_page,
+                    no_timer=not verbose,
+                )
+                # print(f"[{len(csv)}]", end="")
+                df = df.append(
+                    pd.read_csv(io.StringIO(csv), parse_dates=["Timestamp"]),
+                    ignore_index=True,
+                )
+                if next_page is None:
+                    print()
+                    break
+                print("+", end="", flush=True)
+            except SdsError as e:
+                print(f"e={str(e)}, {'408:' in str(e)}")
+                if "408:" not in str(e):
+                    raise e
+                if count is None:
+                    count = (
+                        UXIE_CONSTANT
+                        // self.dataview_columns(namespace_id, dataview_id)
+                        // 2
+                    )
+                else:
+                    count = count // 2
+                df = pd.DataFrame()
+                next_page = None
+                print(f"@({count})", end="")
 
-        if add_dv_column:
-            df["Dataview_ID"] = pd.Series([dataview_id] * len(df.index), index=df.index)
         return self.__process_digital_states(df)
+
+    # SdsError: 'Failed to get Data View data interpolated for Data View, brewery-fv40.
+    # 408:.  URL https://dat-b.osisoft.com/api/v1-preview/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/Namespaces/academic_hub_01/dataviews/brewery-fv40/data/interpolated?form=csvh&startIndex=2017-01-19&endIndex=2020-01-19&interval=00:30:00&continuationtoken=MjAxNy0xMi0yMlQxNzozMDowMC4wMDAwMDAwPzA_MjcwMT8yMTQ3NDgzNjQ3PzE_UGdZUEd3P3lwcWE0bDFxQ0JB&count=2702  OperationId 1246f2ed08023d44af12850ff242a469'
+
+    def request(self, method, url, params=None, data=None, headers=None, **kwargs):
+        print(dir(self))
+        return self._OCSClient__baseClient.request(
+            method, url, params, data, headers, **kwargs
+        )
 
     # EXPERIMENTAL
 
@@ -301,7 +378,7 @@ class HubClient(OCSClient):
         db_query = gql(
             """
 query Database($status: String) {
-  Database(filter: { OR: [{ status: "production" }, { status: $status }] }) {
+  Database(filter: { OR: [{ status: "production" }, { status: $status }] }, orderBy: name_asc) {
     name
     asset_db
     description
@@ -313,7 +390,8 @@ query Database($status: String) {
     asset_with_dv(orderBy: name_asc) {
       name
       description
-      has_dataview(filter: { ocs_sync: true }) {
+      asset_metadata
+      has_dataview(filter: { ocs_sync: true }, orderBy: name_asc) {
         name
         description
         id
@@ -331,128 +409,3 @@ query Database($status: String) {
         print(f"@ Hub data file: {hub_data}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
         print(f"@ Current dataset: {self.current_dataset()}")
-
-    # DEPRECATED
-
-    @typechecked
-    def dataview_definition(
-        self, namespace_id: str, dataview_id: str, version: str = ""
-    ):
-        if version == "":
-            column_key = (
-                dataview_id[
-                    dataview_id.find("HubDV_") + 6 : dataview_id.find("_fv")
-                ].lower()
-                + "_column"
-            )
-        else:
-            return self.dataview_definition_v2(namespace_id, dataview_id, version)
-        df = pd.DataFrame(columns=("OCS_StreamName", "DV_Column", "Value_Type"))
-        i = 0
-        for query in ["Asset_value", "Asset_digital"]:
-            data_items = self.DataViews.getResolvedDataItems(
-                namespace_id, dataview_id, query
-            )
-            for item in data_items.Items:
-                try:
-                    df.loc[i] = [
-                        item.Name,
-                        item.Metadata[column_key],
-                        f"Category"
-                        if query == "Asset_digital"
-                        else ("String" if item.TypeId == "PI-String" else "Float"),
-                    ]
-                    i += 1
-                except KeyError:
-                    return self.dataview_definition_v2(
-                        namespace_id, dataview_id, version
-                    )
-        return df
-
-    @typechecked
-    def fermenter_dataview_ids(
-        self,
-        namespace_id: str,
-        filter: str = "",
-        fv_id: int = 0,
-        first_fv: int = 0,
-        last_fv: int = 0,
-        version: str = "",
-    ):
-        dvs = super().DataViews.getDataViews(namespace_id, count=1000)
-        dv_ids = [dv.Id for dv in dvs if f"hub{version}dv" in dv.Id.lower()]
-        if len(filter) > 0:
-            dv_ids = [dv_id for dv_id in dv_ids if filter.lower() in dv_id.lower()]
-        if fv_id > 0:
-            dv_ids = [dv_id for dv_id in dv_ids if f"fv{fv_id:02}" in dv_id]
-        elif first_fv > 0 and last_fv > 0:
-            fv_ids = [f"fv{fv_id:02}" for fv_id in range(first_fv, last_fv + 1)]
-            dv_ids = [dv_id for dv_id in dv_ids if dv_id[-4:] in fv_ids]
-        return dv_ids
-
-    @timer
-    @typechecked
-    def dataviews_interpolated_pd(
-        self,
-        namespace_id: str,
-        dv_ids: List[str],
-        start_index: str,
-        end_index: str,
-        interval: str,
-        count: int = MAX_COUNT,
-        workers: int = 3,
-        verbose: bool = False,
-        raw: bool = False,
-        skip_sort: bool = False,
-        debug: bool = False,
-    ):
-
-        df = pd.DataFrame()
-        dv_ids_counts = [(dv_id, count) for dv_id in dv_ids]
-        if verbose:
-            summary = f"<@dataviews_interpolated_pd/{start_index}/{end_index}/{interval}/w{workers}/raw={raw} t={datetime.now().isoformat()}"
-            print(summary)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            future_to_dv = {
-                executor.submit(
-                    self.dataview_interpolated_pd,
-                    namespace_id,
-                    dv_id,
-                    start_index=start_index,
-                    end_index=end_index,
-                    interval=interval,
-                    add_dv_column=True,
-                    raw=raw,
-                    count=count,
-                    verbose=debug,
-                    no_timer=not verbose,
-                ): (dv_id, count)
-                for (dv_id, count) in dv_ids_counts
-            }
-            for future in concurrent.futures.as_completed(future_to_dv):
-                dv_id, count = future_to_dv[future]
-                try:
-                    dv_df = future.result()
-                    df = df.append(dv_df, sort=False)
-                except Exception as exc:
-                    tb = traceback.format_exc()
-                    print(
-                        f"{dv_id}/{count} generated an exception: {exc} - if 408, increase interval\n{tb}"
-                    )
-                    for f, _ in future_to_dv.items():
-                        try:
-                            f.cancel()
-                            # print(f"[cancelled? {t}]", end="", flush=True)
-                        except Exception:
-                            # print(f"[oops] {e} ", end="", flush=True)
-                            pass
-                    executor.shutdown(wait=False)
-                    raise exc
-                    # return pd.DataFrame()
-                else:
-                    # print(f"{dv_id}/{count} dataframe has {len(df)} lines")
-                    pass
-        if len(df) == 0 or skip_sort:
-            return df
-        df = df.sort_values(["Dataview_ID", "Timestamp"]).reset_index(drop=True)
-        return df

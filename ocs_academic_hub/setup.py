@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ocs_academic_hub",
-    version="0.79.0",
+    version="0.80.0",
     author="Christian Foisy",
     author_email="cfoisy@osisoft.com",
     description="OSIsoft Academic Hub support package",
@@ -30,6 +30,7 @@ setuptools.setup(
         "python_dateutil>=2.8.0",
         "typeguard>=2.4.1",
         "gql",
+        "backoff",
     ],
     python_requires=">=3.6",
 )
