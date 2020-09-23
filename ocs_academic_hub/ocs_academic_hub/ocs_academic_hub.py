@@ -19,6 +19,7 @@ import pkg_resources
 import urllib3
 import backoff
 import logging
+import requests
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -62,18 +63,50 @@ def assets_and_metadata(gqlh, db_index, current_db):
         assets_info[j]["name"]: metaf(assets_info[j]["asset_metadata"])
         for j in range(len(assets_info))
     }
+    for key in metadata.keys():
+        d = metadata[key]
+        d.update({"Asset_Id": key})
     return assets, metadata
+
+
+class SdsError50x(Exception):
+    pass
 
 
 class HubClient(OCSClient):
     def __init__(self, hub_data="hub_datasets.json", debug=False):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
-        config_file = os.environ.get("OCS_HUB_CONFIG", None)
-        if config_file:
+        config_filename = os.environ.get("OCS_HUB_CONFIG", None)
+        config_file = None
+        if config_filename is None:
+            binder_repo = os.environ.get("BINDER_REPO_URL", None)
+            if binder_repo is not None:
+                print("@ --- OSIsoft authorization required to run on Binder ---")
+                if binder_repo == "https://github.com/academic-hub/datasets":
+                    reply = requests.get(
+                        "https://academichub.blob.core.windows.net/hub/config-binder.ini"
+                    )
+                    if reply.status_code == 200:
+                        config_file = io.StringIO(reply.text)
+                if config_file is None:
+                    print("@ ### authorization denied ###")
+                    return
+
+        if config_filename is None and config_file is None:
+            super().__init__(
+                "v1",
+                "65292b6c-ec16-414a-b583-ce7ae04046d4",
+                "https://dat-b.osisoft.com",
+                "422e6002-9c5a-4651-b986-c7295bcf376c",
+            )
+        else:
             config = configparser.ConfigParser()
-            print(f"> configuration file: {config_file}")
-            config.read(config_file)
+            if config_filename:
+                print(f"> configuration file: {config_file}")
+                config.read(config_filename)
+            else:
+                config.read_file(config_file)
             super().__init__(
                 config.get("Access", "ApiVersion"),
                 config.get("Access", "Tenant"),
@@ -81,13 +114,8 @@ class HubClient(OCSClient):
                 config.get("Credentials", "ClientId"),
                 config.get("Credentials", "ClientSecret"),
             )
-        else:
-            super().__init__(
-                "v1",
-                "65292b6c-ec16-414a-b583-ce7ae04046d4",
-                "https://dat-b.osisoft.com",
-                "422e6002-9c5a-4651-b986-c7295bcf376c",
-            )
+            print("@ --- authorization granted ---")
+
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
         if data_file != default_hub_data:
             print(f"@ Hub data file: {data_file}")
@@ -108,6 +136,12 @@ class HubClient(OCSClient):
             )
             return
         return self.__assets_metadata[asset]
+
+    def all_assets_metadata(self):
+        metadata = [
+            self.__assets_metadata[key] for key in self.__assets_metadata.keys()
+        ]
+        return pd.DataFrame(metadata).sort_values(by=["Asset_Id"])
 
     @typechecked
     def datasets(self) -> List[str]:
@@ -287,6 +321,9 @@ class HubClient(OCSClient):
             **count_arg,
         )
 
+    @backoff.on_exception(
+        backoff.expo, SdsError50x, max_tries=6, jitter=backoff.full_jitter
+    )
     @timer
     @typechecked
     def dataview_interpolated_pd(
@@ -339,25 +376,24 @@ class HubClient(OCSClient):
                     break
                 print("+", end="", flush=True)
             except SdsError as e:
-                print(f"e={str(e)}, {'408:' in str(e)}")
-                if "408:" not in str(e):
+                # print(f"e={str(e)}, {'408:' in str(e)}")
+                if not any(ss in str(e) for ss in ["408:", "503:", "504:"]):
                     raise e
-                if count is None:
-                    count = (
-                        UXIE_CONSTANT
-                        // self.dataview_columns(namespace_id, dataview_id)
-                        // 2
-                    )
-                else:
-                    count = count // 2
+                if "408:" not in str(e):
+                    print(f"[restart-50{'3' if '503:' in str(e) else '4'}]", end="")
+                    raise SdsError50x
                 df = pd.DataFrame()
                 next_page = None
+                if count is None:
+                    count = UXIE_CONSTANT // self.dataview_columns(
+                        namespace_id, dataview_id
+                    )
+                count = count // 2
                 print(f"@({count})", end="")
+                if count < 40:
+                    raise e
 
         return self.__process_digital_states(df)
-
-    # SdsError: 'Failed to get Data View data interpolated for Data View, brewery-fv40.
-    # 408:.  URL https://dat-b.osisoft.com/api/v1-preview/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/Namespaces/academic_hub_01/dataviews/brewery-fv40/data/interpolated?form=csvh&startIndex=2017-01-19&endIndex=2020-01-19&interval=00:30:00&continuationtoken=MjAxNy0xMi0yMlQxNzozMDowMC4wMDAwMDAwPzA_MjcwMT8yMTQ3NDgzNjQ3PzE_UGdZUEd3P3lwcWE0bDFxQ0JB&count=2702  OperationId 1246f2ed08023d44af12850ff242a469'
 
     def request(self, method, url, params=None, data=None, headers=None, **kwargs):
         print(dir(self))
