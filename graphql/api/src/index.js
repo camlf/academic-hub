@@ -80,8 +80,8 @@ const server = new ApolloServer({
   introspection: true,
   playground: true,
   engine: {
-    apiKey: process.env.APOLLO_API_KEY || "none",
-    graphVariant: process.env.APOLLO_TAG || "production"
+    apiKey: process.env.APOLLO_KEY || "none",
+    graphVariant: process.env.APOLLO_GRAPH_VARIANT || "production"
   }
 })
 

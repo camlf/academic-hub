@@ -3,20 +3,35 @@ interface Node {
   # The ID of the object.
   id: ID!
 }
-
+"""
+AF database ==> Hub dataset 
+"""
 type Database implements Node {
+   "internal use"
    _id: Long!
+   "PI WebID" 
    id: ID!
+   "OCS metadata for dataset id"
    asset_db: String!
+   "short description"
    description: String
+   "nice name (unused)"
    display_name: String
+   "for reference information"
    informationURL: String
+   "dataset name"
    name: String!
+   "current OCS namespace for dataset"
    namespace: String
+   "can be: production, onboarding"
    status: String
+   "convention: last date update"
    version: String
+   "AF elements/assets"
    has_element: [Element] @relation(name: "HAS_ELEMENT", direction: "OUT")
+   "all assets with data views are linked here"
    asset_with_dv: [Element] @relation(name: "ASSET_WITH_DV", direction: "OUT")
+   "from source PI server node"
    servers: [Server] @relation(name: "HAS_DATABASE", direction: "IN")
 }
 

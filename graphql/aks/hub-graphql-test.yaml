@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hub-graphql-test
+spec:
+  ports:
+  - port: 4000
+  selector:
+    app: hub-graphql-test
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hub-graphql-test
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: hub-graphql-test
+    spec:
+      containers:
+      - name: hub-graphql-test
+        image: academicpi.azurecr.io/hub-graphql:v30
+        envFrom:
+        - secretRef:
+            name: hub-graphql-test-secret-8mt7cct7hf
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 250m
+
