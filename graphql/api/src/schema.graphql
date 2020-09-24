@@ -1,0 +1,137 @@
+# An object with a Globally Unique ID
+interface Node {
+  # The ID of the object.
+  id: ID!
+}
+
+type Database implements Node {
+   _id: Long!
+   id: ID!
+   asset_db: String!
+   description: String
+   display_name: String
+   informationURL: String
+   name: String!
+   namespace: String
+   status: String
+   version: String
+   has_element: [Element] @relation(name: "HAS_ELEMENT", direction: "OUT")
+   asset_with_dv: [Element] @relation(name: "ASSET_WITH_DV", direction: "OUT")
+   servers: [Server] @relation(name: "HAS_DATABASE", direction: "IN")
+}
+
+type Element implements Node {
+   _id: Long!
+   af_template: String!
+   asset_db: String!
+   id: ID!
+   name: String!
+   description: String
+   static_attributes: [String]
+   asset_metadata: String
+   latitude: Float
+   longitude: Float
+   location: Point
+   has_element: [Element] @relation(name: "HAS_ELEMENT", direction: "OUT")
+   has_dynamic: [PIPoint] @relation(name: "HAS_DYNAMIC", direction: "OUT")
+   has_attribute: [Attribute] @relation(name: "HAS_ATTRIBUTE", direction: "OUT")
+   has_dataview: [DataView] @relation(name: "HAS_DATAVIEW", direction: "OUT")
+   databases: [Database] @relation(name: "ASSET_WITH_DV", direction: "IN")
+   has_parent: [Element] @relation(name: "HAS_ELEMENT", direction: "IN")
+}
+
+type PIPoint implements Node {
+   _id: Long!
+   asset_id: String
+   uom: String
+   af_template: String
+   asset_db: String!
+   categories: [String]
+   column_name: String!
+   description: String
+   digital_set_name: String
+   id: ID!
+   name: String!
+   on_ocs: Int!
+   pointsource: String
+   step: Boolean
+   stream_id: String
+   stream_name: String!
+   type: String!
+   state_from: [DigitalState] @relation(name: "STATE_FROM", direction: "OUT")
+   elements: [Element] @relation(name: "HAS_DYNAMIC", direction: "IN")
+   dataviews: [DataView] @relation(name: "HAS_STREAM", direction: "IN")
+}
+
+type Attribute implements Node {
+   _id: Long!
+   af_template: String!
+   asset_db: String!
+   id: ID!
+   name: String!
+   value: String
+   type: String!
+   configString: String
+   dataReferencePlugin: String
+   typeQualifier: String
+   hub_meta: Boolean
+   elements: [Element] @relation(name: "HAS_ATTRIBUTE", direction: "IN")
+}
+
+type DataView implements Node {
+   _id: Long!
+   id: ID!
+   asset_db: String!
+   asset_id: [String]!
+   columns: String!
+   description: String
+   name: String!
+   ocs_sync: Boolean!
+   ocs_tag: String!
+   has_stream: [PIPoint] @relation(name: "HAS_STREAM", direction: "OUT")
+   elements: [Element] @relation(name: "HAS_DATAVIEW", direction: "IN")
+}
+
+type DigitalState implements Node {
+   _id: Long!
+   af_template: String
+   asset_db: String!
+   id: ID!
+   name: String!
+   states: String!
+   pipoints: [PIPoint] @relation(name: "STATE_FROM", direction: "IN")
+}
+
+type Server implements Node {
+   _id: Long!
+   af_template: String!
+   asset_db: String!
+   id: ID!
+   name: String!
+   has_database: [Database] @relation(name: "HAS_DATABASE", direction: "OUT")
+}
+
+type WindTurbine implements Node {
+   _id: Long!
+   id: ID!
+   model: String
+   manufacturer: String
+   latitude: Float
+   longitude: Float
+   location: Point
+}
+
+type UniBuilding implements Node {
+   _id: Long!
+   id: ID!
+   name: String
+   buildingName: String 
+   CAAN: String 
+   constructionDate: String 
+   displayName: String
+   latitude: Float
+   longitude: Float
+   primaryUsage: String
+   location: Point
+}
+   
