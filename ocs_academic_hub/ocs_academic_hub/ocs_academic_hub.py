@@ -26,8 +26,11 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
-
 UXIE_CONSTANT = 100 * 1000
+HUB_BLOB = "https://academichub.blob.core.windows.net/hub/"
+BINDER_INI = HUB_BLOB + "config-binder.ini"
+COLLAB_INI = HUB_BLOB + "config-collab.ini"
+GITHUB_HUB_DATASETS = "https://github.com/academic-hub/datasets"
 
 hub_db_namespaces = {}
 
@@ -73,8 +76,17 @@ class SdsError50x(Exception):
     pass
 
 
+def get_config(url, client_secret=""):
+    if len(client_secret):
+        client_secret = f"\nClientSecret = {client_secret}\n"
+    reply = requests.get(url)
+    if reply.status_code != 200:
+        raise SdsError("@ ### authorization denied ###")
+    return io.StringIO(reply.text + client_secret)
+
+
 class HubClient(OCSClient):
-    def __init__(self, hub_data="hub_datasets.json", debug=False):
+    def __init__(self, hub_data="hub_datasets.json", collab_key=None, debug=False):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
         config_filename = os.environ.get("OCS_HUB_CONFIG", None)
@@ -83,15 +95,14 @@ class HubClient(OCSClient):
             binder_repo = os.environ.get("BINDER_REPO_URL", None)
             if binder_repo is not None:
                 print("@ --- OSIsoft authorization required to run on Binder ---")
-                if binder_repo == "https://github.com/academic-hub/datasets":
-                    reply = requests.get(
-                        "https://academichub.blob.core.windows.net/hub/config-binder.ini"
-                    )
-                    if reply.status_code == 200:
-                        config_file = io.StringIO(reply.text)
-                if config_file is None:
+                if binder_repo == GITHUB_HUB_DATASETS:
+                    config_file = get_config(BINDER_INI)
+                else:
                     print("@ ### authorization denied ###")
                     return
+            if collab_key:
+                print("@ --- OSIsoft authorization required to run on Collab ---")
+                config_file = get_config(COLLAB_INI, client_secret=collab_key)
 
         if config_filename is None and config_file is None:
             super().__init__(
@@ -376,7 +387,6 @@ class HubClient(OCSClient):
                     break
                 print("+", end="", flush=True)
             except SdsError as e:
-                # print(f"e={str(e)}, {'408:' in str(e)}")
                 if not any(ss in str(e) for ss in ["408:", "503:", "504:"]):
                     raise e
                 if "408:" not in str(e):
