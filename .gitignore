@@ -5,3 +5,6 @@ build/
 dist/
 FeatureDF.csv
 __pycache__/
+Clean/
+node_modules/
+.idea/

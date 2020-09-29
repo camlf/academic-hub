@@ -17,7 +17,7 @@ type Database implements Node {
    asset_db: String!
    "short description of the dataset"
    description: String
-   "nice name (unused)"
+   "nice name - unused"
    display_name: String
    "for reference information"
    informationURL: String
@@ -35,6 +35,10 @@ type Database implements Node {
    asset_with_dv: [Element] @relation(name: "ASSET_WITH_DV", direction: "OUT")
    "source PI server node"
    servers: [Server] @relation(name: "HAS_DATABASE", direction: "IN")
+   "extracted AF template - unused"
+   af_template: String!
+   "all assets (elements) with no children element"
+   leaf_elements: [Element]! @cypher (statement: "MATCH (this)-[:HAS_ELEMENT*]->(e:Element) WHERE NOT ((e)-[:HAS_ELEMENT]->()) RETURN DISTINCT e ORDER BY e.name")
 }
 """
 AF elements from source PI
