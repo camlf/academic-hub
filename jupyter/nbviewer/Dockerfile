@@ -46,7 +46,7 @@ RUN python3 -mpip install --no-cache /wheels/*
 ENV NBVIEWER_THREADS 2
 WORKDIR /srv/nbviewer
 RUN mkdir /srv/deschutes
-COPY ./deschutes/* /srv/deschutes/
+COPY ./deschutes/ /srv/deschutes/
 EXPOSE 8080
 USER nobody
 
