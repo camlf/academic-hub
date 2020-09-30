@@ -50,6 +50,5 @@ COPY ./deschutes/* /srv/deschutes/
 EXPOSE 8080
 USER nobody
 
-EXPOSE 9000
 ENTRYPOINT ["/srv/deschutes/entrypoint.sh"]
 CMD ["python", "-m", "nbviewer", "--port=8080", "--base-url=/nbviewer/"]
