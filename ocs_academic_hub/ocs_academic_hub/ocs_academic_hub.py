@@ -164,9 +164,13 @@ class HubClient(OCSClient):
 
     @typechecked
     def dataset_version(self) -> str:
-        return self.__gqlh["Database"][self.__current_db_index].get(
+        version = self.__gqlh["Database"][self.__current_db_index].get(
             "version", "not available"
         )
+        status = self.__gqlh["Database"][self.__current_db_index].get(
+            "status", "-not set-"
+        )
+        return f"{version} (status: {status})"
 
     @typechecked
     def set_dataset(self, dataset: str):
@@ -305,8 +309,7 @@ class HubClient(OCSClient):
             df = df.drop(columns=[ds_col[:-4] for ds_col in ds_columns])
             df = df.rename(columns={ds_col: ds_col[:-4] for ds_col in ds_columns})
         return df
-
-    # @backoff.on_exception(backoff.expo, SdsError, max_tries=0, jitter=backoff.full_jitter)
+    
     @timer
     def __get_data_interpolated(
         self,
@@ -417,7 +420,7 @@ class HubClient(OCSClient):
         self,
         hub_data="hub_datasets.json",
         additional_status="production",
-        endpoint="https://data.academic.osisoft.com/graphql",
+        endpoint="https://data.academic.osisoft.com/graphql"
     ):
         sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
