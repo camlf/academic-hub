@@ -309,7 +309,7 @@ class HubClient(OCSClient):
             df = df.drop(columns=[ds_col[:-4] for ds_col in ds_columns])
             df = df.rename(columns={ds_col: ds_col[:-4] for ds_col in ds_columns})
         return df
-    
+
     @timer
     def __get_data_interpolated(
         self,
@@ -420,7 +420,7 @@ class HubClient(OCSClient):
         self,
         hub_data="hub_datasets.json",
         additional_status="production",
-        endpoint="https://data.academic.osisoft.com/graphql"
+        endpoint="https://data.academic.osisoft.com/graphql",
     ):
         sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
@@ -458,3 +458,11 @@ query Database($status: String) {
         print(f"@ Hub data file: {hub_data}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
         print(f"@ Current dataset: {self.current_dataset()}")
+
+    def graphql_query(
+        self, query_string, endpoint="https://data.academic.osisoft.com/graphql"
+    ):
+        sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
+        client = Client(transport=sample_transport, fetch_schema_from_transport=True)
+        query = gql(query_string)
+        return client.execute(query)
