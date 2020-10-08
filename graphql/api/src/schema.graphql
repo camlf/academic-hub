@@ -120,6 +120,8 @@ type PIPoint implements Node {
    stream_name: String!
    "data type"
    type: String!
+   "last timestamp for stream (tag)"
+   last_updated: DateTime
    "link to digital state, if applicable"
    state_from: [DigitalState] @relation(name: "STATE_FROM", direction: "OUT")
    "element(s) referencing this stream"
