@@ -102,8 +102,10 @@ type PIPoint implements Node {
    description: String
    "digital state set name, if applicable"
    digital_set_name: String
-   "Web ID"
+   "Currently: asset_db:Web_ID - to allow sharing AF elements by datasets"
    id: ID!
+   "Actual Web ID"
+   webid: String
    "AF attribute name"
    name: String!
    "0 if stream does not exist on OCS, 1 otherwise"
