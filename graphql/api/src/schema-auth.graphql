@@ -1,0 +1,271 @@
+"""
+An object with a Globally Unique ID
+"""
+interface Node {
+  # The ID of the object.
+  id: ID!
+}
+"""
+AF database ==> Hub dataset 
+"""
+type Database implements Node {
+   "(internal database use)"
+   _id: Long!
+   "PI WebID" 
+   id: ID!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "short description of the dataset"
+   description: String
+   "nice name - unused"
+   display_name: String
+   "for reference information"
+   informationURL: String
+   "dataset name"
+   name: String!
+   "OCS namespace for dataset streams"
+   namespace: String
+   "standard status are: production, onboarding"
+   status: String
+   "convention: last dataset update date"
+   version: String
+   "top AF elements/assets"
+   has_element: [Element] @relation(name: "HAS_ELEMENT", direction: "OUT")
+   "all assets (elements) with data views are linked here"
+   asset_with_dv: [Element] @relation(name: "ASSET_WITH_DV", direction: "OUT")
+   "source PI server node"
+   servers: [Server] @relation(name: "HAS_DATABASE", direction: "IN")
+   "extracted AF template - unused"
+   af_template: String!
+   "all assets (elements) with no children element"
+   leaf_elements: [Element]! @cypher (statement: "MATCH (this)-[:HAS_ELEMENT*]->(e:Element) WHERE NOT ((e)-[:HAS_ELEMENT]->()) RETURN DISTINCT e ORDER BY e.name")
+}
+"""
+AF elements from source PI
+"""
+type Element implements Node {
+   "(internal database use)"
+   _id: Long!
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "element name from AF"
+   name: String!
+   "element description from AF"
+   description: String
+   "list of static attributes for element"
+   static_attributes: [String]
+   "serialized dictionary built from static_attributes"
+   asset_metadata: String
+   "latitude (if present, otherwise null)"
+   latitude: Float
+   "longitude (if present, otherwise null)"
+   longitude: Float
+   "compound field with lat/long"
+   location: Point
+   "child AF elements"
+   has_element: [Element] @relation(name: "HAS_ELEMENT", direction: "OUT")
+   "dynamic attributes (PIPoint) of element"
+   has_dynamic: [PIPoint] @relation(name: "HAS_DYNAMIC", direction: "OUT")
+   "static attributes (configuration data) of element"
+   has_attribute: [Attribute] @relation(name: "HAS_ATTRIBUTE", direction: "OUT")
+   "data view object representation"
+   has_dataview: [DataView] @relation(name: "HAS_DATAVIEW", direction: "OUT")
+   "if element has at least one data view, this link exists"
+   databases: [Database] @relation(name: "ASSET_WITH_DV", direction: "IN")
+   "parent element(s)"
+   has_parent: [Element] @relation(name: "HAS_ELEMENT", direction: "IN")
+}
+
+"""
+PIPoint (stream) from PI data archive
+"""
+type PIPoint implements Node {
+   "(internal database use)"
+   _id: Long!
+   "asset identifier - from AF => OCS metadata"
+   asset_id: String
+   "unit of measure"
+   uom: String
+   "extracted AF template"
+   af_template: String
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "AF categories, separated by comma"
+   categories: [String]
+   "data view column name - from AF attribute name => OCS metadata"
+   column_name: String!
+   "AF attribute description"
+   description: String
+   "digital state set name, if applicable"
+   digital_set_name: String
+   "Currently: asset_db:Web_ID - to allow sharing AF elements by datasets"
+   id: ID!
+   "Actual Web ID"
+   webid: String
+   "AF attribute name"
+   name: String!
+   "0 if stream does not exist on OCS, 1 otherwise"
+   on_ocs: Int!
+   "source of the PIPoint"
+   pointsource: String
+   "if step interpolation should apply"
+   step: Boolean
+   "actual Stream ID of PIPoint on OCS"
+   stream_id: String
+   "OCS stream name (same as PI tag name)"
+   stream_name: String!
+   "data type"
+   type: String!
+   "last timestamp for stream (tag)"
+   last_updated: DateTime
+   "link to digital state, if applicable"
+   state_from: [DigitalState] @relation(name: "STATE_FROM", direction: "OUT")
+   "element(s) referencing this stream"
+   elements: [Element] @relation(name: "HAS_DYNAMIC", direction: "IN")
+   "single-asset data views this stream belongs to"
+   dataviews: [DataView] @relation(name: "HAS_STREAM", direction: "IN")
+}
+
+"""
+Static element attribute
+"""
+type Attribute implements Node {
+   "(internal database use)"
+   _id: Long!
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "AF attribute name"
+   name: String!
+   "value of the static attribute"
+   value: String
+   "data type (float, integer, etc.)"
+   type: String!
+   "configuration string extracted from AF"
+   configString: String
+   "data reference plugin extracted from AF"
+   dataReferencePlugin: String
+   "from AF"
+   typeQualifier: String
+   "if this attribute should be published as hub asset metadata"
+   hub_meta: Boolean
+   "elements this attribute belongs to"
+   elements: [Element] @relation(name: "HAS_ATTRIBUTE", direction: "IN")
+}
+
+directive @cacheControl(maxAge: Int = 60) on FIELD_DEFINITION | OBJECT
+
+"""
+Asset-centric data view representation
+Reference: https://academichub.blob.core.windows.net/hub/Hub_Dataset_Onboarding_Part_1.html
+"""
+type DataView implements Node @cacheControl(maxAge: 4800) {
+   "(internal database use)"
+   _id: Long!
+   "data view identifier"
+   id: ID! 
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "all assets referenced by the data view"
+   asset_id: [String]!
+   "list of columns headers"
+   columns: String!
+   "short data view description"
+   description: String
+   "short name for the data view"
+   name: String!
+   "indicates this data view has been mapped on OCS"
+   ocs_sync: Boolean!
+   "associated OCS tag"
+   ocs_tag: String! 
+   "streams associated to the data view"
+   has_stream: [PIPoint] @relation(name: "HAS_STREAM", direction: "OUT")
+   "assets this data views is associated with"
+   elements: [Element] @relation(name: "HAS_DATAVIEW", direction: "IN")
+   "interpolated asset stream data"
+   interpolated(
+      namespace: String!, 
+      startIndex: String!, 
+      endIndex: String!, 
+      interval: String!,
+      nextPage: String
+      count: Int
+   ): [String]! @cacheControl(maxAge: 4800) @neo4j_ignore
+}
+
+
+"""
+Digital state set associated to at least one PIPoint
+"""
+type DigitalState implements Node {
+   "(internal database use)"
+   _id: Long!
+   "extracted AF template"
+   af_template: String
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "name for digital state"
+   name: String!
+   "list of digital state names, in integer value order"
+   states: String!
+   "links to PIPoint having values in this set"
+   pipoints: [PIPoint] @relation(name: "STATE_FROM", direction: "IN")
+}
+
+"""
+Source PI Server representation
+"""
+type Server implements Node {
+   "(internal database use)"
+   _id: Long!
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "server name"
+   name: String!
+   "databases extracted from the server"
+   has_database: [Database] @relation(name: "HAS_DATABASE", direction: "OUT")
+}
+
+"""
+--- EXPERIMENTAL ---
+"""
+type WindTurbine implements Node {
+   _id: Long!
+   id: ID!
+   model: String
+   manufacturer: String
+   latitude: Float
+   longitude: Float
+   location: Point
+}
+
+"""
+--- EXPERIMENTAL ---
+"""
+type UniBuilding implements Node {
+   _id: Long!
+   id: ID!
+   name: String
+   buildingName: String 
+   CAAN: String 
+   constructionDate: String 
+   displayName: String
+   latitude: Float
+   longitude: Float
+   primaryUsage: String
+   location: Point
+}
+   
