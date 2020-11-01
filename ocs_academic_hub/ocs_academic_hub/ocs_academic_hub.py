@@ -11,15 +11,12 @@ import json
 import os
 import numpy as np
 import pandas as pd
-import concurrent.futures
-import traceback
 from typeguard import typechecked
 from typing import List, Union
 import pkg_resources
 import urllib3
 import backoff
 import logging
-import requests
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -76,6 +73,10 @@ class SdsError50x(Exception):
     pass
 
 
+class GraphQLError409(Exception):
+    pass
+
+
 def get_config(url, client_secret=""):
     if len(client_secret):
         client_secret = f"\nClientSecret = {client_secret}\n"
@@ -86,7 +87,14 @@ def get_config(url, client_secret=""):
 
 
 class HubClient(OCSClient):
-    def __init__(self, hub_data="hub_datasets.json", collab_key=None, debug=False):
+    @typechecked
+    def __init__(
+        self,
+        hub_data: str = "hub_datasets.json",
+        collab_key: str = "",
+        options: List[str] = [],
+        debug: bool = False,
+    ):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
         config_filename = os.environ.get("OCS_HUB_CONFIG", None)
@@ -100,7 +108,7 @@ class HubClient(OCSClient):
                 else:
                     print("@ ### authorization denied ###")
                     return
-            if collab_key:
+            if len(collab_key) > 0:
                 print("@ --- OSIsoft authorization required to run on Collab ---")
                 config_file = get_config(COLLAB_INI, client_secret=collab_key)
 
@@ -127,6 +135,8 @@ class HubClient(OCSClient):
             )
             print("@ --- authorization granted ---")
 
+        self.__options = options
+        self.__debug = debug
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
         if data_file != default_hub_data:
             print(f"@ Hub data file: {data_file}")
@@ -275,17 +285,17 @@ class HubClient(OCSClient):
             )
         )
         data_items = super().DataViews.getResolvedDataItems(
-            namespace_id, dataview_id, "Asset_value?count=1000"
+            namespace_id, dataview_id, "Asset_value?count=1000&cache=refresh"
         )
         for i, item in enumerate(data_items.Items):
             df.loc[i] = [
                 item.Metadata["asset_id"],
                 item.Metadata["column_name"],
                 ocstype2hub.get(item.TypeId, "Float"),
-                item.Metadata.get("engunits", "-n/a-"),
+                item.Metadata.get("engunits", "-n/a-").replace("Â", ""),
                 item.Name,
             ]
-        return df.sort_values("Column_Name")
+        return df.sort_values(["Column_Name", "Asset_Id"])
 
     @backoff.on_exception(
         backoff.expo, SdsError, max_tries=6, jitter=backoff.full_jitter
@@ -310,7 +320,6 @@ class HubClient(OCSClient):
             df = df.rename(columns={ds_col: ds_col[:-4] for ds_col in ds_columns})
         return df
 
-    @timer
     def __get_data_interpolated(
         self,
         namespace_id,
@@ -348,7 +357,6 @@ class HubClient(OCSClient):
         end_index: str,
         interval: str,
         count: int = None,
-        raw: bool = False,
         verbose: bool = False,
     ):
         df = pd.DataFrame()
@@ -366,10 +374,17 @@ class HubClient(OCSClient):
         if verbose:
             summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
             print(summary)
+
+        interpolated_f = (
+            self.__get_data_interpolated_gql
+            if "cache" in self.__options
+            else self.__get_data_interpolated
+        )
+        dataview_id = self.remap_campus_dataview_id(dataview_id)
         next_page = None
         while True:
             try:
-                csv, next_page, _ = self.__get_data_interpolated(
+                csv, next_page, _ = interpolated_f(
                     namespace_id=namespace_id,
                     dataview_id=dataview_id,
                     count=count,
@@ -378,7 +393,6 @@ class HubClient(OCSClient):
                     end_index=end_index,
                     interval=interval,
                     next_page=next_page,
-                    no_timer=not verbose,
                 )
                 # print(f"[{len(csv)}]", end="")
                 df = df.append(
@@ -390,10 +404,15 @@ class HubClient(OCSClient):
                     break
                 print("+", end="", flush=True)
             except SdsError as e:
-                if not any(ss in str(e) for ss in ["408:", "503:", "504:"]):
+                if not any(
+                    ss in str(e) for ss in ["408:", "503:", "504:", "409:", "502:"]
+                ):
                     raise e
+                if "409:" in str(e):
+                    print("#", end="")
+                    continue
                 if "408:" not in str(e):
-                    print(f"[restart-50{'3' if '503:' in str(e) else '4'}]", end="")
+                    print(f"[restart-{str(e)[3:6]}]", end="")
                     raise SdsError50x
                 df = pd.DataFrame()
                 next_page = None
@@ -416,13 +435,115 @@ class HubClient(OCSClient):
 
     # EXPERIMENTAL
 
+    def remap_campus_dataview_id(self, dv_id):
+        if "campus.building-" in dv_id:
+            if not any(
+                ss in dv_id for ss in ["-electricity", "-chilled_water", "-steam"]
+            ):
+                return dv_id + "-electricity"
+        return dv_id
+
+    def get_token(self):
+        return self._OCSClient__baseClient._BaseClient__getToken()
+
+    @backoff.on_exception(
+        backoff.expo,
+        (requests.HTTPError, requests.ConnectionError, GraphQLError409),
+        max_tries=10,
+        jitter=backoff.full_jitter,
+    )
+    def __get_data_interpolated_gql(
+        self,
+        namespace_id,
+        dataview_id,
+        form,
+        start_index,
+        end_index,
+        interval,
+        count,
+        next_page,
+        endpoint="https://data.academic.osisoft.com/graphql",
+    ):
+        dv_query = gql(
+            """
+query(
+    $dataview_id: ID,
+    $namespace_id: String!,
+    $start_index: String!,
+    $end_index: String!,
+    $interval: String!,
+    $next_page: String
+    ) {
+  DataView(id: $dataview_id) {
+    id
+    interpolated(
+      namespace: $namespace_id
+      startIndex: $start_index
+      endIndex: $end_index
+      interval: $interval
+      nextPage: $next_page
+    )
+  }
+}
+            """
+        )
+        sample_transport = RequestsHTTPTransport(
+            url=endpoint,
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+            verify=False,
+            retries=5,
+        )
+        client = Client(transport=sample_transport, fetch_schema_from_transport=False)
+        try:
+            result = client.execute(
+                dv_query,
+                variable_values={
+                    "dataview_id": dataview_id,
+                    "namespace_id": namespace_id,
+                    "start_index": start_index,
+                    "end_index": end_index,
+                    "interval": interval,
+                    "next_page": next_page,
+                },
+            )
+        except requests.HTTPError as rh:
+            print("$", end="")
+            raise rh
+        except requests.ConnectionError as rc:
+            print("&", end="")
+            if self.__debug:
+                print(f"[{rc}]")
+            raise rc
+        except Exception as e:
+            print("!", end="")
+            d = eval(str(e))
+            message = json.loads(json.dumps(d))["message"]
+            if "409:" in message:
+                raise GraphQLError409
+            raise SdsError(message)
+        dataview_result = result["DataView"]
+        if len(dataview_result) == 0:
+            raise SdsError(f"  404: DataView ID {dataview_id} not found.")
+        interpolated = dataview_result[0]["interpolated"]
+        index = {"csv": 0, "next_page": 1, "first_page": 2}
+        return (
+            interpolated[index["csv"]],
+            interpolated[index["next_page"]],
+            interpolated[index["first_page"]],
+        )
+
     def refresh_datasets(
         self,
         hub_data="hub_datasets.json",
         additional_status="production",
         endpoint="https://data.academic.osisoft.com/graphql",
     ):
-        sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
+        sample_transport = RequestsHTTPTransport(
+            url=endpoint,
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+            verify=False,
+            retries=3,
+        )
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
         db_query = gql(
             """
@@ -462,7 +583,12 @@ query Database($status: String) {
     def graphql_query(
         self, query_string, endpoint="https://data.academic.osisoft.com/graphql"
     ):
-        sample_transport = RequestsHTTPTransport(url=endpoint, verify=False, retries=3)
+        sample_transport = RequestsHTTPTransport(
+            url=endpoint,
+            headers={"Authorization": f"Bearer {self.get_token()}"},
+            verify=False,
+            retries=3,
+        )
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
         query = gql(query_string)
         return client.execute(query)
