@@ -160,15 +160,17 @@ type Attribute implements Node {
    elements: [Element] @relation(name: "HAS_ATTRIBUTE", direction: "IN")
 }
 
+directive @cacheControl(maxAge: Int = 60) on FIELD_DEFINITION | OBJECT
+
 """
 Asset-centric data view representation
 Reference: https://academichub.blob.core.windows.net/hub/Hub_Dataset_Onboarding_Part_1.html
 """
-type DataView implements Node {
+type DataView implements Node @cacheControl(maxAge: 4800) {
    "(internal database use)"
    _id: Long!
    "data view identifier"
-   id: ID!
+   id: ID! 
    "OCS metadata for dataset identifier"
    asset_db: String!
    "all assets referenced by the data view"
@@ -182,12 +184,22 @@ type DataView implements Node {
    "indicates this data view has been mapped on OCS"
    ocs_sync: Boolean!
    "associated OCS tag"
-   ocs_tag: String!
+   ocs_tag: String! 
    "streams associated to the data view"
    has_stream: [PIPoint] @relation(name: "HAS_STREAM", direction: "OUT")
    "assets this data views is associated with"
    elements: [Element] @relation(name: "HAS_DATAVIEW", direction: "IN")
+   "interpolated asset stream data"
+   interpolated(
+      namespace: String!, 
+      startIndex: String!, 
+      endIndex: String!, 
+      interval: String!,
+      nextPage: String
+      count: Int
+   ): [String]! @cacheControl(maxAge: 4800) @neo4j_ignore
 }
+
 
 """
 Digital state set associated to at least one PIPoint
