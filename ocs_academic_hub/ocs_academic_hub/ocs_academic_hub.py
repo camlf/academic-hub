@@ -268,6 +268,9 @@ class HubClient(OCSClient):
             )
         )
 
+    def __asdict(self, item_metadata):
+        return {i["Name"]: i["Value"] for i in item_metadata}
+
     @backoff.on_exception(
         backoff.expo, SdsError, max_tries=6, jitter=backoff.full_jitter
     )
@@ -282,6 +285,7 @@ class HubClient(OCSClient):
                 "Stream_Type",
                 "Stream_UOM",
                 "OCS_Stream_Name",
+                "OCS_Stream_Id",
             )
         )
         data_items = super().DataViews.getResolvedDataItems(
@@ -289,11 +293,12 @@ class HubClient(OCSClient):
         )
         for i, item in enumerate(data_items.Items):
             df.loc[i] = [
-                item.Metadata["asset_id"],
-                item.Metadata["column_name"],
+                self.__asdict(item.Metadata)["asset_id"],
+                self.__asdict(item.Metadata)["column_name"],
                 ocstype2hub.get(item.TypeId, "Float"),
-                item.Metadata.get("engunits", "-n/a-").replace("Â", ""),
+                self.__asdict(item.Metadata).get("engunits", "-n/a-").replace("Â", ""),
                 item.Name,
+                item.Id,
             ]
         return df.sort_values(["Column_Name", "Asset_Id"])
 
@@ -581,7 +586,10 @@ query Database($status: String) {
         print(f"@ Current dataset: {self.current_dataset()}")
 
     def graphql_query(
-        self, query_string, endpoint="https://data.academic.osisoft.com/graphql"
+        self,
+        query_string,
+        variable_values=None,
+        endpoint="https://data.academic.osisoft.com/graphql",
     ):
         sample_transport = RequestsHTTPTransport(
             url=endpoint,
@@ -591,4 +599,6 @@ query Database($status: String) {
         )
         client = Client(transport=sample_transport, fetch_schema_from_transport=True)
         query = gql(query_string)
-        return client.execute(query)
+        if variable_values is None:
+            variable_values = {}
+        return client.execute(query, variable_values=variable_values)
