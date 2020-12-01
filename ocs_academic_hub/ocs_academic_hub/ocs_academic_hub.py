@@ -57,7 +57,10 @@ def initialize_hub_data(data_file):
 def assets_and_metadata(gqlh, db_index, current_db):
     assets_info = gqlh["Database"][db_index[current_db]]["asset_with_dv"]
     assets = sorted([i["name"].lower() for i in assets_info])
-    # h["Database"][0]["asset_with_dv"][0]["asset_metadata"]
+    dv_column_key = {}
+    for i in assets_info:
+        for dv in i["has_dataview"]:
+            dv_column_key[dv["id"]] = dv.get("ocs_column_key", None)
     metaf = lambda x: {} if x is None else eval(x)
     metadata = {
         assets_info[j]["name"]: metaf(assets_info[j]["asset_metadata"])
@@ -66,7 +69,7 @@ def assets_and_metadata(gqlh, db_index, current_db):
     for key in metadata.keys():
         d = metadata[key]
         d.update({"Asset_Id": key})
-    return assets, metadata
+    return assets, metadata, dv_column_key
 
 
 class SdsError50x(Exception):
@@ -142,7 +145,7 @@ class HubClient(OCSClient):
             print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
-        self.__assets, self.__assets_metadata = assets_and_metadata(
+        self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
             self.__gqlh, self.__db_index, self.__current_db
         )
 
@@ -193,7 +196,7 @@ class HubClient(OCSClient):
             if self.__gqlh["Database"][j]["name"] == dataset:
                 self.__current_db_index = j
                 self.__current_db = self.__gqlh["Database"][j]["asset_db"]
-                self.__assets, self.__assets_metadata = assets_and_metadata(
+                self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
                     self.__gqlh, self.__db_index, self.__current_db
                 )
                 break
@@ -291,12 +294,18 @@ class HubClient(OCSClient):
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value?count=1000&cache=refresh"
         )
+        v2_column_key = self.__dv_column_key.get(dataview_id, None)
+        column_key = (
+            "column_name" if v2_column_key is None else f"{v2_column_key}|column"
+        )
         for i, item in enumerate(data_items.Items):
+            item_meta = self.__asdict(item.Metadata)
+            # print(column_key)
             df.loc[i] = [
-                self.__asdict(item.Metadata)["asset_id"],
-                self.__asdict(item.Metadata)["column_name"],
+                item_meta["asset_id"],
+                item_meta[column_key],
                 ocstype2hub.get(item.TypeId, "Float"),
-                self.__asdict(item.Metadata).get("engunits", "-n/a-").replace("Â", ""),
+                item_meta.get("engunits", "-n/a-").replace("Â", ""),
                 item.Name,
                 item.Id,
             ]
@@ -572,6 +581,7 @@ query Database($status: String) {
         id
         asset_id
         columns
+        ocs_column_key
       }
     }
   }
