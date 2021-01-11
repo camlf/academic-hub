@@ -279,18 +279,18 @@ class HubClient(OCSClient):
     )
     @typechecked
     def dataview_definition(
-        self, namespace_id: str, dataview_id: str, version: str = ""
+        self, namespace_id: str, dataview_id: str, stream_id=False, version: str = ""
     ):
-        df = pd.DataFrame(
-            columns=(
-                "Asset_Id",
-                "Column_Name",
-                "Stream_Type",
-                "Stream_UOM",
-                "OCS_Stream_Name",
-                "OCS_Stream_Id",
-            )
-        )
+        columns = [
+            "Asset_Id",
+            "Column_Name",
+            "Stream_Type",
+            "Stream_UOM",
+            "OCS_Stream_Name",
+        ]
+        if stream_id:
+            columns += ["OCS_Stream_Id"]
+        df = pd.DataFrame(columns=columns)
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value?count=1000&cache=refresh"
         )
@@ -300,15 +300,16 @@ class HubClient(OCSClient):
         )
         for i, item in enumerate(data_items.Items):
             item_meta = self.__asdict(item.Metadata)
-            # print(column_key)
-            df.loc[i] = [
+            column_values = [
                 item_meta["asset_id"],
                 item_meta[column_key],
                 ocstype2hub.get(item.TypeId, "Float"),
                 item_meta.get("engunits", "-n/a-").replace("Â", ""),
                 item.Name,
-                item.Id,
             ]
+            if stream_id:
+                column_values += [item.Id]
+            df.loc[i] = column_values
         return df.sort_values(["Column_Name", "Asset_Id"])
 
     @backoff.on_exception(
