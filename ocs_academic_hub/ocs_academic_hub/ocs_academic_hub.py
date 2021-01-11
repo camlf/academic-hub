@@ -549,19 +549,37 @@ query(
 
     def refresh_datasets(
         self,
+        hub_data="hub_datasets",
+        additional_status="production",
+        base_url="https://academichub.blob.core.windows.net/hub/datasets/",
+        experimental=False,
+        **kwargs,
+    ):
+        if experimental:
+            self.refresh_datasets_experimental(hub_data, additional_status, **kwargs)
+        else:
+            db_file = f"{hub_data}-{additional_status}.json"
+            db = requests.get(base_url + db_file)
+            if db.status_code == 200:
+                with open(hub_data, "w") as f:
+                    f.write(json.dumps(db.json(), indent=2))
+            else:
+                print(
+                    f"!!! Error getting data file {db_file} at {base_url}: datasets info not updated, please retry"
+                )
+                return
+
+        print(f"@ Hub data file: {hub_data}")
+        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
+        print(f"@ Current dataset: {self.current_dataset()}")
+
+    def refresh_datasets_experimental(
+        self,
         hub_data="hub_datasets.json",
         additional_status="production",
         endpoint="https://data.academic.osisoft.com/graphql",
     ):
-        sample_transport = RequestsHTTPTransport(
-            url=endpoint,
-            headers={"Authorization": f"Bearer {self.get_token()}"},
-            verify=False,
-            retries=3,
-        )
-        client = Client(transport=sample_transport, fetch_schema_from_transport=True)
-        db_query = gql(
-            """
+        db_query = """
 query Database($status: String) {
   Database(filter: { OR: [{ status: "production" }, { status: $status }] }, orderBy: name_asc) {
     name
@@ -588,13 +606,11 @@ query Database($status: String) {
   }
 }
             """
+        db = self.graphql_query(
+            db_query, variable_values={"status": additional_status}, endpoint=endpoint
         )
-        db = client.execute(db_query, variable_values={"status": additional_status})
         with open(hub_data, "w") as f:
             f.write(json.dumps(db, indent=2))
-        print(f"@ Hub data file: {hub_data}")
-        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(hub_data)
-        print(f"@ Current dataset: {self.current_dataset()}")
 
     def graphql_query(
         self,
