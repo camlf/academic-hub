@@ -549,7 +549,7 @@ query(
 
     def refresh_datasets(
         self,
-        hub_data="hub_datasets",
+        hub_data="hub_datasets.json",
         additional_status="production",
         base_url="https://academichub.blob.core.windows.net/hub/datasets/",
         experimental=False,
@@ -558,11 +558,12 @@ query(
         if experimental:
             self.refresh_datasets_experimental(hub_data, additional_status, **kwargs)
         else:
-            db_file = f"{hub_data}-{additional_status}.json"
+            db_file = f"{hub_data.replace('.json', '')}-{additional_status}.json"
             db = requests.get(base_url + db_file)
             if db.status_code == 200:
                 with open(hub_data, "w") as f:
                     f.write(json.dumps(db.json(), indent=2))
+
             else:
                 print(
                     f"!!! Error getting data file {db_file} at {base_url}: datasets info not updated, please retry"

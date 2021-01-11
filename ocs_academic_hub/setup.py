@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ocs_academic_hub",
-    version="0.91.0",
+    version="0.92.0",
     author="Christian Foisy",
     author_email="cfoisy@osisoft.com",
     description="OSIsoft Academic Hub Library",
