@@ -372,14 +372,16 @@ class HubClient(OCSClient):
         end_index: str,
         interval: str,
         count: int = None,
+        sub_second_interval: bool = False,
         verbose: bool = False,
     ):
         df = pd.DataFrame()
-        try:
-            datetime.strptime(interval, "%H:%M:%S")
-        except ValueError as e:
-            print(f"@Error: interval has invalid format: {e}")
-            return df
+        if not sub_second_interval:
+            try:
+                datetime.strptime(interval, "%H:%M:%S")
+            except ValueError as e:
+                print(f"@Error: interval has invalid format: {e}")
+                return df
         try:
             parse(end_index)
             parse(start_index)

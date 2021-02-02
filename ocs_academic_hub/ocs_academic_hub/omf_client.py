@@ -109,9 +109,7 @@ class OMFClient:
         if r.status_code == 200:
             self._producer_token = r.text
         else:
-            extra_message = (
-                f" (bad API key: {api_key})" if r.status_code == 400 else ""
-            )
+            extra_message = f" (bad API key: {api_key})" if r.status_code == 400 else ""
             printg(
                 f"@@ error from hub configuration server{extra_message}, please correct and retry (error code {r.status_code})"
             )
@@ -129,7 +127,7 @@ class OMFClient:
         )
         if r.status_code != 200:
             if r.status_code == 401:
-                printg(f"@@ please correct API key: current key is {api_key}\n")
+                printg(f"@@# please correct API key: current key is {api_key}\n")
             else:
                 printg(
                     f"\n\n !#!# error with type definition: status={r.status_code}\n\n >>> {r.text}\n\n"
@@ -204,7 +202,7 @@ class OMFClient:
 
                 row_omf_data = [
                     omf_data(
-                        self._equipment,
+                        asset_name,
                         sensor,
                         t.astimezone(UTC).isoformat(),
                         row_dict[sensor],

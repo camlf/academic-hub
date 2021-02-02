@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ocs_academic_hub",
-    version="0.92.0",
+    version="0.94.0",
     author="Christian Foisy",
     author_email="cfoisy@osisoft.com",
     description="OSIsoft Academic Hub Library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/osisoft/OSI-Samples",
+    url="https://github.com/osisoft/OSI-Samples-OCS",
     packages=["ocs_academic_hub"],
     package_dir={"ocs_academic_hub": "ocs_academic_hub"},
     package_data={"ocs_academic_hub": ["*.json"]},
