@@ -1,0 +1,156 @@
+ARC Pavilion:
+  ChilledWater_MBTU: hubdv__1b20fb73
+  Electricity: hubdv__8b5bd6d4
+  Steam: hubdv__f2baabb0
+Academic Surge Building:
+  ChilledWater_MBTU: hubdv__c6820a74
+  Domestic Water: hubdv__cba63640
+  Electricity: hubdv__7678fbd9
+  Gas_Non-Heating: hubdv__e4de7ecd
+  Steam: hubdv__81991419
+Activities and Recreation Center:
+  ChilledWater: hubdv__2803da23
+  Domestic Water: hubdv__63c83d4b
+  Electricity: hubdv__9747d9db
+  Gas_Non-Heating: hubdv__cf274706
+  Steam: hubdv__8aceb34a
+Advanced Materials Research Laboratory:
+  Domestic Water: hubdv__3a503c41
+  Electricity: hubdv__6799b816
+Advanced Transportation Infrastructure Research Center:
+  Domestic Water: hubdv__29b18b54
+  Electricity: hubdv__85d44f3b
+  Gas_Non-Heating: hubdv__50dd7da1
+Agronomy Field Laboratory:
+  Electricity: hubdv__86198e70
+Animal Building:
+  Electricity: hubdv__05e1a6ad
+Animal Resource Service J1:
+  Domestic Water: hubdv__80d280c8
+  Electricity: hubdv__47c45632
+  Gas: hubdv__9fe5201d
+Animal Resource Service M3:
+  Electricity: hubdv__afde93cf
+Animal Resource Service N1:
+  Electricity: hubdv__56e12fa4
+Ann E. Pitzer Center:
+  ChilledWater: hubdv__4f2eb0cb
+  Domestic Water: hubdv__cdbc4d9b
+  Electricity: hubdv__b95f1ea0
+  Steam: hubdv__1b574f8f
+Antique Mechanics Trailer:
+  Electricity: hubdv__a8ba97c8
+Aquatic Biology & Environmental Science Bldg:
+  Electricity: hubdv__c358423d
+Art Building Annex:
+  Electricity: hubdv__3db088e1
+Art, Music, Wright Halls:
+  ChilledWater: hubdv__080f5f65
+  Electricity: hubdv__d5fdb4ef
+  Steam: hubdv__1fd48564
+Asmundson Annex:
+  Electricity: hubdv__8b274bb5
+Asmundson Hall:
+  ChilledWater: hubdv__a68fa0bd
+  Electricity: hubdv__5395a718
+  Steam: hubdv__662c9f08
+Bainer Hall:
+  ChilledWater: hubdv__7646e831
+  Electricity: hubdv__c95e6b84
+  Gas_Non-Heating: hubdv__c62b7535
+  Steam: hubdv__24d47297
+Bowley Head House:
+  Electricity: hubdv__dc94caa9
+Briggs Hall:
+  ChilledWater: hubdv__21403094
+  Electricity: hubdv__bf7bcfff
+  Steam: hubdv__4421dcb7
+CFA Administration Building:
+  ChilledWater: hubdv__c5741842
+California Hall:
+  ChilledWater: hubdv__f381779e
+  Domestic Water: hubdv__a823beb7
+  Electricity: hubdv__342783ba
+  Gas_Non-Heating: hubdv__06fbb7d5
+  HeatingHotWater: hubdv__61440df7
+Cellular Biology Laboratory:
+  Electricity: hubdv__17761b1b
+Center for Companion Animal Health:
+  ChilledWater: hubdv__55e004c1
+  Electricity: hubdv__bf84987e
+  Steam: hubdv__18ee48ad
+Center for Comparative Medicine:
+  ChilledWater: hubdv__5fc6f820
+  Domestic Water: hubdv__c5964ed1
+  Electricity: hubdv__354c41a0
+  Gas_Non-Heating: hubdv__3f0c276d
+  Steam With Steam Meter: hubdv__5990a530
+Center for Health & Environment Clinical Medicine:
+  Electricity: hubdv__f6370d1f
+Center for Health & Environment Office & Laboratory:
+  Electricity: hubdv__d3155b55
+Center for Health & Environment Toxic Pollutant Laboratory:
+  Electricity: hubdv__8ad38ae1
+  Gas: hubdv__6f07e9b5
+Center for Health and Environment Toxic Pollutant Laboratory:
+  Domestic Water: hubdv__be913539
+Central Cage Wash Facility:
+  ChilledWater: hubdv__3e62e3b0
+  Electricity: hubdv__f8b0ec68
+  Steam: hubdv__1b5dd4f3
+Chemistry:
+  ChilledWater_MBTU: hubdv__7d56bf2f
+  Domestic Water: hubdv__f2855d11
+  Electricity: hubdv__8c2edd63
+  Steam: hubdv__09464a04
+Chemistry Annex:
+  ChilledWater: hubdv__3a09ba5a
+  Electricity: hubdv__0c352542
+  Steam: hubdv__a21d7316
+Cole A:
+  Electricity: hubdv__b098b5f4
+Cole B:
+  ChilledWater: hubdv__b89f69f7
+  Electricity: hubdv__342182b1
+  Steam: hubdv__59456922
+Conference Center:
+  Domestic Water: hubdv__fef4d7f3
+  Electricity: hubdv__e6f5121f
+Contained Research Facility:
+  Electricity: hubdv__2065468e
+Cruess Hall:
+  ChilledWater: hubdv__6331344e
+  Domestic Water: hubdv__c5a730c0
+  Electricity: hubdv__f1e27574
+  Steam: hubdv__9344cacd
+Dairy Cattle Feed:
+  Electricity: hubdv__d31539a1
+Dairy Tower:
+  Electricity: hubdv__3ead0001
+Dutton Hall:
+  ChilledWater_MBTU: hubdv__e2436437
+  Electricity: hubdv__45ffb36a
+  Steam: hubdv__54bc076c
+Earth and Physical Sciences Building:
+  ChilledWater: hubdv__0f1c38af
+  Domestic Water: hubdv__d9ec418b
+  Electricity: hubdv__bcd13fe5
+  Gas_Non-Heating: hubdv__51edcb8c
+  Steam: hubdv__0b62a302
+Environmental Services Facility Headquarters:
+  Electricity: hubdv__1f0781e8
+Equestrian Center Caretaker Trailer:
+  Electricity: hubdv__cd1856d6
+Equestrian Center Covered Arena:
+  Domestic Water: hubdv__43c36f43
+  Electricity: hubdv__8062b7e9
+Everson Hall:
+  Domestic Water: hubdv__bc186dda
+  Electricity: hubdv__bada1d29
+  Steam: hubdv__7ba1a072
+FPS Trinchero Building:
+  Domestic Water: hubdv__6e295d55
+  Electricity: hubdv__40040507
+  Gas: hubdv__2485f12d
+Facilities Electrical Annex:
+  Electricity: hubdv__706747dd
