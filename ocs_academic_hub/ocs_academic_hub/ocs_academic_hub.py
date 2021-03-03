@@ -44,26 +44,39 @@ resource_path = "/".join((".", "hub_datasets.json"))
 default_hub_data = pkg_resources.resource_filename(resource_package, resource_path)
 
 
+def asset_id_fix(gqlh):
+    for i, database in enumerate(gqlh["Database"]):
+        for j, asset in enumerate(database["asset_with_dv"]):
+            if asset.get("asset_id", None) is None:
+                asset["asset_id"] = asset["name"]
+            else:
+                asset["name"] = asset["asset_id"]
+    return gqlh
+
+
 def initialize_hub_data(data_file):
+    global hub_db_namespaces
     with open(data_file) as f:
         gqlh = json.loads(f.read())
     db_index = {}
+    hub_db_namespaces.clear()
     for i, database in enumerate(gqlh["Database"]):
         db_index[database["asset_db"]] = i
         hub_db_namespaces[database["name"]] = database["namespace"]
-    return gqlh, gqlh["Database"][0]["asset_db"], db_index
+    return asset_id_fix(gqlh), gqlh["Database"][0]["asset_db"], db_index
 
 
 def assets_and_metadata(gqlh, db_index, current_db):
     assets_info = gqlh["Database"][db_index[current_db]]["asset_with_dv"]
-    assets = sorted([i["name"].lower() for i in assets_info])
+    asset_key = "name"
+    assets = sorted([i[asset_key].lower() for i in assets_info])
     dv_column_key = {}
     for i in assets_info:
         for dv in i["has_dataview"]:
             dv_column_key[dv["id"]] = dv.get("ocs_column_key", None)
     metaf = lambda x: {} if x is None else eval(x)
     metadata = {
-        assets_info[j]["name"]: metaf(assets_info[j]["asset_metadata"])
+        assets_info[j][asset_key]: metaf(assets_info[j]["asset_metadata"])
         for j in range(len(assets_info))
     }
     for key in metadata.keys():
@@ -595,6 +608,7 @@ query Database($status: String) {
     id
     asset_with_dv(orderBy: name_asc) {
       name
+      asset_id
       description
       asset_metadata
       has_dataview(filter: { ocs_sync: true }, orderBy: name_asc) {
