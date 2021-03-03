@@ -1,6 +1,7 @@
 .ipynb_checkpoints
 *.ini
 *.egg-info
+*.csv
 build/
 dist/
 FeatureDF.csv
