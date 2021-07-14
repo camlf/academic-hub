@@ -38,4 +38,5 @@ jobs:
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
-          command: papermill --log-output ~/project/learning_modules/scripts/Brewery_test_release.ipynb Brewery_test_log.ipynb
+          app-dir: ~/project/learning_modules/scripts
+          command: papermill --log-output Brewery_test_release.ipynb Brewery_test_log.ipynb
