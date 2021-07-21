@@ -372,6 +372,27 @@ class HubClient(OCSClient):
             **count_arg,
         )
 
+    def __get_data_stored(
+        self,
+        namespace_id,
+        dataview_id,
+        form,  # not used
+        start_index,
+        end_index,
+        interval,  # not used
+        count,
+        next_page,
+    ):
+        count_arg = {} if count is None else {"count": count}
+        return super().DataViews.getDataStored(
+            namespace_id,
+            dataview_id,
+            startIndex=start_index,
+            endIndex=end_index,
+            url=next_page,
+            **count_arg,
+        )
+
     @backoff.on_exception(
         backoff.expo, SdsError50x, max_tries=6, jitter=backoff.full_jitter
     )
@@ -387,9 +408,34 @@ class HubClient(OCSClient):
         count: int = None,
         sub_second_interval: bool = False,
         verbose: bool = False,
+        stored: bool = False,
+    ):
+        return self.dataview_get_data_pd(
+            namespace_id,
+            dataview_id,
+            start_index,
+            end_index,
+            interval,
+            count,
+            sub_second_interval,
+            verbose,
+            stored,
+        )
+
+    def dataview_get_data_pd(
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        start_index: str,
+        end_index: str,
+        interval: str,
+        count: int = None,
+        sub_second_interval: bool = False,
+        verbose: bool = False,
+        stored: bool = False,
     ):
         df = pd.DataFrame()
-        if not sub_second_interval:
+        if not sub_second_interval and not stored:
             try:
                 datetime.strptime(interval, "%H:%M:%S")
             except ValueError as e:
@@ -405,16 +451,16 @@ class HubClient(OCSClient):
             summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
             print(summary)
 
-        interpolated_f = (
-            self.__get_data_interpolated_gql
-            if "cache" in self.__options
-            else self.__get_data_interpolated
-        )
+        dataview_f = self.__get_data_stored if stored else self.__get_data_interpolated
+        # when GraphQL interface is in place
+        # self.__get_data_interpolated_gql
+        # if "cache" in self.__options
+
         dataview_id = self.remap_campus_dataview_id(dataview_id)
         next_page = None
         while True:
             try:
-                csv, next_page, _ = interpolated_f(
+                csv_or_json, next_page, _ = dataview_f(
                     namespace_id=namespace_id,
                     dataview_id=dataview_id,
                     count=count,
@@ -424,11 +470,17 @@ class HubClient(OCSClient):
                     interval=interval,
                     next_page=next_page,
                 )
-                # print(f"[{len(csv)}]", end="")
-                df = df.append(
-                    pd.read_csv(io.StringIO(csv), parse_dates=["Timestamp"]),
-                    ignore_index=True,
-                )
+                # print(f"[{len(csv)}, {type(csv)}, {str(csv)}]", end="")
+                if not stored:
+                    df = df.append(
+                        pd.read_csv(
+                            io.StringIO(csv_or_json), parse_dates=["Timestamp"]
+                        ),
+                        ignore_index=True,
+                    )
+                else:
+                    df = df.append(pd.read_json(json.dumps(csv_or_json)))
+
                 if next_page is None:
                     print()
                     break
@@ -456,6 +508,39 @@ class HubClient(OCSClient):
                     raise e
 
         return self.__process_digital_states(df)
+
+    @backoff.on_exception(
+        backoff.expo, SdsError50x, max_tries=6, jitter=backoff.full_jitter
+    )
+    @timer
+    @typechecked
+    def dataview_stored_pd(
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        start_index: str,
+        end_index: str,
+        # count: int = None,
+    ):
+        try:
+            result = self.dataview_get_data_pd(
+                namespace_id,
+                dataview_id + "_narrow",
+                start_index,
+                end_index,
+                "",
+                stored=True,
+            )
+        except SdsError as e:
+            if "404" in str(e):
+                print(
+                    f"### Error: data view with Id {dataview_id} has no version for stored data.\n"
+                    "###  If data view id is correct, contact Hub support if stored data is required instead of interpolated."
+                )
+                return
+            else:
+                raise e
+        return result
 
     def request(self, method, url, params=None, data=None, headers=None, **kwargs):
         print(dir(self))
