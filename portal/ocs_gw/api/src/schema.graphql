@@ -1,96 +1,212 @@
-scalar Point
-scalar DateTime
-scalar PointInput
 
-type User {
-  userId: ID!
-  name: String
-  reviews: [Review] @relationship(type: "WROTE", direction: OUT)
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
-    )
-  numReviews: Int
-    @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
-  recommendations(first: Int = 3): [Business]
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review)-[:REVIEWS]->(:Business)<-[:REVIEWS]-(:Review)<-[:WROTE]-(:User)-[:WROTE]->(:Review)-[:REVIEWS]->(rec:Business) WHERE NOT EXISTS( (this)-[:WROTE]->(:Review)-[:REVIEWS]->(rec) ) WITH rec, COUNT(*) AS num ORDER BY num DESC LIMIT $first RETURN rec"
-    )
+"""
+AF database ==> Hub dataset 
+"""
+type Database {
+   "PI WebID" 
+   id: ID!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "short description of the dataset"
+   description: String
+   "nice name - unused"
+   display_name: String
+   "for reference information"
+   informationURL: String
+   "dataset name"
+   name: String!
+   "OCS namespace for dataset streams"
+   namespace: String
+   "standard status are: production, onboarding"
+   status: String
+   "convention: last dataset update date"
+   version: String
+   "top AF elements/assets"
+   has_element: [Element] @relationship(type: "HAS_ELEMENT", direction: OUT)
+   "all assets (elements) with data views are linked here"
+   asset_with_dv: [Element] @relationship(type: "ASSET_WITH_DV", direction: OUT)
+   "source PI server node"
+   servers: [Server] @relationship(type: "HAS_DATABASE", direction: IN)
+   "extracted AF template - unused"
+   af_template: String!
+   "all assets (elements) with no children element"
+   leaf_elements: [Element]! @cypher (statement: "MATCH (this)-[:HAS_ELEMENT*]->(e:Element) WHERE NOT ((e)-[:HAS_ELEMENT]->()) RETURN DISTINCT e ORDER BY e.name")
 }
 
-type Business {
-  businessId: ID!
-  name: String!
-  address: String
-  city: String
-  state: String
-  location: Point
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)<-[:REVIEWS]-(r:Review) RETURN coalesce(avg(r.stars),0.0)"
-    )
-  reviews: [Review] @relationship(type: "REVIEWS", direction: IN)
-  categories: [Category] @relationship(type: "IN_CATEGORY", direction: OUT)
+# extend type Database @auth(rules: [{ isAuthenticated: true }])
+"""
+AF elements from source PI
+"""
+type Element {
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "element name from AF"
+   name: String!
+   "element description from AF"
+   description: String
+   "list of static attributes for element"
+   static_attributes: [String]
+   "serialized dictionary built from static_attributes"
+   asset_metadata: String
+   "latitude (if present, otherwise null)"
+   latitude: Float
+   "longitude (if present, otherwise null)"
+   longitude: Float
+   "compound field with lat/long"
+   location: Point
+   "child AF elements"
+   has_element: [Element] @relationship(type: "HAS_ELEMENT", direction: OUT)
+   "dynamic attributes (PIPoint) of element"
+   has_dynamic: [PIPoint] @relationship(type: "HAS_DYNAMIC", direction: OUT)
+   "static attributes (configuration data) of element"
+   has_attribute: [Attribute] @relationship(type: "HAS_ATTRIBUTE", direction: OUT)
+   "data view object representation"
+   has_dataview: [DataView] @relationship(type: "HAS_DATAVIEW", direction: OUT)
+   "if element has at least one data view, this link exists"
+   databases: [Database] @relationship(type: "ASSET_WITH_DV", direction: IN)
+   "parent element(s)"
+   has_parent: [Element] @relationship(type: "HAS_ELEMENT", direction: IN)
 }
 
-type Review {
-  reviewId: ID!
-  stars: Float
-  text: String
-  date: DateTime
-  business: Business @relationship(type: "REVIEWS", direction: OUT)
-  user: User @relationship(type: "WROTE", direction: IN)
+"""
+PIPoint (stream) from PI data archive
+"""
+type PIPoint {
+   "asset identifier - from AF => OCS metadata"
+   asset_id: String
+   "unit of measure"
+   uom: String
+   "extracted AF template"
+   af_template: String
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "AF categories, separated by comma"
+   categories: [String]
+   "data view column name - from AF attribute name => OCS metadata"
+   column_name: String!
+   "AF attribute description"
+   description: String
+   "digital state set name, if applicable"
+   digital_set_name: String
+   "Currently: asset_db:Web_ID - to allow sharing AF elements by datasets"
+   id: ID!
+   "Actual Web ID"
+   webid: String
+   "AF attribute name"
+   name: String!
+   "0 if stream does not exist on OCS, 1 otherwise"
+   on_ocs: Int!
+   "source of the PIPoint"
+   pointsource: String
+   "if step interpolation should apply"
+   step: Boolean
+   "actual Stream ID of PIPoint on OCS"
+   stream_id: String
+   "OCS stream name (same as PI tag name)"
+   stream_name: String!
+   "data type"
+   type: String!
+   "last timestamp for stream (tag)"
+   last_updated: DateTime
+   "link to digital state, if applicable"
+   state_from: [DigitalState] @relationship(type: "STATE_FROM", direction: OUT)
+   "element(s) referencing this stream"
+   elements: [Element] @relationship(type: "HAS_DYNAMIC", direction: IN)
+   "single-asset data views this stream belongs to"
+   dataviews: [DataView] @relationship(type: "HAS_STREAM", direction: IN)
 }
 
-type Category {
-  name: ID!
-  businesses: [Business] @relationship(type: "IN_CATEGORY", direction: IN)
+"""
+Static element attribute
+"""
+type Attribute {
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset id"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "AF attribute name"
+   name: String!
+   "value of the static attribute"
+   value: String
+   "data type (float, integer, etc.)"
+   type: String!
+   "configuration string extracted from AF"
+   configString: String
+   "data reference plugin extracted from AF"
+   dataReferencePlugin: String
+   "from AF"
+   typeQualifier: String
+   "if this attribute should be published as hub asset metadata"
+   hub_meta: Boolean
+   "elements this attribute belongs to"
+   elements: [Element] @relationship(type: "HAS_ATTRIBUTE", direction: IN)
 }
 
-type RatingCount @exclude {
-  stars: Float!
-  count: Int!
+"""
+Asset-centric data view representation
+Reference: https://academichub.blob.core.windows.net/hub/Hub_Dataset_Onboarding_Part_1.html
+"""
+type DataView {
+   "data view identifier"
+   id: ID!
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "all assets referenced by the data view"
+   asset_id: [String]!
+   "list of columns headers"
+   columns: String!
+   "short data view description"
+   description: String
+   "short name for the data view"
+   name: String!
+   "indicates this data view has been mapped on OCS"
+   ocs_sync: Boolean!
+   "associated OCS tag"
+   ocs_tag: String!
+   "streams associated to the data view"
+   has_stream: [PIPoint] @relationship(type: "HAS_STREAM", direction: OUT)
+   "assets this data views is associated with"
+   elements: [Element] @relationship(type: "HAS_DATAVIEW", direction: IN)
 }
 
-type Mutation {
-  mergeBusinessCategory(categories: [String!]!, businessId: ID!): Business
-    @cypher(
-      statement: "MATCH (b:Business {businessId: $businessId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"
-    )
-  mergeUser(name: String!, userId: ID!): User
-    @cypher(
-      statement: """
-      MERGE (u:User {userId: $userId})
-      ON CREATE SET u.name = $name
-      RETURN u
-      """
-    )
-  mergeBusiness(
-    businessId: ID!
-    name: String!
-    address: String!
-    city: String!
-    state: String!
-    latitude: Float!
-    longitude: Float!
-  ): Business
-    @cypher(
-      statement: """
-      MERGE (b:Business {businessId: $businessId})
-      ON CREATE SET b.name = $name,
-                    b.address = $address,
-                    b.city = $city,
-                    b.state = $state,
-                    b.location = Point({latitude: $latitude, longitude: $longitude})
-      RETURN b
-      """
-    )
+"""
+Digital state set associated to at least one PIPoint
+"""
+type DigitalState {
+   "extracted AF template"
+   af_template: String
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "name for digital state"
+   name: String!
+   "list of digital state names, in integer value order"
+   states: String!
+   "links to PIPoint having values in this set"
+   pipoints: [PIPoint] @relationship(type: "STATE_FROM", direction: IN)
 }
 
-type Query {
-  userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
-  ratingsCount: [RatingCount]
-    @cypher(
-      statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
-    )
+"""
+Source PI Server representation
+"""
+type Server {
+   "extracted AF template"
+   af_template: String!
+   "OCS metadata for dataset identifier"
+   asset_db: String!
+   "Web ID"
+   id: ID!
+   "server name"
+   name: String!
+   "databases extracted from the server"
+   has_database: [Database] @relationship(type: "HAS_DATABASE", direction: OUT)
 }
+
+   
