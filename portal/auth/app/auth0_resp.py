@@ -33,6 +33,7 @@ AUTH0_CLIENT_SECRET = env.get(constants.AUTH0_CLIENT_SECRET)
 AUTH0_DOMAIN = env.get(constants.AUTH0_DOMAIN)
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 AUTH0_AUDIENCE = env.get(constants.AUTH0_AUDIENCE)
+AUTH0_ROLES_KEY = "https://data.academic.osisoft.com/roles"
 
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = constants.SECRET_KEY
@@ -57,7 +58,7 @@ auth0 = oauth.register(
     access_token_url=AUTH0_BASE_URL + '/oauth/token',
     authorize_url=AUTH0_BASE_URL + '/authorize',
     client_kwargs={
-        'scope': 'openid profile email app_metadataa',
+        'scope': 'openid profile email app_metadata',
     },
 )
 
@@ -84,7 +85,11 @@ def home():
 
 @app.route('/callback')
 def callback_handling():
-    token = auth0.authorize_access_token()
+    try: 
+        token = auth0.authorize_access_token()
+    except:
+        return "You're not part of the Academic Hub organization", 400
+
     resp = auth0.get('userinfo')
     userinfo = resp.json()
 
@@ -118,9 +123,10 @@ def logout():
 @app.route('/dashboard')
 @requires_auth
 def dashboard():
+    roles = session[constants.JWT_PAYLOAD][AUTH0_ROLES_KEY]
     return render_template('dashboard.html',
                            userinfo=session[constants.PROFILE_KEY],
-                           userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD], indent=4),
+                           userinfo_pretty=roles,  # json.dumps(session[constants.JWT_PAYLOAD], indent=4),
                            token_pretty=json.dumps(session[constants.PROFILE_KEY]['token'], indent=4))
 
 
