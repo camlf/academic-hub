@@ -34,6 +34,8 @@ AUTH0_DOMAIN = env.get(constants.AUTH0_DOMAIN)
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 AUTH0_AUDIENCE = env.get(constants.AUTH0_AUDIENCE)
 AUTH0_ROLES_KEY = "https://data.academic.osisoft.com/roles"
+auth0_debug = int(env.get(constants.AUTH0_DEBUG, 0))
+print("debug:", auth0_debug)
 
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = constants.SECRET_KEY
@@ -93,10 +95,6 @@ def callback_handling():
     resp = auth0.get('userinfo')
     userinfo = resp.json()
 
-    hub_session_id = session.get('hub-session-id')
-    if hub_session_id:
-        app.r.set("hub:" + hub_session_id, str(token), 120)
-
     session[constants.JWT_PAYLOAD] = userinfo
     session[constants.PROFILE_KEY] = {
         'user_id': userinfo['sub'],
@@ -105,6 +103,11 @@ def callback_handling():
         # 'app_metadata': userinfo['app_metadata'],
         'token': {"token": token}
     }
+
+    hub_session_id = session.get('hub-session-id')
+    if hub_session_id:
+        app.r.set("hub:" + hub_session_id, str(userinfo), 120)
+
     return redirect('/auth/dashboard')
 
 
@@ -123,11 +126,12 @@ def logout():
 @app.route('/dashboard')
 @requires_auth
 def dashboard():
-    roles = session[constants.JWT_PAYLOAD][AUTH0_ROLES_KEY]
+    roles = [i for i in session[constants.JWT_PAYLOAD][AUTH0_ROLES_KEY] if "client-" not in i]
     return render_template('dashboard.html',
                            userinfo=session[constants.PROFILE_KEY],
                            userinfo_pretty=roles,  # json.dumps(session[constants.JWT_PAYLOAD], indent=4),
-                           token_pretty=json.dumps(session[constants.PROFILE_KEY]['token'], indent=4))
+                           token_pretty=json.dumps(session[constants.PROFILE_KEY]['token'], indent=4),
+                           debug=auth0_debug)
 
 
 @app.route('/token')
@@ -144,11 +148,10 @@ def return_token():
             return f"not found", 400
     else:
         return "no token", 400
-    # return session[constants.PROFILE_KEY]['token']
 
 
 api.mount('/auth', app)
 
 if __name__ == "__main__":
-    api.run(address="0.0.0.0", port=3000, debug=True)  # host='0.0.0.0', port=env.get('PORT', 3000))
+    api.run(address="0.0.0.0", port=3000, debug=True) 
  

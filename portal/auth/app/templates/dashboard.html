@@ -14,9 +14,12 @@
                     <h2 id="logo"><img src="https://academichub.blob.core.windows.net/images/aveva-logo_v2.png" /></h2>
 		    <!-- <img class="avatar" src="{{userinfo['picture']}}"/> -->
                     <h3>Welcome {{userinfo['name'].split(' ')[0]}} to the Academic Hub</h3>
-		    <h4>Applications you have access to:</h4>
+		    <h4><b>You can return now to the Hub Portal browser tab</b></h4>
+		    <h4>Applications/roles assigned to you</h4>
                     <pre>{{userinfo_pretty}}</pre>
-		    <pre>token={{token_pretty}}</pre>
+		    {% if debug %}
+		       <pre>--debug -- token={{token_pretty}}</pre>
+		    {% endif %}
                     <a id="qsLogoutBtn" class="btn btn-primary btn-lg btn-logout btn-block" href="/auth/logout">Logout</a>
                 </div>
             </div>
