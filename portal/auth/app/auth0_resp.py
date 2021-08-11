@@ -106,7 +106,8 @@ def callback_handling():
 
     hub_session_id = session.get('hub-session-id')
     if hub_session_id:
-        app.r.set("hub:" + hub_session_id, str(userinfo), 120)
+        app.r.set("hub:" + hub_session_id, json.dumps(userinfo), 120)
+        app.r.set("hub:" + hub_session_id + ":token", token, 120)
 
     return redirect('/auth/dashboard')
 

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: hubauth 
-        image: academicpi.azurecr.io/hub-auth:v7
+        image: academicpi.azurecr.io/hub-auth:v10
         envFrom:
         - secretRef:
             name: hub-portal-secret-25h986d7f4
