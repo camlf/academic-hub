@@ -19,10 +19,10 @@ spec:
     spec:
       containers:
       - name: hubauth 
-        image: academicpi.azurecr.io/hub-auth:v10
+        image: academicpi.azurecr.io/hub-auth:v11
         envFrom:
         - secretRef:
-            name: hub-portal-secret-25h986d7f4
+            name: hub-portal-secret-f9t7bdg842
         ports:
         - containerPort: 3000 
         resources:

@@ -41,7 +41,7 @@ app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = constants.SECRET_KEY
 app.debug = True
 
-app.r = redis.StrictRedis(host="academichub.redis.cache.windows.net", port=6380, db=1, password="MqpCoiUSms7ZBu0GoqVFYBSeBVHBm5oxtOdYaEurzFU=", ssl=True)
+app.r = redis.StrictRedis(host=env.get("REDIS_HOST"), port=6380, db=1, password=env.get("REDIS_PASSWORD"), ssl=True)
 
 @app.errorhandler(Exception)
 def handle_auth_error(ex):
@@ -107,7 +107,7 @@ def callback_handling():
     hub_session_id = session.get('hub-session-id')
     if hub_session_id:
         app.r.set("hub:" + hub_session_id, json.dumps(userinfo), 120)
-        app.r.set("hub:" + hub_session_id + ":token", token, 120)
+        app.r.set("hub:" + hub_session_id + ":token", str(token), 120)
 
     return redirect('/auth/dashboard')
 
