@@ -120,9 +120,14 @@ def callback_handling():
 
 @app.route("/login")
 def login():
-    return auth0.authorize_redirect(
-        redirect_uri=AUTH0_CALLBACK_URL
-    )  # , audience=AUTH0_AUDIENCE)
+    if request.args.get("invitation", None):
+        return auth0.authorize_redirect(
+            redirect_uri=AUTH0_CALLBACK_URL,
+            invitation=request.args("invitation"),
+            organization=request.args("organization"),
+        )
+    else:
+        return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
 
 
 @app.route("/logout")
