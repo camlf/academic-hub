@@ -4,6 +4,7 @@ import configparser
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 import requests
+from requests.structures import CaseInsensitiveDict
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 import io
@@ -17,6 +18,7 @@ import pkg_resources
 import urllib3
 import backoff
 import logging
+from notebook.notebookapp import list_running_servers
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -25,9 +27,7 @@ from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
 UXIE_CONSTANT = 100 * 1000
 HUB_BLOB = "https://academichub.blob.core.windows.net/hub/"
-BINDER_INI = HUB_BLOB + "config-binder.ini"
 COLLAB_INI = HUB_BLOB + "config-collab.ini"
-GITHUB_HUB_DATASETS = "https://github.com/academic-hub/datasets"
 
 hub_db_namespaces = {}
 
@@ -116,18 +116,12 @@ class HubClient(OCSClient):
         config_filename = os.environ.get("OCS_HUB_CONFIG", None)
         config_file = None
         if config_filename is None:
-            binder_repo = os.environ.get("BINDER_REPO_URL", None)
-            if binder_repo is not None:
-                print("@ --- OSIsoft authorization required to run on Binder ---")
-                if binder_repo == GITHUB_HUB_DATASETS:
-                    config_file = get_config(BINDER_INI)
-                else:
-                    print("@ ### authorization denied ###")
-                    return
             if len(collab_key) > 0:
                 print("@ --- OSIsoft authorization required to run on Collab ---")
                 config_file = get_config(COLLAB_INI, client_secret=collab_key)
-
+            elif next(list_running_servers())["hostname"] != "localhost":
+                if os.path.exists("config.txt"):
+                    config_filename = "config.txt"
         if config_filename is None and config_file is None:
             super().__init__(
                 "v1",
@@ -292,7 +286,11 @@ class HubClient(OCSClient):
     )
     @typechecked
     def dataview_definition(
-        self, namespace_id: str, dataview_id: str, stream_id=False, version: str = ""
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        stream_id: bool = False,
+        version: str = "",
     ):
         columns = [
             "Asset_Id",
@@ -304,6 +302,7 @@ class HubClient(OCSClient):
         if stream_id:
             columns += ["OCS_Stream_Id"]
         df = pd.DataFrame(columns=columns)
+
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value?count=1000&cache=refresh"
         )
@@ -312,7 +311,7 @@ class HubClient(OCSClient):
             "column_name" if v2_column_key is None else f"{v2_column_key}|column"
         )
         for i, item in enumerate(data_items.Items):
-            item_meta = self.__asdict(item.Metadata)
+            item_meta = CaseInsensitiveDict(self.__asdict(item.Metadata))
             column_values = [
                 item_meta["asset_id"],
                 item_meta[column_key],
@@ -520,7 +519,7 @@ class HubClient(OCSClient):
         dataview_id: str,
         start_index: str,
         end_index: str,
-        # count: int = None,
+        count: int = None,
     ):
         try:
             result = self.dataview_get_data_pd(
@@ -529,6 +528,7 @@ class HubClient(OCSClient):
                 start_index,
                 end_index,
                 "",
+                count=count,
                 stored=True,
             )
         except SdsError as e:
