@@ -132,7 +132,7 @@ class HubClient(OCSClient):
         else:
             config = configparser.ConfigParser()
             if config_filename:
-                print(f"> configuration file: {config_file}")
+                print(f"> configuration file: {config_filename}")
                 config.read(config_filename)
             else:
                 config.read_file(config_file)
