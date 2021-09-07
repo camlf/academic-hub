@@ -68,15 +68,15 @@ h3 {
 }
 #logo img {
   width: 300px;
-  margin-bottom: 60px;
+  margin-bottom: 10px;
 }
 .home-description {
   font-weight: 100;
   margin: 100px 0;
 }
 h2 {
-  margin-top: 30px;
-  margin-bottom: 40px;
+  margin-top: 10px;
+  margin-bottom: 15px;
   font-size: 200%;
 }
 label {

@@ -8,4 +8,4 @@ AUTH0_AUDIENCE = 'AUTH0_AUDIENCE'
 PROFILE_KEY = 'profile'
 SECRET_KEY = 'ThisIsTheSecretKey'
 JWT_PAYLOAD = 'jwt_payload'
-
+AUTH0_DEBUG = 'AUTH0_DEBUG'

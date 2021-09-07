@@ -1,2 +1,4 @@
 auth_app/.env
 kustomization.yaml
+.env*
+.vscode/
