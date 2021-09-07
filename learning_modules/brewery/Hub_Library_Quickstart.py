@@ -39,7 +39,7 @@
 # In[1]:
 
 
-# get_ipython().system('pip install ocs-academic-hub==0.80.0')
+# get_ipython().system('pip install ocs-academic-hub==0.99.1')
 
 
 # ## Use the `pip uninstall` only in case of library issues
