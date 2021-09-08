@@ -26,8 +26,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
 UXIE_CONSTANT = 100 * 1000
-HUB_BLOB = "https://academichub.blob.core.windows.net/hub/"
-COLLAB_INI = HUB_BLOB + "config-collab.ini"
+HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
+HUB_CLIENT_CONFIG = HUB_KEY_BLOB + "config.txt"
 
 hub_db_namespaces = {}
 
@@ -107,54 +107,70 @@ class HubClient(OCSClient):
     def __init__(
         self,
         hub_data: str = "hub_datasets.json",
-        collab_key: str = "",
+        client_key: str = "",
         options: List[str] = [],
         debug: bool = False,
     ):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
-        config_filename = os.environ.get("OCS_HUB_CONFIG", None)
+        config_filename = os.environ.get("HUB_CONFIG_FILE", None)
         config_file = None
         if config_filename is None:
-            if len(collab_key) > 0:
-                print("@ --- OSIsoft authorization required to run on Collab ---")
-                config_file = get_config(COLLAB_INI, client_secret=collab_key)
-            elif next(list_running_servers())["hostname"] != "localhost":
-                if os.path.exists("config.txt"):
-                    config_filename = "config.txt"
-        if config_filename is None and config_file is None:
-            super().__init__(
-                "v1",
-                "65292b6c-ec16-414a-b583-ce7ae04046d4",
-                "https://dat-b.osisoft.com",
-                "422e6002-9c5a-4651-b986-c7295bcf376c",
-            )
-        else:
-            config = configparser.ConfigParser()
-            if config_filename:
-                print(f"> configuration file: {config_filename}")
-                config.read(config_filename)
+            if len(client_key) > 0 or os.environ.get("HUB_CLIENT_KEY", None):
+                print(
+                    "@ --- OSIsoft authorization required to run hosted notebook (Collab/Binder/etc) ---"
+                )
+                config_file = get_config(
+                    HUB_CLIENT_CONFIG,
+                    client_secret=client_key
+                    if len(client_key)
+                    else os.environ.get("HUB_CLIENT_KEY"),
+                )
             else:
-                config.read_file(config_file)
-            super().__init__(
-                config.get("Access", "ApiVersion"),
-                config.get("Access", "Tenant"),
-                config.get("Access", "Resource"),
-                config.get("Credentials", "ClientId"),
-                config.get("Credentials", "ClientSecret"),
-            )
-            print("@ --- authorization granted ---")
+                try:
+                    if next(list_running_servers())["hostname"] != "localhost":
+                        if os.path.exists("config.txt"):
+                            config_filename = "config.txt"
+                except StopIteration:
+                    pass
+        try:
+            if config_filename is None and config_file is None:
+                super().__init__(
+                    "v1",
+                    "65292b6c-ec16-414a-b583-ce7ae04046d4",
+                    "https://dat-b.osisoft.com",
+                    "422e6002-9c5a-4651-b986-c7295bcf376c",
+                )
+            else:
+                config = configparser.ConfigParser()
+                if config_filename:
+                    print(f"> configuration file: {config_filename}")
+                    config.read(config_filename)
+                else:
+                    config.read_file(config_file)
+                super().__init__(
+                    config.get("Access", "ApiVersion"),
+                    config.get("Access", "Tenant"),
+                    config.get("Access", "Resource"),
+                    config.get("Credentials", "ClientId"),
+                    config.get("Credentials", "ClientSecret"),
+                )
+                print("@ --- authorization granted ---")
 
-        self.__options = options
-        self.__debug = debug
-        data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
-        if data_file != default_hub_data:
-            print(f"@ Hub data file: {data_file}")
-        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
-        self.__current_db_index = 0
-        self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-            self.__gqlh, self.__db_index, self.__current_db
-        )
+            self.__options = options
+            self.__debug = debug
+            data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
+            if data_file != default_hub_data:
+                print(f"@ Hub data file: {data_file}")
+            self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(
+                data_file
+            )
+            self.__current_db_index = 0
+            self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
+                self.__gqlh, self.__db_index, self.__current_db
+            )
+        except SdsError as e:
+            raise Exception("{}".format(e)) from None
 
     def gqlh(self):
         return self.__gqlh
