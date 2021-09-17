@@ -25,6 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
+MAX_STORED_DV_ROWS = 500000
 UXIE_CONSTANT = 100 * 1000
 HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
 HUB_CLIENT_CONFIG = HUB_KEY_BLOB + "config.txt"
@@ -169,6 +170,8 @@ class HubClient(OCSClient):
             self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
                 self.__gqlh, self.__db_index, self.__current_db
             )
+            self.__dataview_next_page = None
+
         except SdsError as e:
             raise Exception("{}".format(e)) from None
 
@@ -408,6 +411,10 @@ class HubClient(OCSClient):
             **count_arg,
         )
 
+    @typechecked
+    def remaining_data(self) -> bool:
+        return False if self.__dataview_next_page is None else True
+
     @backoff.on_exception(
         backoff.expo, SdsError50x, max_tries=6, jitter=backoff.full_jitter
     )
@@ -448,23 +455,32 @@ class HubClient(OCSClient):
         sub_second_interval: bool = False,
         verbose: bool = False,
         stored: bool = False,
+        resume: bool = False,
     ):
         df = pd.DataFrame()
-        if not sub_second_interval and not stored:
+        next_page = None
+        if not resume:
+            if not sub_second_interval and not stored:
+                try:
+                    datetime.strptime(interval, "%H:%M:%S")
+                except ValueError as e:
+                    print(f"@Error: interval has invalid format: {e}")
+                    return df
             try:
-                datetime.strptime(interval, "%H:%M:%S")
+                parse(end_index)
+                parse(start_index)
             except ValueError as e:
-                print(f"@Error: interval has invalid format: {e}")
+                print(f"@Error: start_index and/or end_index has invalid format: {e}")
                 return df
-        try:
-            parse(end_index)
-            parse(start_index)
-        except ValueError as e:
-            print(f"@Error: start_index and/or end_index has invalid format: {e}")
-            return df
-        if verbose:
-            summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
-            print(summary)
+            if verbose:
+                summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
+                print(summary)
+
+        else:
+            if not self.remaining_data():
+                print(f"@Error: no remaining data for stored dataview id {dataview_id}")
+                return df
+            next_page = self.__dataview_next_page
 
         dataview_f = self.__get_data_stored if stored else self.__get_data_interpolated
         # when GraphQL interface is in place
@@ -472,9 +488,10 @@ class HubClient(OCSClient):
         # if "cache" in self.__options
 
         dataview_id = self.remap_campus_dataview_id(dataview_id)
-        next_page = None
+
         while True:
             try:
+                # print(f"[{next_page}]", end="")
                 csv_or_json, next_page, _ = dataview_f(
                     namespace_id=namespace_id,
                     dataview_id=dataview_id,
@@ -495,9 +512,14 @@ class HubClient(OCSClient):
                     )
                 else:
                     df = df.append(pd.read_json(json.dumps(csv_or_json)))
+                    if len(df) >= MAX_STORED_DV_ROWS:
+                        self.__dataview_next_page = next_page
+                        print()
+                        break
 
                 if next_page is None:
                     print()
+                    self.__dataview_next_page = None
                     break
                 print("+", end="", flush=True)
             except SdsError as e:
@@ -536,6 +558,7 @@ class HubClient(OCSClient):
         start_index: str,
         end_index: str,
         count: int = None,
+        resume: bool = False,
     ):
         try:
             result = self.dataview_get_data_pd(
@@ -546,6 +569,7 @@ class HubClient(OCSClient):
                 "",
                 count=count,
                 stored=True,
+                resume=resume,
             )
         except SdsError as e:
             if "404" in str(e):
