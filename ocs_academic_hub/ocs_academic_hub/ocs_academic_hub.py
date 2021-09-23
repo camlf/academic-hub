@@ -25,7 +25,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
-MAX_STORED_DV_ROWS = 500000
+MAX_STORED_DV_ROWS = 2000000
 UXIE_CONSTANT = 100 * 1000
 HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
 HUB_CLIENT_CONFIG = HUB_KEY_BLOB + "config.txt"
@@ -194,8 +194,10 @@ class HubClient(OCSClient):
         return pd.DataFrame(metadata).sort_values(by=["Asset_Id"])
 
     @typechecked
-    def datasets(self) -> List[str]:
-        return list(hub_db_namespaces.keys())
+    def datasets(self, first="") -> List[str]:
+        data_sets = list(hub_db_namespaces.keys())
+        data_sets.sort(key=lambda s: s == first, reverse=True)
+        return data_sets
 
     @typechecked
     def current_dataset(self) -> str:
