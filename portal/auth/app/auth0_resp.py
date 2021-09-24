@@ -17,6 +17,8 @@ from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 import responder
 import redis
+import bcrypt
+import base64
 
 import constants
 
@@ -40,6 +42,13 @@ print("debug:", auth0_debug)
 app = Flask(__name__, static_url_path="/public", static_folder="./public")
 app.secret_key = constants.SECRET_KEY
 app.debug = True
+
+
+@app.errorhandler(Exception)
+def server_error(err):
+    app.logger.exception(err)
+    return "exception", 500
+
 
 app.r = redis.StrictRedis(
     host=env.get("REDIS_HOST"),
@@ -123,8 +132,8 @@ def login():
     if request.args.get("invitation", None):
         return auth0.authorize_redirect(
             redirect_uri=AUTH0_CALLBACK_URL,
-            invitation=request.args("invitation"),
-            organization=request.args("organization"),
+            invitation=request.args.get("invitation"),
+            organization=request.args.get("organization"),
         )
     else:
         return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
@@ -141,11 +150,21 @@ def logout():
 @requires_auth
 def dashboard():
     roles = session[constants.JWT_PAYLOAD][AUTH0_ROLES_KEY]
-    pretty_roles = {i: roles[i] for i in roles if "client-" not in i}
+    email = session[constants.JWT_PAYLOAD]["email"]
+    token = session[constants.PROFILE_KEY]["token"]["token"]
+    access_token = token["access_token"]
+    expires_in = int(token["expires_in"])
+    hashed = bcrypt.hashpw(access_token.encode('utf8'), bcrypt.gensalt(14))  # .decode('utf8')
+    # print("email:", email, access_token, type(access_token.encode("utf8")), expires_in, hashed)
+    if app.r is None:
+        print("--- no redis ---")
+    else:
+        app.r.set("hub-access:" + email, hashed, 3600)  # expires_in
+
     return render_template(
         "dashboard.html",
         userinfo=session[constants.PROFILE_KEY],
-        userinfo_pretty=pretty_roles,  # json.dumps(session[constants.JWT_PAYLOAD], indent=4),
+        userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD], indent=4) if auth0_debug else roles,
         token_pretty=json.dumps(session[constants.PROFILE_KEY]["token"], indent=4),
         debug=auth0_debug,
     )
@@ -153,7 +172,7 @@ def dashboard():
 
 @app.route("/token")
 def return_token():
-    hub_session_id = request.headers.get("hub-id")
+    hub_session_id = request.headers.get("hub-id", None)
     if hub_session_id:
         try:
             token = app.r.get("hub:" + hub_session_id)
@@ -165,6 +184,29 @@ def return_token():
             return f"not found", 400
     else:
         return "no token", 400
+
+
+@app.route("/legacy-auth")
+def legacy_auth():
+    auth = request.headers.get("Authorization", None)
+    # print("auth", auth)
+    if not auth:
+        return "Not authorized", 401
+    auth = auth.replace("Basic ", "")
+    user_pwd = base64.b64decode(auth).decode('utf8')
+    isep = user_pwd.find(":")
+    user = user_pwd[:isep]
+    password = user_pwd[isep+1:]
+    hashed = app.r.get("hub-access:" + user)
+    if hashed:
+        if bcrypt.checkpw(password.encode('utf8'), hashed):
+            return "OK", 200
+    return "Bad request", 400
+
+
+@app.route("/legacy-access")
+def legacy_access():
+    return f"MATLAB || username &lt;gmail account&gt;, password: {session[constants.PROFILE_KEY]['token']['token']['access_token']}"
 
 
 api.mount("/auth", app)
