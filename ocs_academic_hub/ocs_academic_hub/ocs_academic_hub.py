@@ -4,6 +4,7 @@ import configparser
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 import requests
+from requests.structures import CaseInsensitiveDict
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 import io
@@ -17,17 +18,17 @@ import pkg_resources
 import urllib3
 import backoff
 import logging
+from notebook.notebookapp import list_running_servers
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
+MAX_STORED_DV_ROWS = 2000000
 UXIE_CONSTANT = 100 * 1000
-HUB_BLOB = "https://academichub.blob.core.windows.net/hub/"
-BINDER_INI = HUB_BLOB + "config-binder.ini"
-COLLAB_INI = HUB_BLOB + "config-collab.ini"
-GITHUB_HUB_DATASETS = "https://github.com/academic-hub/datasets"
+HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
+HUB_CLIENT_CONFIG = HUB_KEY_BLOB + "config.txt"
 
 hub_db_namespaces = {}
 
@@ -107,60 +108,72 @@ class HubClient(OCSClient):
     def __init__(
         self,
         hub_data: str = "hub_datasets.json",
-        collab_key: str = "",
+        client_key: str = "",
         options: List[str] = [],
         debug: bool = False,
     ):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
-        config_filename = os.environ.get("OCS_HUB_CONFIG", None)
+        config_filename = os.environ.get("HUB_CONFIG_FILE", None)
         config_file = None
         if config_filename is None:
-            binder_repo = os.environ.get("BINDER_REPO_URL", None)
-            if binder_repo is not None:
-                print("@ --- OSIsoft authorization required to run on Binder ---")
-                if binder_repo == GITHUB_HUB_DATASETS:
-                    config_file = get_config(BINDER_INI)
-                else:
-                    print("@ ### authorization denied ###")
-                    return
-            if len(collab_key) > 0:
-                print("@ --- OSIsoft authorization required to run on Collab ---")
-                config_file = get_config(COLLAB_INI, client_secret=collab_key)
-
-        if config_filename is None and config_file is None:
-            super().__init__(
-                "v1",
-                "65292b6c-ec16-414a-b583-ce7ae04046d4",
-                "https://dat-b.osisoft.com",
-                "422e6002-9c5a-4651-b986-c7295bcf376c",
-            )
-        else:
-            config = configparser.ConfigParser()
-            if config_filename:
-                print(f"> configuration file: {config_file}")
-                config.read(config_filename)
+            if len(client_key) > 0 or os.environ.get("HUB_CLIENT_KEY", None):
+                print(
+                    "@ --- OSIsoft authorization required to run hosted notebook (Collab/Binder/etc) ---"
+                )
+                config_file = get_config(
+                    HUB_CLIENT_CONFIG,
+                    client_secret=client_key
+                    if len(client_key)
+                    else os.environ.get("HUB_CLIENT_KEY"),
+                )
             else:
-                config.read_file(config_file)
-            super().__init__(
-                config.get("Access", "ApiVersion"),
-                config.get("Access", "Tenant"),
-                config.get("Access", "Resource"),
-                config.get("Credentials", "ClientId"),
-                config.get("Credentials", "ClientSecret"),
-            )
-            print("@ --- authorization granted ---")
+                try:
+                    if next(list_running_servers())["hostname"] != "localhost":
+                        if os.path.exists("config.txt"):
+                            config_filename = "config.txt"
+                except StopIteration:
+                    pass
+        try:
+            if config_filename is None and config_file is None:
+                super().__init__(
+                    "v1",
+                    "65292b6c-ec16-414a-b583-ce7ae04046d4",
+                    "https://dat-b.osisoft.com",
+                    "422e6002-9c5a-4651-b986-c7295bcf376c",
+                )
+            else:
+                config = configparser.ConfigParser()
+                if config_filename:
+                    print(f"> configuration file: {config_filename}")
+                    config.read(config_filename)
+                else:
+                    config.read_file(config_file)
+                super().__init__(
+                    config.get("Access", "ApiVersion"),
+                    config.get("Access", "Tenant"),
+                    config.get("Access", "Resource"),
+                    config.get("Credentials", "ClientId"),
+                    config.get("Credentials", "ClientSecret"),
+                )
+                print("@ --- authorization granted ---")
 
-        self.__options = options
-        self.__debug = debug
-        data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
-        if data_file != default_hub_data:
-            print(f"@ Hub data file: {data_file}")
-        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
-        self.__current_db_index = 0
-        self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-            self.__gqlh, self.__db_index, self.__current_db
-        )
+            self.__options = options
+            self.__debug = debug
+            data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
+            if data_file != default_hub_data:
+                print(f"@ Hub data file: {data_file}")
+            self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(
+                data_file
+            )
+            self.__current_db_index = 0
+            self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
+                self.__gqlh, self.__db_index, self.__current_db
+            )
+            self.__dataview_next_page = None
+
+        except SdsError as e:
+            raise Exception("{}".format(e)) from None
 
     def gqlh(self):
         return self.__gqlh
@@ -181,8 +194,10 @@ class HubClient(OCSClient):
         return pd.DataFrame(metadata).sort_values(by=["Asset_Id"])
 
     @typechecked
-    def datasets(self) -> List[str]:
-        return list(hub_db_namespaces.keys())
+    def datasets(self, first="") -> List[str]:
+        data_sets = list(hub_db_namespaces.keys())
+        data_sets.sort(key=lambda s: s == first, reverse=True)
+        return data_sets
 
     @typechecked
     def current_dataset(self) -> str:
@@ -292,7 +307,11 @@ class HubClient(OCSClient):
     )
     @typechecked
     def dataview_definition(
-        self, namespace_id: str, dataview_id: str, stream_id=False, version: str = ""
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        stream_id: bool = False,
+        version: str = "",
     ):
         columns = [
             "Asset_Id",
@@ -304,6 +323,7 @@ class HubClient(OCSClient):
         if stream_id:
             columns += ["OCS_Stream_Id"]
         df = pd.DataFrame(columns=columns)
+
         data_items = super().DataViews.getResolvedDataItems(
             namespace_id, dataview_id, "Asset_value?count=1000&cache=refresh"
         )
@@ -312,7 +332,7 @@ class HubClient(OCSClient):
             "column_name" if v2_column_key is None else f"{v2_column_key}|column"
         )
         for i, item in enumerate(data_items.Items):
-            item_meta = self.__asdict(item.Metadata)
+            item_meta = CaseInsensitiveDict(self.__asdict(item.Metadata))
             column_values = [
                 item_meta["asset_id"],
                 item_meta[column_key],
@@ -393,6 +413,10 @@ class HubClient(OCSClient):
             **count_arg,
         )
 
+    @typechecked
+    def remaining_data(self) -> bool:
+        return False if self.__dataview_next_page is None else True
+
     @backoff.on_exception(
         backoff.expo, SdsError50x, max_tries=6, jitter=backoff.full_jitter
     )
@@ -433,23 +457,32 @@ class HubClient(OCSClient):
         sub_second_interval: bool = False,
         verbose: bool = False,
         stored: bool = False,
+        resume: bool = False,
     ):
         df = pd.DataFrame()
-        if not sub_second_interval and not stored:
+        next_page = None
+        if not resume:
+            if not sub_second_interval and not stored:
+                try:
+                    datetime.strptime(interval, "%H:%M:%S")
+                except ValueError as e:
+                    print(f"@Error: interval has invalid format: {e}")
+                    return df
             try:
-                datetime.strptime(interval, "%H:%M:%S")
+                parse(end_index)
+                parse(start_index)
             except ValueError as e:
-                print(f"@Error: interval has invalid format: {e}")
+                print(f"@Error: start_index and/or end_index has invalid format: {e}")
                 return df
-        try:
-            parse(end_index)
-            parse(start_index)
-        except ValueError as e:
-            print(f"@Error: start_index and/or end_index has invalid format: {e}")
-            return df
-        if verbose:
-            summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
-            print(summary)
+            if verbose:
+                summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
+                print(summary)
+
+        else:
+            if not self.remaining_data():
+                print(f"@Error: no remaining data for stored dataview id {dataview_id}")
+                return df
+            next_page = self.__dataview_next_page
 
         dataview_f = self.__get_data_stored if stored else self.__get_data_interpolated
         # when GraphQL interface is in place
@@ -457,9 +490,10 @@ class HubClient(OCSClient):
         # if "cache" in self.__options
 
         dataview_id = self.remap_campus_dataview_id(dataview_id)
-        next_page = None
+
         while True:
             try:
+                # print(f"[{next_page}]", end="")
                 csv_or_json, next_page, _ = dataview_f(
                     namespace_id=namespace_id,
                     dataview_id=dataview_id,
@@ -480,9 +514,14 @@ class HubClient(OCSClient):
                     )
                 else:
                     df = df.append(pd.read_json(json.dumps(csv_or_json)))
+                    if len(df) >= MAX_STORED_DV_ROWS:
+                        self.__dataview_next_page = next_page
+                        print()
+                        break
 
                 if next_page is None:
                     print()
+                    self.__dataview_next_page = None
                     break
                 print("+", end="", flush=True)
             except SdsError as e:
@@ -520,7 +559,8 @@ class HubClient(OCSClient):
         dataview_id: str,
         start_index: str,
         end_index: str,
-        # count: int = None,
+        count: int = None,
+        resume: bool = False,
     ):
         try:
             result = self.dataview_get_data_pd(
@@ -529,7 +569,9 @@ class HubClient(OCSClient):
                 start_index,
                 end_index,
                 "",
+                count=count,
                 stored=True,
+                resume=resume,
             )
         except SdsError as e:
             if "404" in str(e):
