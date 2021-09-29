@@ -154,7 +154,7 @@ def dashboard():
     token = session[constants.PROFILE_KEY]["token"]["token"]
     access_token = token["access_token"]
     expires_in = int(token["expires_in"])
-    hashed = bcrypt.hashpw(access_token.encode('utf8'))  # , bcrypt.gensalt(10))
+    hashed = bcrypt.hashpw(access_token.encode('utf8'), bcrypt.gensalt())
     # print("email:", email, access_token, type(access_token.encode("utf8")), expires_in, hashed)
     if app.r is None:
         print("--- no redis ---")
