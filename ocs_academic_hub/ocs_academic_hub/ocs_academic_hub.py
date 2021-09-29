@@ -458,6 +458,7 @@ class HubClient(OCSClient):
         verbose: bool = False,
         stored: bool = False,
         resume: bool = False,
+        max_stored_rows=MAX_STORED_DV_ROWS,
     ):
         df = pd.DataFrame()
         next_page = None
@@ -514,7 +515,7 @@ class HubClient(OCSClient):
                     )
                 else:
                     df = df.append(pd.read_json(json.dumps(csv_or_json)))
-                    if len(df) >= MAX_STORED_DV_ROWS:
+                    if len(df) >= max_stored_rows:
                         self.__dataview_next_page = next_page
                         print()
                         break
@@ -561,6 +562,7 @@ class HubClient(OCSClient):
         end_index: str,
         count: int = None,
         resume: bool = False,
+        max_rows=MAX_STORED_DV_ROWS,
     ):
         try:
             result = self.dataview_get_data_pd(
@@ -572,6 +574,7 @@ class HubClient(OCSClient):
                 count=count,
                 stored=True,
                 resume=resume,
+                max_stored_rows=max_rows,
             )
         except SdsError as e:
             if "404" in str(e):
