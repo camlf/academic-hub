@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-api
+spec:
+  ports:
+  - port: 80 
+  selector:
+    app: data-api
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: data-api
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: data-api
+    spec:
+      containers:
+      - name: data-api
+        image: academicpi.azurecr.io/hub-api:v9
+        env:
+        - name: MAX_ROWS 
+          value: "5500"
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+

@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster as base
+FROM python:3.8.10-slim-buster as base
 FROM base as builder
 RUN mkdir /install
 WORKDIR /install
