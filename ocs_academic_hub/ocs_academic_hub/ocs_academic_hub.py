@@ -18,6 +18,7 @@ import pkg_resources
 import urllib3
 import backoff
 import logging
+from math import nan
 from notebook.notebookapp import list_running_servers
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
