@@ -31,7 +31,7 @@ UXIE_CONSTANT = 100 * 1000
 HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
 HUB_CLIENT_CONFIG = HUB_KEY_BLOB + "config.txt"
 
-hub_db_namespaces = {}
+hub_db_namespaces = CaseInsensitiveDict({})
 
 ocstype2hub = {
     "PI-Digital": "Category",
@@ -60,7 +60,7 @@ def initialize_hub_data(data_file):
     global hub_db_namespaces
     with open(data_file) as f:
         gqlh = json.loads(f.read())
-    db_index = {}
+    db_index = CaseInsensitiveDict({})
     hub_db_namespaces.clear()
     for i, database in enumerate(gqlh["Database"]):
         db_index[database["asset_db"]] = i
