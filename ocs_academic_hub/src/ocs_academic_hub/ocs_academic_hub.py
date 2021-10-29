@@ -19,13 +19,13 @@ import urllib3
 import backoff
 import logging
 from math import nan
-from notebook.notebookapp import list_running_servers
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 from ocs_sample_library_preview import OCSClient, DataView, SdsError
 
+GRAPHQL_ENDPOINT = "https://data.academic.osisoft.com/graphql"
 MAX_STORED_DV_ROWS = 2000000
 UXIE_CONSTANT = 100 * 1000
 HUB_KEY_BLOB = "https://academichub.blob.core.windows.net/hub/keys/"
@@ -129,12 +129,7 @@ class HubClient(OCSClient):
                     else os.environ.get("HUB_CLIENT_KEY"),
                 )
             else:
-                try:
-                    if next(list_running_servers())["hostname"] != "localhost":
-                        if os.path.exists("config.txt"):
-                            config_filename = "config.txt"
-                except StopIteration:
-                    pass
+                config_filename = "config.txt" if os.path.exists("config.txt") else None
         try:
             if config_filename is None and config_file is None:
                 super().__init__(
@@ -607,92 +602,6 @@ class HubClient(OCSClient):
     def get_token(self):
         return self._OCSClient__baseClient._BaseClient__getToken()
 
-    @backoff.on_exception(
-        backoff.expo,
-        (requests.HTTPError, requests.ConnectionError, GraphQLError409),
-        max_tries=10,
-        jitter=backoff.full_jitter,
-    )
-    def __get_data_interpolated_gql(
-        self,
-        namespace_id,
-        dataview_id,
-        form,
-        start_index,
-        end_index,
-        interval,
-        count,
-        next_page,
-        endpoint="https://data.academic.osisoft.com/graphql",
-    ):
-        dv_query = gql(
-            """
-query(
-    $dataview_id: ID,
-    $namespace_id: String!,
-    $start_index: String!,
-    $end_index: String!,
-    $interval: String!,
-    $next_page: String
-    ) {
-  DataView(id: $dataview_id) {
-    id
-    interpolated(
-      namespace: $namespace_id
-      startIndex: $start_index
-      endIndex: $end_index
-      interval: $interval
-      nextPage: $next_page
-    )
-  }
-}
-            """
-        )
-        sample_transport = RequestsHTTPTransport(
-            url=endpoint,
-            headers={"Authorization": f"Bearer {self.get_token()}"},
-            verify=False,
-            retries=5,
-        )
-        client = Client(transport=sample_transport, fetch_schema_from_transport=False)
-        try:
-            result = client.execute(
-                dv_query,
-                variable_values={
-                    "dataview_id": dataview_id,
-                    "namespace_id": namespace_id,
-                    "start_index": start_index,
-                    "end_index": end_index,
-                    "interval": interval,
-                    "next_page": next_page,
-                },
-            )
-        except requests.HTTPError as rh:
-            print("$", end="")
-            raise rh
-        except requests.ConnectionError as rc:
-            print("&", end="")
-            if self.__debug:
-                print(f"[{rc}]")
-            raise rc
-        except Exception as e:
-            print("!", end="")
-            d = eval(str(e))
-            message = json.loads(json.dumps(d))["message"]
-            if "409:" in message:
-                raise GraphQLError409
-            raise SdsError(message)
-        dataview_result = result["DataView"]
-        if len(dataview_result) == 0:
-            raise SdsError(f"  404: DataView ID {dataview_id} not found.")
-        interpolated = dataview_result[0]["interpolated"]
-        index = {"csv": 0, "next_page": 1, "first_page": 2}
-        return (
-            interpolated[index["csv"]],
-            interpolated[index["next_page"]],
-            interpolated[index["first_page"]],
-        )
-
     def refresh_datasets(
         self,
         hub_data="hub_datasets.json",
@@ -724,7 +633,7 @@ query(
         self,
         hub_data="hub_datasets.json",
         additional_status="production",
-        endpoint="https://data.academic.osisoft.com/graphql",
+        endpoint=GRAPHQL_ENDPOINT,
     ):
         db_query = """
 query Database($status: String) {
@@ -761,10 +670,7 @@ query Database($status: String) {
             f.write(json.dumps(db, indent=2))
 
     def graphql_query(
-        self,
-        query_string,
-        variable_values=None,
-        endpoint="https://data.academic.osisoft.com/graphql",
+        self, query_string, variable_values=None, endpoint=GRAPHQL_ENDPOINT
     ):
         sample_transport = RequestsHTTPTransport(
             url=endpoint,
