@@ -6,7 +6,7 @@
     "graphql": "^15.5.1",
     "neo4j-driver": "^4.4.0"
   },
-  "name": "graphql2",
+  "name": "hub-graphql",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
