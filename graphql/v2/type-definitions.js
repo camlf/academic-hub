@@ -129,6 +129,14 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
    # has_stream: [PIPoint] @relation(name: "HAS_STREAM", direction: "OUT")
    "assets this data views is associated with"
    elements: [Element] @relationship(type: "HAS_DATAVIEW", direction: IN)
+    "stored asset stream values"
+    stored(
+        namespace: String!
+        startIndex: String!
+        endIndex: String!
+        nextPage: String
+        count: Int
+    ): [String]! @ignore 
 }
 `;
 

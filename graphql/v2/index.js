@@ -1,5 +1,7 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer } = require("apollo-server-express");
 const { Neo4jGraphQL } = require("@neo4j/graphql");
+const express = require("express");
+const http = require('http');
 
 const driver = require("./driver");
 const typeDefs = require("./type-definitions");
@@ -16,16 +18,34 @@ const neoSchema = new Neo4jGraphQL({
     }
 });
 
-const { ApolloServerPluginLandingPageGraphQLPlayground } = require("apollo-server-core")
+const { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginDrainHttpServer} = require("apollo-server-core")
 
-const server = new ApolloServer({
-    schema: neoSchema.schema,
-    context: ({ req }) => ({ req }),
-    plugins: [
-        ApolloServerPluginLandingPageGraphQLPlayground(),
-    ],
-});
+const path = "/graphql2"
 
-server.listen(4000, "0.0.0.0").then(({ url }) => {
-    console.log(`@neo4j/graphql API ready at ${url}`);
-});
+async function startApolloServer() {
+    const app = express()
+    const httpServer = http.createServer(app);
+    const server = new ApolloServer({
+        schema: neoSchema.schema,
+        context: ({req}) => ({req}),
+        plugins: [
+            ApolloServerPluginLandingPageGraphQLPlayground(),
+            ApolloServerPluginDrainHttpServer({httpServer})
+        ],
+    });
+
+    await server.start();
+
+    // Mount Apollo middleware here.
+    server.applyMiddleware({app, path: path});
+    await new Promise(resolve => httpServer.listen({port: 4000, host: "0.0.0.0"}, resolve));
+    console.log(`@neo4j/graphql API ready at http://0.0.0.0:4000${path}`);
+    return {server, app};
+}
+
+startApolloServer().then();
+
+// server.applyMiddleware(app, "graphql2")
+// server.listen({port: 4000, host: "0.0.0.0"}).then(({ url }) => {
+//    console.log(`@neo4j/graphql API ready at ${url}`);
+// });
