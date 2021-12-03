@@ -1,13 +1,74 @@
 
+const { ApolloError } = require('apollo-server-errors');
 const { gql } = require("apollo-server");
+const fetch = require('node-fetch');
+
+
+const base_url = "https://dat-b.osisoft.com/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces";
 
 const resolvers = {
    DataView: {
-      stored(source, args) {
+      stored: async (source, args) => {
          console.log(source);
          console.log(`args: ${args}`);
          console.log(args);
-         return ["0,1,2,3", "first-url", "next-url"];
+
+         if (source.id === undefined) {
+            console.log("@@error: dataview_id not defined (add id field)")
+            throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID'); // , myCustomExtensions);
+         }
+
+         if (args.nextPage) {
+            var url = new URL(args.nextPage);
+         } else {
+            var url = new URL(`${base_url}/${args.namespace}/dataviews/${source.id}_narrow/data/stored`);
+
+            let params = {
+               startIndex: args.startIndex,
+               endIndex: args.endIndex,
+               form: "tableh",
+            };
+
+            if (args.count) {
+               params["count"] = args.count;
+            }
+
+            url.search = new URLSearchParams(params).toString();
+         }
+         console.log(`url: ${String(url)}`);
+
+         var reply = await fetch(url, {
+            headers: {
+               'Authorization': `Bearer ${args.token}`
+            }
+         });
+         console.log(`status: ${reply.status}`);
+         // || ${(0, _stringify.default)(reply.headers.raw())}`);
+
+         if (reply.status == 200) {
+            // console.log(`headers: ${reply.headers.get('link')}`);
+            var s = reply.headers.get('link');
+            var links = {};
+            var re = /<(\S+)>; rel=\"(\S+)\"/g;
+            var m;
+
+            do {
+               m = re.exec(s);
+               if (m) {
+                  // console.log(m[1], m[2])
+                  links[m[2]] = m[1];
+               }
+            } while (m);
+
+            return [links["next"], reply.text(), links["first"]];
+         } else {
+            return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`, reply.status,
+                {
+                   reason: reply.statusText,
+                   headers: reply.headers.raw()
+                });
+         }
+         // return ["0,1,2,3", "first-url", "next-url"];
       }
    }
 };
@@ -141,6 +202,7 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
    elements: [Element] @relationship(type: "HAS_DATAVIEW", direction: IN)
     "stored asset stream values"
     stored(
+        token: String! 
         namespace: String!
         startIndex: String!
         endIndex: String!
