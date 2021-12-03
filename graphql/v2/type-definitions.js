@@ -1,6 +1,16 @@
 
 const { gql } = require("apollo-server");
 
+const resolvers = {
+   DataView: {
+      stored(source, args) {
+         console.log(source);
+         console.log(`args: ${args}`);
+         console.log(args);
+         return ["0,1,2,3", "first-url", "next-url"];
+      }
+   }
+};
 
 const typeDefs = gql`
 # """
@@ -140,4 +150,4 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
 }
 `;
 
-module.exports = typeDefs;
+module.exports = { typeDefs, resolvers };

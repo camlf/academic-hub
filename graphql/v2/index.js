@@ -4,10 +4,11 @@ const express = require("express");
 const http = require('http');
 
 const driver = require("./driver");
-const typeDefs = require("./type-definitions");
+const { typeDefs, resolvers } = require("./type-definitions");
 
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
+    resolvers,
     driver,
     config: {
         jwt: {
