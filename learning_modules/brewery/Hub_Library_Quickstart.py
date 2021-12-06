@@ -3,7 +3,7 @@
 
 # # OSIsoft Academic Hub Library Quick Start
 # 
-# Version 0.97
+# Version 0.98
 # 
 # Academic Hub datasets are hosted by the OSIsoft Cloud Service (OCS, https://www.osisoft.com/solutions/cloud/vision/), a cloud-native realtime data infrastructure to perform enterprise-wide analytics using tools and languages of their choice. 
 # 
