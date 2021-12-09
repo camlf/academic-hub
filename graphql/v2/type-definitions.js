@@ -3,73 +3,76 @@ const { ApolloError } = require('apollo-server-errors');
 const { gql } = require("apollo-server");
 const fetch = require('node-fetch');
 
+async function get_data_view(kind, _source, _args, _context) {
+   let url;
+   let dv_id_extra;
 
-const base_url = "https://dat-b.osisoft.com/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces";
+   if (_source.id === undefined) {
+      console.log("@@error: dataview_id not defined (add id field)")
+      throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID');
+   }
+
+   // console.log(`ocs_token: ${_context.ocs_token}`);
+   if (_args.nextPage) {
+      url = new URL(`${_args.nextPage}`);
+   } else {
+      let params = {
+         startIndex: _args.startIndex,
+         endIndex: _args.endIndex
+      };
+      if (kind === "stored") {
+         params["form"] = "tableh";
+         dv_id_extra = "_narrow";
+      } else {  // "interpolated"
+         params["form"] = "csvh";
+         params["interpolation"] = _args.interpolation;
+         dv_id_extra = "";
+      }
+      if (_args.count) {
+         params["count"] = _args.count;
+      }
+      url = new URL(`${_context.ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
+      url.search = new URLSearchParams(params).toString();
+   }
+   console.log(`url: ${String(url)}`);
+
+   let reply = await fetch(url, {
+      headers: {
+         'Authorization': `Bearer ${_context.ocs_token}`
+      }
+   });
+   console.log(`status: ${reply.status}`);
+
+   if (reply.status === 200) {
+      let s = reply.headers.get('link');
+      let links = {};
+      let re = /<(\S+)>; rel=\"(\S+)\"/g;
+      let m;
+      do {
+         m = re.exec(s);
+         if (m) {
+            links[m[2]] = m[1];
+         }
+      } while (m);
+
+      return [links["next"], reply.text(), links["first"]];
+   } else {
+      let body = await reply.text();
+      // console.log(`reply-msg: ${reply.text()}`);
+      return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
+          reply.status,
+          {
+             reason: reply.statusText,
+             message: body,
+             headers: reply.headers.raw()
+          });
+   }
+};
 
 const resolvers = {
    DataView: {
-      stored: async (source, args) => {
-         console.log(source);
-         console.log(`args: ${args}`);
-         console.log(args);
-
-         if (source.id === undefined) {
-            console.log("@@error: dataview_id not defined (add id field)")
-            throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID'); // , myCustomExtensions);
-         }
-
-         if (args.nextPage) {
-            var url = new URL(args.nextPage);
-         } else {
-            var url = new URL(`${base_url}/${args.namespace}/dataviews/${source.id}_narrow/data/stored`);
-
-            let params = {
-               startIndex: args.startIndex,
-               endIndex: args.endIndex,
-               form: "tableh",
-            };
-
-            if (args.count) {
-               params["count"] = args.count;
-            }
-
-            url.search = new URLSearchParams(params).toString();
-         }
-         console.log(`url: ${String(url)}`);
-
-         var reply = await fetch(url, {
-            headers: {
-               'Authorization': `Bearer ${args.token}`
-            }
-         });
-         console.log(`status: ${reply.status}`);
-         // || ${(0, _stringify.default)(reply.headers.raw())}`);
-
-         if (reply.status == 200) {
-            // console.log(`headers: ${reply.headers.get('link')}`);
-            var s = reply.headers.get('link');
-            var links = {};
-            var re = /<(\S+)>; rel=\"(\S+)\"/g;
-            var m;
-
-            do {
-               m = re.exec(s);
-               if (m) {
-                  // console.log(m[1], m[2])
-                  links[m[2]] = m[1];
-               }
-            } while (m);
-
-            return [links["next"], reply.text(), links["first"]];
-         } else {
-            return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`, reply.status,
-                {
-                   reason: reply.statusText,
-                   headers: reply.headers.raw()
-                });
-         }
-         // return ["0,1,2,3", "first-url", "next-url"];
-      }
+      stored: async (_source, _args, _context) => await get_data_view("stored", _source, _args, _context),
+      interpolated: async (_source, _args, _context) => await get_data_view("interpolated", _source, _args, _context)
    }
 };
 
@@ -82,9 +85,9 @@ const typeDefs = gql`
 #   id: ID!
 # }
 
-extend type Database
-  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
-  @exclude(operations: [CREATE, UPDATE, DELETE])  
+# extend type Database
+#  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
+#  @exclude(operations: [CREATE, UPDATE, DELETE])  
 
 """
 Database == Hub dataset 
@@ -200,12 +203,20 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
    # has_stream: [PIPoint] @relation(name: "HAS_STREAM", direction: "OUT")
    "assets this data views is associated with"
    elements: [Element] @relationship(type: "HAS_DATAVIEW", direction: IN)
-    "stored asset stream values"
-    stored(
-        token: String! 
+   "stored asset stream values"
+   stored(
         namespace: String!
         startIndex: String!
         endIndex: String!
+        nextPage: String
+        count: Int
+    ): [String]! @ignore 
+   "interpolated asset stream values"
+    interpolated(
+        namespace: String!
+        startIndex: String!
+        endIndex: String!
+        interpolation: String!
         nextPage: String
         count: Int
     ): [String]! @ignore 
