@@ -61,7 +61,7 @@ async function get_data_view(kind, _source, _args, _context) {
       return [links["next"], reply.text(), links["first"]];
    } else {
       let body = await reply.text();
-      console.log(`reply-msg: ${reply.text()}`);
+      console.log(`reply-msg: ${body}`);
       return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
           reply.status,
           {
@@ -94,7 +94,7 @@ async function get_data_items(_source, _args, _context) {
       return reply.json();
    } else {
       let body = await reply.text();
-      console.log(`reply-msg: ${reply.text()}`);
+      console.log(`reply-msg: ${body}`);
       return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
           reply.status,
           {
