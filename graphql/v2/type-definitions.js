@@ -1,18 +1,21 @@
 
 const { ApolloError } = require('apollo-server-errors');
-const { gql } = require("apollo-server");
 const fetch = require('node-fetch');
+
+
+function checkDataviewId(id) {
+   if (id === undefined) {
+      console.log("@@error: dataview_id not defined (add id field)")
+      throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID');
+   }
+}
 
 async function get_data_view(kind, _source, _args, _context) {
    let url;
    let dv_id_extra;
 
-   if (_source.id === undefined) {
-      console.log("@@error: dataview_id not defined (add id field)")
-      throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID');
-   }
+   checkDataviewId(_source.id);
 
-   // console.log(`ocs_token: ${_context.ocs_token}`);
    if (_args.nextPage) {
       url = new URL(`${_args.nextPage}`);
    } else {
@@ -46,7 +49,7 @@ async function get_data_view(kind, _source, _args, _context) {
    if (reply.status === 200) {
       let s = reply.headers.get('link');
       let links = {};
-      let re = /<(\S+)>; rel=\"(\S+)\"/g;
+      let re = /<(\S+)>; rel="(\S+)"/g;
       let m;
       do {
          m = re.exec(s);
@@ -58,7 +61,7 @@ async function get_data_view(kind, _source, _args, _context) {
       return [links["next"], reply.text(), links["first"]];
    } else {
       let body = await reply.text();
-      // console.log(`reply-msg: ${reply.text()}`);
+      console.log(`reply-msg: ${reply.text()}`);
       return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
           reply.status,
           {
@@ -67,16 +70,54 @@ async function get_data_view(kind, _source, _args, _context) {
              headers: reply.headers.raw()
           });
    }
-};
+}
+
+async function get_data_items(_source, _args, _context) {
+
+   checkDataviewId(_source.id);
+
+   let params = {
+      count: "1000",
+      cache: "refresh",
+   };
+   const url = new URL(`${_context.ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
+   url.search = new URLSearchParams(params).toString();
+
+   let reply = await fetch(url, {
+      headers: {
+         'Authorization': `Bearer ${_context.ocs_token}`
+      }
+   });
+   console.log(`status: ${reply.status}`);
+
+   if (reply.status === 200) {
+      return reply.json();
+   } else {
+      let body = await reply.text();
+      console.log(`reply-msg: ${reply.text()}`);
+      return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
+          reply.status,
+          {
+             reason: reply.statusText,
+             message: body,
+             headers: reply.headers.raw()
+          });
+   }
+}
 
 const resolvers = {
    DataView: {
       stored: async (_source, _args, _context) => await get_data_view("stored", _source, _args, _context),
-      interpolated: async (_source, _args, _context) => await get_data_view("interpolated", _source, _args, _context)
+      interpolated: async (_source, _args, _context) => await get_data_view("interpolated", _source, _args, _context),
+      resolvedDataItems: async (_source, _args, _context) => await get_data_items(_source, _args, _context),
    }
 };
 
-const typeDefs = gql`
+const typeDefs = `
+
+scalar JSON
+scalar JSONObject
+
 # """
 # An object with a Globally Unique ID
 # """
@@ -127,7 +168,7 @@ type Database {
 }
  
 #extend type Database
-#  @auth(rules: [{ operations: [READ], roles: ["hub:readd"] }])
+#  @auth(rules: [{ operations: [READ], roles: ["hub:read"] }])
 
 # extend type Database @auth(rules: [{ isAuthenticated: true }])
 # extend type Database @auth(rules: [{ allowUnauthenticated: true }])
@@ -220,6 +261,10 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
         nextPage: String
         count: Int
     ): [String]! @ignore 
+   resolvedDataItems(
+        namespace: String!
+        queryId: String!
+   ): JSONObject @ignore 
 }
 `;
 
