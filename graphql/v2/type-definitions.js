@@ -10,6 +10,18 @@ function checkDataviewId(id) {
    }
 }
 
+async function customGraphQLError(url, reply) {
+   let body = await reply.text();
+   console.log(`reply-msg: ${body}`);
+   return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
+       reply.status,
+       {
+          reason: reply.statusText,
+          message: body,
+          headers: reply.headers.raw()
+       });
+}
+
 async function get_data_view(kind, _source, _args, _context) {
    let url;
    let dv_id_extra;
@@ -60,15 +72,7 @@ async function get_data_view(kind, _source, _args, _context) {
 
       return [links["next"], reply.text(), links["first"]];
    } else {
-      let body = await reply.text();
-      console.log(`reply-msg: ${body}`);
-      return new ApolloError(`  ${reply.status}:${reply.statusText}.  URL ${String(url)}  OperationId ${reply.headers.get("Operation-Id")}`,
-          reply.status,
-          {
-             reason: reply.statusText,
-             message: body,
-             headers: reply.headers.raw()
-          });
+      return await customGraphQLError(url, reply);
    }
 }
 
@@ -126,9 +130,10 @@ scalar JSONObject
 #   id: ID!
 # }
 
-# extend type Database
+extend type Database
+  @exclude(operations: [CREATE, UPDATE, DELETE])  
 #  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
-#  @exclude(operations: [CREATE, UPDATE, DELETE])  
+
 
 """
 Database == Hub dataset 

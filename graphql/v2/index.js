@@ -5,7 +5,8 @@ const http = require('http');
 const fetch = require('node-fetch');
 const {
     ApolloServerPluginLandingPageGraphQLPlayground,
-    ApolloServerPluginDrainHttpServer
+    ApolloServerPluginDrainHttpServer,
+    ApolloServerPluginInlineTrace,
 } = require("apollo-server-core")
 
 const dotenv = require("dotenv")
@@ -62,7 +63,8 @@ async function startApolloServer() {
         })),
         plugins: [
             ApolloServerPluginLandingPageGraphQLPlayground(),
-            ApolloServerPluginDrainHttpServer({httpServer})
+            ApolloServerPluginDrainHttpServer({httpServer}),
+            ApolloServerPluginInlineTrace,
         ],
     });
 
