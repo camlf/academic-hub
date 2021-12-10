@@ -1,0 +1,89 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+  creationTimestamp: null
+  name: acad-hub-ingress
+spec:
+  rules:
+  - host: data.academic.osisoft.com
+    http:
+      paths:
+      - backend:
+          serviceName: data-api
+          servicePort: 80
+        path: /google3a8ba05497fdc1cd.html
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: data-api
+          servicePort: 80
+        path: /
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: data-api
+          servicePort: 80
+        path: /interpolated
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: data-portal
+          servicePort: 80
+        path: /data
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: data-portal
+          servicePort: 80
+        path: /datas
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: pivision-avail
+          servicePort: 5001
+        path: /pivision
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: ucdavis-report
+          servicePort: 8050
+        path: /ucdavis
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: prom-grafana
+          servicePort: 80
+        path: /grafana
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: hub-v2-graphql
+          servicePort: 4000
+        path: /graphql2
+      - backend:
+          serviceName: hub-graphql
+          servicePort: 4000
+        path: /graphql
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: hub-graphql-admin
+          servicePort: 4000
+        path: /hubgraphql
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: hub-graphql-test
+          servicePort: 4000
+        path: /tubgraphql
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: nbviewer
+          servicePort: 8080
+        path: /nbviewer
+        pathType: ImplementationSpecific
+      - backend:
+          serviceName: hubauth
+          servicePort: 3000
+        path: /auth
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - data.academic.osisoft.com
+    secretName: hub-ingress-tls
+status:
+  loadBalancer: {}

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hub-v2-graphql
+spec:
+  type: ClusterIP
+  ports:
+  - port: 4000
+  selector:
+    app: hub-v2-graphql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hub-v2-graphql
+spec:
+  replicas: 1 
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  selector:
+    matchLabels: 
+      app: hub-v2-graphql
+  template:
+    metadata:
+      labels:
+        app: hub-v2-graphql
+    spec:
+      containers:
+      - name: hub-v2-graphql
+        image: academicpi.azurecr.io/hub-v2-graphql:v1
+        envFrom:
+        - secretRef:
+            name: hub-v2-graphql-secret-d8b576m6dc
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 250m
+

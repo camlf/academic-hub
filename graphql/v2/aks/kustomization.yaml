@@ -1,0 +1,14 @@
+secretGenerator:
+- name: hub-v2-graphql-secret
+  literals:
+  - NEO4J_URI=neo4j://neo4jcore00.westus.cloudapp.azure.com:7687
+  - NEO4J_DATABASE=neo4j
+  - NEO4J_USER=piuser
+  - NEO4J_PASSWORD=piuser
+  - DEBUG=*
+  - APOLLO_KEY=service:hubv3:V3Jz6dOpqnkab3JIViSmCA
+  - APOLLO_GRAPH_ID=hubv3
+  - APOLLO_GRAPH_VARIANT=current
+  - APOLLO_SCHEMA_REPORTING=true
+  - OCS_CLIENT_ID=780beb35-edb6-4818-964a-6954e3959a28
+  - OCS_CLIENT_SECRET=Py9CuqVoSCygnZEkV/PwtvFzK+eP2sVQ8O40IhJP7O4=
