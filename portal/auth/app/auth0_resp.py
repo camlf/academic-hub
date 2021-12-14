@@ -19,8 +19,8 @@ import responder
 import redis
 import bcrypt
 import base64
-
 import constants
+
 
 api = responder.API()
 
@@ -136,6 +136,9 @@ def login():
             organization=request.args.get("organization"),
         )
     else:
+        hub_session_id = request.args.get("hub-id")
+        if hub_session_id:
+            session["hub-session-id"] = hub_session_id
         return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
 
 
