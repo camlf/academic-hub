@@ -173,11 +173,13 @@ def dashboard():
 @app.route("/token")
 def return_token():
     hub_session_id = request.headers.get("hub-id", None)
+    extra_key = ":token" if request.args.get("jwt", None) else ""
+    print(f"extra_key: {extra_key}")
     if hub_session_id:
         try:
-            token = app.r.get("hub:" + hub_session_id)
+            token = app.r.get("hub:" + hub_session_id + extra_key)
             if token is None:
-                return f'key {"hub:" + hub_session_id} not found"', 400
+                return f'key {"hub:" + hub_session_id + extra_key}  not found"', 400
             else:
                 return token.decode("utf-8")
         except:
