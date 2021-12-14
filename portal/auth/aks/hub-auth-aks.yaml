@@ -22,7 +22,7 @@ spec:
         image: academicpi.azurecr.io/hub-auth:v23
         envFrom:
         - secretRef:
-            name: auth-portal-secret-6h6gtd52d2
+            name: auth-portal-secret-b96m4k5c56
         ports:
         - containerPort: 3000 
         resources:
