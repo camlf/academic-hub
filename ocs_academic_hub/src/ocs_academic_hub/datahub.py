@@ -109,9 +109,7 @@ def process_digital_states(df):
 
 def remap_campus_dataview_id(dv_id):
     if "campus.building-" in dv_id:
-        if not any(
-                ss in dv_id for ss in ["-electricity", "-chilled_water", "-steam"]
-        ):
+        if not any(ss in dv_id for ss in ["-electricity", "-chilled_water", "-steam"]):
             return dv_id + "-electricity"
     return dv_id
 
@@ -123,10 +121,10 @@ def asdict(item_metadata):
 class HubClient:
     @typechecked
     def __init__(
-            self,
-            hub_data: str = "hub_datasets.json",
-            options: List[str] = [],
-            debug: bool = False,
+        self,
+        hub_data: str = "hub_datasets.json",
+        options: List[str] = [],
+        debug: bool = False,
     ):
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
@@ -141,13 +139,13 @@ class HubClient:
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
         if data_file != default_hub_data:
             print(f"@ Hub data file: {data_file}")
-        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(
-            data_file
-        )
+        self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
-        self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-            self.__gqlh, self.__db_index, self.__current_db
-        )
+        (
+            self.__assets,
+            self.__assets_metadata,
+            self.__dv_column_key,
+        ) = assets_and_metadata(self.__gqlh, self.__db_index, self.__current_db)
         self.__dataview_next_page = None
 
     @typechecked
@@ -165,8 +163,7 @@ class HubClient:
             retries=3,
         )
         self.__graphql_client = Client(
-            transport=self.__graphql_transport,
-            fetch_schema_from_transport=False
+            transport=self.__graphql_transport, fetch_schema_from_transport=False
         )
 
     @typechecked
@@ -225,9 +222,11 @@ class HubClient:
             if self.__gqlh["Database"][j]["name"] == dataset:
                 self.__current_db_index = j
                 self.__current_db = self.__gqlh["Database"][j]["asset_db"]
-                self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-                    self.__gqlh, self.__db_index, self.__current_db
-                )
+                (
+                    self.__assets,
+                    self.__assets_metadata,
+                    self.__dv_column_key,
+                ) = assets_and_metadata(self.__gqlh, self.__db_index, self.__current_db)
                 break
 
     @typechecked
@@ -254,7 +253,7 @@ class HubClient:
 
     @typechecked
     def asset_dataviews(
-            self, filter: str = "default", asset: str = "", multiple_asset: bool = False
+        self, filter: str = "default", asset: str = "", multiple_asset: bool = False
     ) -> Union[None, List[str]]:
         if len(asset) > 0:
             if asset.lower() not in self.__assets:
@@ -290,11 +289,11 @@ class HubClient:
                         i["id"]
                         for i in dataviews
                         if (
-                                   filter.lower() in i["id"]
-                                   or filter.lower() in i["description"].lower()
-                           )
-                           and asset_test(asset, i["asset_id"])
-                           and len_test(i["asset_id"])
+                            filter.lower() in i["id"]
+                            or filter.lower() in i["description"].lower()
+                        )
+                        and asset_test(asset, i["asset_id"])
+                        and len_test(i["asset_id"])
                     ]
                 )
             )
@@ -302,11 +301,11 @@ class HubClient:
 
     @typechecked
     def dataview_definition(
-            self,
-            namespace_id: str,
-            dataview_id: str,
-            stream_id: bool = False,
-            version: str = "",
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        stream_id: bool = False,
+        version: str = "",
     ):
         columns = [
             "Asset_Id",
@@ -319,10 +318,10 @@ class HubClient:
             columns += ["OCS_Stream_Id"]
         df = pd.DataFrame(columns=columns)
 
-        data_items = self.graphql_query(q_resolved,
-                                        {"id": dataview_id,
-                                         "namespace": namespace_id,
-                                         "queryId": "Asset_value"})
+        data_items = self.graphql_query(
+            q_resolved,
+            {"id": dataview_id, "namespace": namespace_id, "queryId": "Asset_value"},
+        )
         v2_column_key = self.__dv_column_key.get(dataview_id, None)
         column_key = (
             "column_name" if v2_column_key is None else f"{v2_column_key}|column"
@@ -343,55 +342,66 @@ class HubClient:
         return df.sort_values(["Column_Name", "Asset_Id"])
 
     def dataview_columns(self, namespace_id: str, dataview_id: str):
-        data_items = self.graphql_query(q_resolved,
-                                        {"id": dataview_id,
-                                         "namespace": namespace_id,
-                                         "queryId": "Asset_value"})
-        digital_items = self.graphql_query(q_resolved,
-                                           {"id": dataview_id,
-                                            "namespace": namespace_id,
-                                            "queryId": "Asset_digital"})
-        return len(data_items["dataview"][0]["resolvedDataItems"]["Items"]) + \
-               len(digital_items["dataview"][0]["resolvedDataItems"]["Items"]) + 1
+        data_items = self.graphql_query(
+            q_resolved,
+            {"id": dataview_id, "namespace": namespace_id, "queryId": "Asset_value"},
+        )
+        digital_items = self.graphql_query(
+            q_resolved,
+            {"id": dataview_id, "namespace": namespace_id, "queryId": "Asset_digital"},
+        )
+        return (
+            len(data_items["dataview"][0]["resolvedDataItems"]["Items"])
+            + len(digital_items["dataview"][0]["resolvedDataItems"]["Items"])
+            + 1
+        )
 
     def __get_data_interpolated(
-            self,
-            namespace_id,
-            dataview_id,
-            start_index,
-            end_index,
-            interval,
-            count,
-            next_page,
+        self,
+        namespace_id,
+        dataview_id,
+        start_index,
+        end_index,
+        interval,
+        count,
+        next_page,
     ):
         # count_arg = {} if count is None else {"count": count}
-        reply = self.graphql_query(q_interpolated,
-                                   dict(namespace=namespace_id,
-                                        id=dataview_id,
-                                        startIndex=start_index,
-                                        endIndex=end_index,
-                                        interpolation=interval,
-                                        nextPage=next_page))
+        reply = self.graphql_query(
+            q_interpolated,
+            dict(
+                namespace=namespace_id,
+                id=dataview_id,
+                startIndex=start_index,
+                endIndex=end_index,
+                interpolation=interval,
+                nextPage=next_page,
+            ),
+        )
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
 
     def __get_data_stored(
-            self,
-            namespace_id,
-            dataview_id,
-            start_index,
-            end_index,
-            interval,  # not used
-            count,
-            next_page,
+        self,
+        namespace_id,
+        dataview_id,
+        start_index,
+        end_index,
+        interval,  # not used
+        count,
+        next_page,
     ):
         # count_arg = {} if count is None else {"count": count}
-        reply = self.graphql_query(q_stored,
-                                   dict(namespace=namespace_id,
-                                        id=dataview_id,
-                                        startIndex=start_index,
-                                        endIndex=end_index,
-                                        nextPage=next_page))
+        reply = self.graphql_query(
+            q_stored,
+            dict(
+                namespace=namespace_id,
+                id=dataview_id,
+                startIndex=start_index,
+                endIndex=end_index,
+                nextPage=next_page,
+            ),
+        )
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
 
@@ -402,16 +412,16 @@ class HubClient:
     @timer
     @typechecked
     def dataview_interpolated_pd(
-            self,
-            namespace_id: str,
-            dataview_id: str,
-            start_index: str,
-            end_index: str,
-            interval: str,
-            count: int = None,
-            sub_second_interval: bool = False,
-            verbose: bool = False,
-            stored: bool = False,
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        start_index: str,
+        end_index: str,
+        interval: str,
+        count: int = None,
+        sub_second_interval: bool = False,
+        verbose: bool = False,
+        stored: bool = False,
     ):
         return self.dataview_get_data_pd(
             namespace_id,
@@ -426,18 +436,18 @@ class HubClient:
         )
 
     def dataview_get_data_pd(
-            self,
-            namespace_id: str,
-            dataview_id: str,
-            start_index: str,
-            end_index: str,
-            interval: str,
-            count: int = None,
-            sub_second_interval: bool = False,
-            verbose: bool = False,
-            stored: bool = False,
-            resume: bool = False,
-            max_stored_rows=MAX_STORED_DV_ROWS,
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        start_index: str,
+        end_index: str,
+        interval: str,
+        count: int = None,
+        sub_second_interval: bool = False,
+        verbose: bool = False,
+        stored: bool = False,
+        resume: bool = False,
+        max_stored_rows=MAX_STORED_DV_ROWS,
     ):
         df = pd.DataFrame()
         next_page = None
@@ -501,7 +511,7 @@ class HubClient:
                 print("+", end="", flush=True)
             except Exception as e:
                 if not any(
-                        ss in str(e) for ss in ["408:", "503:", "504:", "409:", "502:"]
+                    ss in str(e) for ss in ["408:", "503:", "504:", "409:", "502:"]
                 ):
                     raise e
                 if "409:" in str(e):
@@ -526,14 +536,14 @@ class HubClient:
     @timer
     @typechecked
     def dataview_stored_pd(
-            self,
-            namespace_id: str,
-            dataview_id: str,
-            start_index: str,
-            end_index: str,
-            count: int = None,
-            resume: bool = False,
-            max_rows=MAX_STORED_DV_ROWS,
+        self,
+        namespace_id: str,
+        dataview_id: str,
+        start_index: str,
+        end_index: str,
+        count: int = None,
+        resume: bool = False,
+        max_rows=MAX_STORED_DV_ROWS,
     ):
         try:
             result = self.dataview_get_data_pd(
@@ -547,7 +557,7 @@ class HubClient:
                 resume=resume,
                 max_stored_rows=max_rows,
             )
-        except SdsError as e:
+        except Exception as e:
             if "404" in str(e):
                 print(
                     f"### Error: data view with Id {dataview_id} has no version for stored data.\n"
@@ -559,11 +569,13 @@ class HubClient:
                 raise e
         return result
 
+    @typechecked
     def refresh_datasets(
-            self,
-            hub_data="hub_datasets.json",
-            additional_status="production",
-    ):
+        self,
+        hub_data: str = "hub_datasets.json",
+        additional_status: str = "production",
+        experimental: bool = True,
+    ) -> None:
         db = self.graphql_query(
             q_datasets, variable_values={"status": additional_status}
         )
@@ -571,7 +583,9 @@ class HubClient:
             f.write(json.dumps(db, indent=2))
 
     def graphql_query(
-            self, query_string, variable_values=None,
+        self,
+        query_string,
+        variable_values=None,
     ):
         if variable_values is None:
             variable_values = {}
@@ -582,7 +596,9 @@ class HubClient:
 def hub_login(gw_url=None):
     hub = HubClient()
     new_tab = 'target="_blank"'
-    registration_link = f'(<a {new_tab} href="https://academic.osisoft.com/register">register here</a>)'
+    registration_link = (
+        f'(<a {new_tab} href="https://academic.osisoft.com/register"><font color="blue">register here</font></a>)'
+    )
     step1 = '<font color="orange"><b>Step 1. Click here to initiate login sequence on new tab</b></font>'
     login_md = f"""<b>Academic Hub Login {registration_link}</b> 
 
@@ -613,7 +629,9 @@ Follow the 4 steps below:
 
     def button_confirm(_):
         r = requests.get(
-            f"{AUTH_ENDPOINT}/token?jwt=1", headers={"hub-id": hub.session_id()}, verify=False
+            f"{AUTH_ENDPOINT}/token?jwt=1",
+            headers={"hub-id": hub.session_id()},
+            verify=False,
         )
         if 200 == r.status_code:
             status.value = "OK, you can proceed"

@@ -1,8 +1,9 @@
 
 
+# Database alias to match previous file format
 q_datasets = """
 query datasets($status: String) {
-  databases(
+  Database: databases(
     where: { OR: [{ status: "production" }, { status: $status }] }
     options: { sort: [{ name: ASC }] }
   ) {
