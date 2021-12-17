@@ -1,7 +1,37 @@
 
 const { ApolloError } = require('apollo-server-errors');
+const { gql } = require('graphql-tag');
 const fetch = require('node-fetch');
 
+const base_url = "https://dat-b.osisoft.com";
+const token_url = `${base_url}/identity/connect/token`;
+const ocs_url = `${base_url}/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces`;
+
+let ocs_jwt = {};
+let ocs_jwt_exp = 1;
+
+async function getOCSToken(url) {
+   const response = await fetch(url, {
+      method: 'POST',
+      body: new URLSearchParams({
+         'client_id': process.env.OCS_CLIENT_ID || 'none',
+         'client_secret': process.env.OCS_CLIENT_SECRET || 'none',
+         'grant_type': 'client_credentials',
+      })
+   });
+   console.log("@got fresh OCS token")
+   return response.json();
+}
+
+async function getToken() {
+   let delta = ocs_jwt_exp - Date.now()
+   // console.log(`delta: ${delta}`)
+    if (delta <= 5*60*1000) {
+        ocs_jwt = await getOCSToken(token_url);
+        ocs_jwt_exp = Date.now() + 1000*ocs_jwt["expires_in"]
+    }
+    return ocs_jwt["access_token"]
+}
 
 function checkDataviewId(id) {
    if (id === undefined) {
@@ -36,24 +66,25 @@ async function get_data_view(kind, _source, _args, _context) {
          endIndex: _args.endIndex
       };
       if (kind === "stored") {
-         params["form"] = "tableh";
+         // params["form"] = "tableh";
          dv_id_extra = "_narrow";
       } else {  // "interpolated"
          params["form"] = "csvh";
-         params["interpolation"] = _args.interpolation;
+         params["interval"] = _args.interpolation;
          dv_id_extra = "";
       }
       if (_args.count) {
          params["count"] = _args.count;
       }
-      url = new URL(`${_context.ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
+      url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
       url.search = new URLSearchParams(params).toString();
    }
    console.log(`url: ${String(url)}`);
 
+   let ocs_token = await getToken();
    let reply = await fetch(url, {
       headers: {
-         'Authorization': `Bearer ${_context.ocs_token}`
+         'Authorization': `Bearer ${ocs_token}`
       }
    });
    console.log(`status: ${reply.status}`);
@@ -70,7 +101,17 @@ async function get_data_view(kind, _source, _args, _context) {
          }
       } while (m);
 
-      return [links["next"], reply.text(), links["first"]];
+      let result;
+      if (kind === "stored") {
+         result = reply.json()
+      } else {
+         result = reply.text()
+      }
+      return {
+         nextPage: links["next"],
+         data: result,
+         firstPage: links["first"]
+      }
    } else {
       return await customGraphQLError(url, reply);
    }
@@ -84,12 +125,13 @@ async function get_data_items(_source, _args, _context) {
       count: "1000",
       cache: "refresh",
    };
-   const url = new URL(`${_context.ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
+   const url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
    url.search = new URLSearchParams(params).toString();
 
+   let ocs_token = await getToken();
    let reply = await fetch(url, {
       headers: {
-         'Authorization': `Bearer ${_context.ocs_token}`
+         'Authorization': `Bearer ${ocs_token}`
       }
    });
    console.log(`status: ${reply.status}`);
@@ -117,28 +159,21 @@ const resolvers = {
    }
 };
 
-const typeDefs = `
+const typeDefs = gql`
 
 scalar JSON
 scalar JSONObject
 
-# """
-# An object with a Globally Unique ID
-# """
-# interface Node {
-#   # The ID of the object.
-#   id: ID!
-# }
-
-extend type Database
-  @exclude(operations: [CREATE, UPDATE, DELETE])  
-#  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
-
+interface AuthReadOnly @auth(rules: [{operations: [READ], isAuthenticated: true }]) 
+   @exclude(operations: [CREATE, UPDATE, DELETE]) {
+   id: ID!
+}
 
 """
 Database == Hub dataset 
 """
-type Database {
+
+type Database implements AuthReadOnly {
    "pseudo-PI WebID"
    id: ID!
    "OCS metadata for dataset id"
@@ -172,16 +207,15 @@ type Database {
    leaf_elements: [Element]! @cypher (statement: "MATCH (this)-[:HAS_ELEMENT*]->(e:Element) WHERE NOT ((e)-[:HAS_ELEMENT]->()) RETURN DISTINCT e ORDER BY e.name")
 }
  
-#extend type Database
-#  @auth(rules: [{ operations: [READ], roles: ["hub:read"] }])
+# extend type Database
+#  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
 
-# extend type Database @auth(rules: [{ isAuthenticated: true }])
-# extend type Database @auth(rules: [{ allowUnauthenticated: true }])
+  # @exclude(operations: [CREATE, UPDATE, DELETE])  
 
 """
 AF elements from source PI
 """
-type Element @exclude(operations: [CREATE, UPDATE, DELETE]) {
+type Element implements AuthReadOnly {
    # "(internal database use)"
    # _id: Long!
    "asset identifier - from AF => OCS metadata"
@@ -219,12 +253,24 @@ type Element @exclude(operations: [CREATE, UPDATE, DELETE]) {
    "parent element(s)"
    has_parent: [Element] @relationship(type: "HAS_ELEMENT", direction: IN)
 }
-   
+
+type StoredResult {
+   nextPage: String
+   data: JSONObject
+   firstPage: String
+}
+
+type InterpolatedResult {
+   nextPage: String
+   data: String
+   firstPage: String
+}
+
 """
 Asset-centric data view representation
 Reference: https://academichub.blob.core.windows.net/hub/Hub_Dataset_Onboarding_Part_1.html
 """
-type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
+type DataView implements AuthReadOnly {
    # "(internal database use)"
    # _id: Long!
    "data view identifier"
@@ -256,7 +302,7 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
         endIndex: String!
         nextPage: String
         count: Int
-    ): [String]! @ignore 
+    ): StoredResult @ignore 
    "interpolated asset stream values"
     interpolated(
         namespace: String!
@@ -265,7 +311,7 @@ type DataView @exclude(operations: [CREATE, UPDATE, DELETE]) {
         interpolation: String!
         nextPage: String
         count: Int
-    ): [String]! @ignore 
+    ): InterpolatedResult @ignore 
    resolvedDataItems(
         namespace: String!
         queryId: String!

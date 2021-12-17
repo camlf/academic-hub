@@ -84,6 +84,6 @@ spec:
   tls:
   - hosts:
     - data.academic.osisoft.com
-    secretName: hub-ingress-tls
+    secretName: hub-ingress2-tls
 status:
   loadBalancer: {}

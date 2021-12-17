@@ -14,7 +14,7 @@ kind: Deployment
 metadata:
   name: hub-v2-graphql
 spec:
-  replicas: 1 
+  replicas: 2 
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: hub-v2-graphql
-        image: academicpi.azurecr.io/hub-v2-graphql:v1
+        image: academicpi.azurecr.io/hub-v2-graphql:v5
         envFrom:
         - secretRef:
             name: hub-v2-graphql-secret-d8b576m6dc
