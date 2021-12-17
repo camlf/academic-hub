@@ -50,6 +50,18 @@ def timer(func):
     return wrapper_timer
 
 
+def hub_authenticated(func):
+
+    @functools.wraps(func)
+    def wrapper_hub(*args, **kwargs):
+        if not args[0].authenticated():
+            raise Exception("@@ You should authenticate with Hub first (cell with hub_login() )")
+        value = func(*args, **kwargs)
+        return value
+
+    return wrapper_hub
+
+
 def debug_requests_on():
     """Switches on logging of the requests module."""
     HTTPConnection.debuglevel = 1

@@ -93,3 +93,11 @@ query resolvedDataItems($id: ID, $namespace: String!, $queryId: String!) {
   }
 }
 """
+
+q_endpoint_check = """
+query { 
+  databases(where: {name: "Wind_Farms"}) {
+    name
+  }
+}
+"""

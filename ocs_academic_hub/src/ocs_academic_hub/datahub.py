@@ -1,5 +1,5 @@
 #
-from .util import timer
+from .util import timer, hub_authenticated
 import configparser
 from dateutil.parser import parse
 from datetime import datetime, timedelta
@@ -129,6 +129,7 @@ class HubClient:
         if debug:
             logging.getLogger("backoff").addHandler(logging.StreamHandler())
 
+        self.__authenticated = False
         self.__jwt = {}
         self.__session_id = str(uuid.uuid4())
         self.__graphql_transport = None
@@ -173,9 +174,18 @@ class HubClient:
             raise Exception("@@@ Please (re)start Hub login sequence")
         return token
 
+    @typechecked
+    def set_authenticated(self) -> None:
+        self.__authenticated = True
+
+    @typechecked
+    def authenticated(self) -> bool:
+        return self.__authenticated
+
     def gqlh(self):
         return self.__gqlh
 
+    @hub_authenticated
     @typechecked
     def asset_metadata(self, asset: str):
         if asset.lower() not in self.__assets:
@@ -191,12 +201,14 @@ class HubClient:
         ]
         return pd.DataFrame(metadata).sort_values(by=["Asset_Id"])
 
+    @hub_authenticated
     @typechecked
     def datasets(self, first="") -> List[str]:
         data_sets = list(hub_db_namespaces.keys())
         data_sets.sort(key=lambda s: s == first, reverse=True)
         return data_sets
 
+    @hub_authenticated
     @typechecked
     def current_dataset(self) -> str:
         return self.__gqlh["Database"][self.__current_db_index]["name"]
@@ -211,6 +223,7 @@ class HubClient:
         )
         return f"{version} (status: {status})"
 
+    @hub_authenticated
     @typechecked
     def set_dataset(self, dataset: str):
         try:
@@ -229,6 +242,7 @@ class HubClient:
                 ) = assets_and_metadata(self.__gqlh, self.__db_index, self.__current_db)
                 break
 
+    @hub_authenticated
     @typechecked
     def namespace_of(self, dataset: str):
         try:
@@ -236,6 +250,7 @@ class HubClient:
         except KeyError:
             print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
 
+    @hub_authenticated
     @typechecked
     def assets(self, filter: str = ""):
         df = pd.DataFrame(columns=("Asset_Id", "Description"))
@@ -251,6 +266,7 @@ class HubClient:
             df.loc[i] = [asset, asset_description[asset]]
         return df
 
+    @hub_authenticated
     @typechecked
     def asset_dataviews(
         self, filter: str = "default", asset: str = "", multiple_asset: bool = False
@@ -299,6 +315,7 @@ class HubClient:
             )
         )
 
+    @hub_authenticated
     @typechecked
     def dataview_definition(
         self,
@@ -405,11 +422,13 @@ class HubClient:
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
 
+    @hub_authenticated
     @typechecked
     def remaining_data(self) -> bool:
         return False if self.__dataview_next_page is None else True
 
     @timer
+    @hub_authenticated
     @typechecked
     def dataview_interpolated_pd(
         self,
@@ -534,6 +553,7 @@ class HubClient:
         return process_digital_states(df)
 
     @timer
+    @hub_authenticated
     @typechecked
     def dataview_stored_pd(
         self,
@@ -569,6 +589,7 @@ class HubClient:
                 raise e
         return result
 
+    @hub_authenticated
     @typechecked
     def refresh_datasets(
         self,
@@ -587,6 +608,8 @@ class HubClient:
         query_string,
         variable_values=None,
     ):
+        if self.__graphql_client is None:
+            raise Exception("@@@ Please (re)start Hub login sequence (cell with hub_login() )")
         if variable_values is None:
             variable_values = {}
         query = gql(query_string)
@@ -634,8 +657,13 @@ Follow the 4 steps below:
             verify=False,
         )
         if 200 == r.status_code:
-            status.value = "OK, you can proceed"
             hub.set_jwt(eval(r.text), gw_url)
+            reply = hub.graphql_query(q_endpoint_check)
+            if reply.get("databases", False):
+                hub.set_authenticated()
+                status.value = "OK, you can proceed"
+            else:
+                status.value = "ERROR: Hub endpoint failed, go to Step 1"
         else:
             status.value = "ERROR: Go back to Step 1"
 
