@@ -1,9 +1,7 @@
 #
 from .util import timer, hub_authenticated
-import configparser
 from dateutil.parser import parse
 from datetime import datetime, timedelta
-import requests
 from requests.structures import CaseInsensitiveDict
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
@@ -15,23 +13,27 @@ import pandas as pd
 from typeguard import typechecked
 from typing import List, Union
 import pkg_resources
-import urllib3
-import backoff
-import logging
+import requests
 from math import nan
 
 import markdown
 import ipywidgets as widgets
 from ipywidgets import HTML
 import uuid
+from . import __version__
 
 from .queries import *
+from .access import previous_jwt, save_jwt, delete_jwt
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse, parse_qs
 
+# import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 HUB_BASE_URL = "https://data.academic.osisoft.com"
 AUTH_ENDPOINT = f"{HUB_BASE_URL}/auth"
 GRAPHQL_ENDPOINT = f"{HUB_BASE_URL}/graphql2"
+REGISTRATION_URL = "https://academic.osisoft.com/register"
 MAX_STORED_DV_ROWS = 2000000
 UXIE_CONSTANT = 100 * 1000
 
@@ -80,7 +82,10 @@ def assets_and_metadata(gqlh, db_index, current_db):
     for i in assets_info:
         for dv in i["has_dataview"]:
             dv_column_key[dv["id"]] = dv.get("ocs_column_key", None)
-    metaf = lambda x: {} if x is None else eval(x)
+
+    def metaf(x):
+        return {} if x is None else eval(x)
+
     metadata = {
         assets_info[j][asset_key]: metaf(assets_info[j]["asset_metadata"])
         for j in range(len(assets_info))
@@ -126,8 +131,8 @@ class HubClient:
         options: List[str] = [],
         debug: bool = False,
     ):
-        if debug:
-            logging.getLogger("backoff").addHandler(logging.StreamHandler())
+        # if debug:
+        #    logging.getLogger("backoff").addHandler(logging.StreamHandler())
 
         self.__authenticated = False
         self.__jwt = {}
@@ -278,15 +283,24 @@ class HubClient:
                 )
                 return
         if not multiple_asset:
-            len_test = lambda l: len(l) == 1
+
+            def len_test(li):
+                return len(li) == 1
+
         else:
-            len_test = lambda l: len(l) > 1
+
+            def len_test(li):
+                return len(li) > 1
+
         if asset == "":
-            asset_test = lambda x, y: True
+
+            def asset_test(_x, _y):
+                return True
+
         else:
-            asset_test = lambda asset, asset_list: asset.lower() in [
-                i.lower() for i in asset_list
-            ]
+
+            def asset_test(this_asset, asset_list):
+                return this_asset.lower() in [i.lower() for i in asset_list]
 
         dataviews = []
         for j in self.__gqlh["Database"][self.__db_index[self.__current_db]][
@@ -322,7 +336,6 @@ class HubClient:
         namespace_id: str,
         dataview_id: str,
         stream_id: bool = False,
-        version: str = "",
     ):
         columns = [
             "Asset_Id",
@@ -395,6 +408,9 @@ class HubClient:
                 nextPage=next_page,
             ),
         )
+        if len(reply["dataview"]) == 0:
+            print("@@ NO DATA: Check dataview_id and/or date range")
+            return None, [], None
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
 
@@ -419,6 +435,9 @@ class HubClient:
                 nextPage=next_page,
             ),
         )
+        if len(reply["dataview"]) == 0:
+            print("@@ NO DATA: Check dataview_id and/or date range")
+            return None, [], None
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
 
@@ -484,7 +503,8 @@ class HubClient:
                 print(f"@Error: start_index and/or end_index has invalid format: {e}")
                 return df
             if verbose:
-                summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={datetime.now().isoformat()}"
+                now = datetime.now().isoformat()
+                summary = f"<@dataview_interpolated_pd/{dataview_id}/{start_index}/{end_index}/{interval}  t={now}"
                 print(summary)
 
         else:
@@ -609,28 +629,33 @@ class HubClient:
         variable_values=None,
     ):
         if self.__graphql_client is None:
-            raise Exception("@@@ Please (re)start Hub login sequence (cell with hub_login() )")
+            raise Exception(
+                "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
+            )
         if variable_values is None:
             variable_values = {}
         query = gql(query_string)
         return self.__graphql_client.execute(query, variable_values=variable_values)
 
 
-def hub_login(gw_url=None):
+def hub_login(force_login=False, gw_url=None):
+    if force_login:
+        delete_jwt()
     hub = HubClient()
     new_tab = 'target="_blank"'
-    registration_link = (
-        f'(<a {new_tab} href="https://academic.osisoft.com/register"><font color="blue">register here</font></a>)'
-    )
+    registration_link = f'(<a {new_tab} href="{REGISTRATION_URL}"><font color="blue">register here</font></a>)'
     step1 = '<font color="orange"><b>Step 1. Click here to initiate login sequence on new tab</b></font>'
-    login_md = f"""<b>Academic Hub Login {registration_link}</b> 
+    login_md = f"""<b>Academic Hub Login {registration_link}, version {__version__}</b> 
 
-Follow the 4 steps below:
+Follow the 5 steps below:
 
-1. Click on the Step 1 link below will open a new browser tab
-2. Enter "academic-hub" when asked for the organization
-3. Select your Google account and enter your credentials
-4. Upon successful login with Google, come back here and press the "Click me" button (Step 4)
+<ol start="0">
+  <li><b>If Login status is "OK", your previous login still works, skip Steps 1 to 4</b></li>
+  <li>Click on the Step 1 link below will open a new browser tab</li>
+  <li>Enter "academic-hub" when asked for the organization</li>
+  <li>Select your Google account and enter your credentials</li>
+  <li>Upon successful login with Google, come back here and press the "Click me" button (Step 4)</li>
+</ol>
 
 &nbsp;&nbsp;&nbsp;&nbsp;<a {new_tab} href="{AUTH_ENDPOINT}/login?hub-id={hub.session_id()}">{step1}</a>
 """
@@ -643,8 +668,46 @@ Follow the 4 steps below:
         icon="cloud-download",
     )
 
+    def set_token_and_check(jwt, custom_url):
+        hub.set_jwt(jwt, custom_url)
+        reply = hub.graphql_query(q_endpoint_check)
+        if reply.get("databases", False):
+            hub.set_authenticated()
+            save_jwt(jwt)
+            return True
+        else:
+            return False
+
+    class RequestHandler(BaseHTTPRequestHandler):
+        """Handles reception of previous JWT from access module"""
+
+        def do_GET(self):
+            """Handles GET request against this temporary local server"""
+            RequestHandler.jwt = parse_qs(urlparse(self.path).query)["jwt"][0]
+
+            # Write response
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.end_headers()
+            self.wfile.write("<h1>You can now return to the application.</h1>".encode())
+
+        def log_message(self, format, *args):
+            return
+
+    # Set up server for previous JWT reception
+    server = HTTPServer(("", 5004), RequestHandler)
+    previous_jwt()
+    server.handle_request()
+    jwt = json.loads(RequestHandler.jwt)
+    login_status = "--undefined--"
+    try:
+        if set_token_and_check(eval(jwt), gw_url):
+            login_status = "OK, you can proceed+"
+    except:
+        pass
+
     status = widgets.Text(
-        value="--undefined--",
+        value=login_status,
         placeholder="Type something",
         description="Login status:",
         disabled=True,
@@ -657,10 +720,7 @@ Follow the 4 steps below:
             verify=False,
         )
         if 200 == r.status_code:
-            hub.set_jwt(eval(r.text), gw_url)
-            reply = hub.graphql_query(q_endpoint_check)
-            if reply.get("databases", False):
-                hub.set_authenticated()
+            if set_token_and_check(eval(r.text), gw_url):
                 status.value = "OK, you can proceed"
             else:
                 status.value = "ERROR: Hub endpoint failed, go to Step 1"
