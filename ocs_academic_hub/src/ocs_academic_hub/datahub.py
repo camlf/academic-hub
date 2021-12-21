@@ -23,9 +23,10 @@ import uuid
 from . import __version__
 
 from .queries import *
-from .access import previous_jwt, save_jwt, delete_jwt
+from .access import save_jwt, delete_jwt, restore_previous_jwt, get_previous_jwt
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+import time
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -97,6 +98,10 @@ def assets_and_metadata(gqlh, db_index, current_db):
 
 
 class GraphQLError409(Exception):
+    pass
+
+
+class GraphQLException(Exception):
     pass
 
 
@@ -629,7 +634,7 @@ class HubClient:
         variable_values=None,
     ):
         if self.__graphql_client is None:
-            raise Exception(
+            raise GraphQLException(
                 "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
             )
         if variable_values is None:
@@ -678,33 +683,16 @@ Follow the 5 steps below:
         else:
             return False
 
-    class RequestHandler(BaseHTTPRequestHandler):
-        """Handles reception of previous JWT from access module"""
-
-        def do_GET(self):
-            """Handles GET request against this temporary local server"""
-            RequestHandler.jwt = parse_qs(urlparse(self.path).query)["jwt"][0]
-
-            # Write response
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html")
-            self.end_headers()
-            self.wfile.write("<h1>You can now return to the application.</h1>".encode())
-
-        def log_message(self, format, *args):
-            return
-
-    # Set up server for previous JWT reception
-    server = HTTPServer(("", 5004), RequestHandler)
-    previous_jwt()
-    server.handle_request()
-    jwt = json.loads(RequestHandler.jwt)
+    restore_previous_jwt(hub.session_id())
+    time.sleep(1)
+    jwt = get_previous_jwt(hub.session_id())
     login_status = "--undefined--"
-    try:
-        if set_token_and_check(eval(jwt), gw_url):
-            login_status = "OK, you can proceed+"
-    except:
-        pass
+    if jwt["access_token"] != "none":
+        try:
+            if set_token_and_check(jwt, gw_url):
+                login_status = "OK, you can proceed+"
+        except GraphQLException:
+            pass
 
     status = widgets.Text(
         value=login_status,
