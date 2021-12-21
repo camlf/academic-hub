@@ -727,8 +727,6 @@ Follow the 5 steps below:
         with output:
             if "OK" in change["new"]:
                 save_jwt(jwt)
-            else:
-                display("oops: bad jwt")
 
     status.observe(on_value_change, names="value")
 
