@@ -691,7 +691,7 @@ Follow the 5 steps below:
     except GraphQLException:
         pass
     except Exception as e:
-        if "unauthenticated" in e.message.lower():
+        if "unauthenticated" in str(e).lower():
             pass
         else:
             raise e
