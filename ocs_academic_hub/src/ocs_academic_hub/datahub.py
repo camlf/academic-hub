@@ -181,7 +181,7 @@ class HubClient:
     def _id_token(self) -> str:
         token = self.__jwt.get("id_token", None)
         if token is None:
-            raise Exception("@@@ Please (re)start Hub login sequence")
+            raise GraphQLException("@@@ Please (re)start Hub login sequence")
         return token
 
     @typechecked
@@ -687,12 +687,11 @@ Follow the 5 steps below:
     time.sleep(1)
     jwt = get_previous_jwt(hub.session_id())
     login_status = "--undefined--"
-    if jwt["access_token"] != "none":
-        try:
-            if set_token_and_check(jwt, gw_url):
-                login_status = "OK, you can proceed+"
-        except GraphQLException:
-            pass
+    try:
+        if set_token_and_check(jwt, gw_url):
+            login_status = "OK, you can proceed+"
+    except GraphQLException:
+        pass
 
     status = widgets.Text(
         value=login_status,
