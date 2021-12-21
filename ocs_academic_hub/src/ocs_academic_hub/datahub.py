@@ -690,6 +690,11 @@ Follow the 5 steps below:
             login_status = f"OK, you can proceed+{default_data_indicator}"
     except GraphQLException:
         pass
+    except Exception as e:
+        if "unauthenticated" in e.message.lower():
+            pass
+        else:
+            raise e
 
     status = widgets.Text(
         value=login_status,
