@@ -1,7 +1,6 @@
-
 from IPython.display import display, Javascript
-import json
 import requests
+import json
 
 HUB_BASE_URL = "https://data.academic.osisoft.com"
 AUTH_ENDPOINT = f"{HUB_BASE_URL}/auth"
@@ -19,6 +18,7 @@ def jss(session_id):
         }},
         // mode: 'no-cors'
     }}; 
+    console.log(`t: ${{t}}`);
     fetch('{AUTH_ENDPOINT}/previous_token', options) 
     .then(function (response) {{
         // console.log(`response: ${{response.text()}}`); 
@@ -39,11 +39,12 @@ def restore_previous_jwt(session_id):
     display(js(session_id))
 
 
-def save_jwt(good_jwt):
-    tjs = f"""
-        localStorage.setItem("hub_jwt", JSON.stringify({json.dumps(good_jwt)}));
+def save_jwt(jwt):
+    tjss = f"""
+        let t1 = JSON.stringify(JSON.parse('{json.dumps(jwt)}'));
+        localStorage.setItem("hub_jwt", t1);
     """
-    display(Javascript(tjs))
+    display(Javascript(tjss))
 
 
 def delete_jwt():

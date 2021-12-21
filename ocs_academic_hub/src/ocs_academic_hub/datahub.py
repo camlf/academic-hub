@@ -136,9 +136,6 @@ class HubClient:
         options: List[str] = [],
         debug: bool = False,
     ):
-        # if debug:
-        #    logging.getLogger("backoff").addHandler(logging.StreamHandler())
-
         self.__authenticated = False
         self.__jwt = {}
         self.__session_id = str(uuid.uuid4())
@@ -148,7 +145,8 @@ class HubClient:
         self.__options = options
         self.__debug = debug
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
-        if data_file != default_hub_data:
+        self.__default_data = data_file == default_hub_data
+        if debug and (self.__default_data):
             print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
@@ -191,6 +189,10 @@ class HubClient:
     @typechecked
     def authenticated(self) -> bool:
         return self.__authenticated
+
+    @typechecked
+    def default_data(self) -> bool:
+        return self.__default_data
 
     def gqlh(self):
         return self.__gqlh
@@ -337,10 +339,7 @@ class HubClient:
     @hub_authenticated
     @typechecked
     def dataview_definition(
-        self,
-        namespace_id: str,
-        dataview_id: str,
-        stream_id: bool = False,
+        self, namespace_id: str, dataview_id: str, stream_id: bool = False
     ):
         columns = [
             "Asset_Id",
@@ -628,11 +627,7 @@ class HubClient:
         with open(hub_data, "w") as f:
             f.write(json.dumps(db, indent=2))
 
-    def graphql_query(
-        self,
-        query_string,
-        variable_values=None,
-    ):
+    def graphql_query(self, query_string, variable_values=None):
         if self.__graphql_client is None:
             raise GraphQLException(
                 "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
@@ -641,6 +636,9 @@ class HubClient:
             variable_values = {}
         query = gql(query_string)
         return self.__graphql_client.execute(query, variable_values=variable_values)
+
+
+jwt = {"access_token": "none"}
 
 
 def hub_login(force_login=False, gw_url=None):
@@ -678,7 +676,6 @@ Follow the 5 steps below:
         reply = hub.graphql_query(q_endpoint_check)
         if reply.get("databases", False):
             hub.set_authenticated()
-            save_jwt(jwt)
             return True
         else:
             return False
@@ -689,7 +686,8 @@ Follow the 5 steps below:
     login_status = "--undefined--"
     try:
         if set_token_and_check(jwt, gw_url):
-            login_status = "OK, you can proceed+"
+            default_data_indicator = "+" if not hub.default_data() else ""
+            login_status = f"OK, you can proceed+{default_data_indicator}"
     except GraphQLException:
         pass
 
@@ -701,6 +699,7 @@ Follow the 5 steps below:
     )
 
     def button_confirm(_):
+        global jwt
         r = requests.get(
             f"{AUTH_ENDPOINT}/token?jwt=1",
             headers={"hub-id": hub.session_id()},
@@ -708,6 +707,7 @@ Follow the 5 steps below:
         )
         if 200 == r.status_code:
             if set_token_and_check(eval(r.text), gw_url):
+                jwt = eval(r.text)
                 status.value = "OK, you can proceed"
             else:
                 status.value = "ERROR: Hub endpoint failed, go to Step 1"
@@ -715,5 +715,16 @@ Follow the 5 steps below:
             status.value = "ERROR: Go back to Step 1"
 
     button.on_click(button_confirm)
+    output = widgets.Output()
 
-    return [widgets.VBox([HTML(html), button, status]), hub]
+    def on_value_change(change):
+        global jwt
+        with output:
+            if "OK" in change["new"]:
+                save_jwt(jwt)
+            else:
+                display("oops: bad jwt")
+
+    status.observe(on_value_change, names="value")
+
+    return [widgets.VBox([HTML(html), button, status, output]), hub]
