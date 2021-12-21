@@ -13,6 +13,7 @@ from flask import render_template
 from flask import session
 from flask import request
 from flask import url_for
+from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 import responder
@@ -40,6 +41,7 @@ auth0_debug = int(env.get(constants.AUTH0_DEBUG, 0))
 print("debug:", auth0_debug)
 
 app = Flask(__name__, static_url_path="/public", static_folder="./public")
+CORS(app)
 app.secret_key = constants.SECRET_KEY
 app.debug = True
 
@@ -92,7 +94,7 @@ def requires_auth(f):
 
 
 # Controllers API
-@app.route("/")
+@app.route("/", methods=['GET'])
 def home():
     hub_session_id = request.args.get("hub-id")
     if hub_session_id:
@@ -100,7 +102,7 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/callback")
+@app.route("/callback", methods=['GET'])
 def callback_handling():
     try:
         token = auth0.authorize_access_token()
@@ -127,7 +129,7 @@ def callback_handling():
     return redirect("/auth/dashboard")
 
 
-@app.route("/login")
+@app.route("/login", methods=['GET'])
 def login():
     if request.args.get("invitation", None):
         return auth0.authorize_redirect(
@@ -142,14 +144,14 @@ def login():
         return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
 
 
-@app.route("/logout")
+@app.route("/logout", methods=['GET'])
 def logout():
     session.clear()
     params = {"returnTo": url_for("home", _external=True), "client_id": AUTH0_CLIENT_ID}
     return redirect(auth0.api_base_url + "/v2/logout?" + urlencode(params))
 
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET'])
 @requires_auth
 def dashboard():
     roles = session[constants.JWT_PAYLOAD][AUTH0_ROLES_KEY]
@@ -173,7 +175,7 @@ def dashboard():
     )
 
 
-@app.route("/token")
+@app.route("/token", methods=['GET'])
 def return_token():
     hub_session_id = request.headers.get("hub-id", None)
     extra_key = ":token" if request.args.get("jwt", None) else ""
@@ -191,7 +193,32 @@ def return_token():
         return "no token", 400
 
 
-@app.route("/legacy-auth")
+@app.route("/previous_token", methods=['POST', 'GET'])
+def previous_token():
+    auth_header = request.headers.get("Authorization", None)
+    if auth_header is None:
+        print("--- no session id --- 2")
+        print(f"{request.headers}")
+        return "bad request", 400
+    hub_session_id = auth_header.split(" ")[1]
+    print(f"hub-id: {hub_session_id}, {request.method}")
+    key = "hub:" + hub_session_id + ":otoken"
+    if request.method == 'POST':
+        app.r.set(key, str(request.get_json()), 60)
+        return "OK.", 201
+    else:  # 'GET'
+        try:
+            token = app.r.get(key)
+            if token is None:
+                return f'key {key} not found', 400
+            else:
+                app.r.delete(key)
+                return token.decode("utf-8")
+        except:
+            return f"not found", 400
+
+
+@app.route("/legacy-auth", methods=['GET'])
 def legacy_auth():
     auth = request.headers.get("Authorization", None)
     # print("auth", auth)
