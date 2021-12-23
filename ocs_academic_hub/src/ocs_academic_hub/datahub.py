@@ -24,8 +24,8 @@ from . import __version__
 
 from .queries import *
 from .access import save_jwt, delete_jwt, restore_previous_jwt, get_previous_jwt
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+from urllib3.exceptions import HTTPError
 import time
 
 # import urllib3
@@ -465,17 +465,20 @@ class HubClient:
         verbose: bool = False,
         stored: bool = False,
     ):
-        return self.dataview_get_data_pd(
-            namespace_id,
-            dataview_id,
-            start_index,
-            end_index,
-            interval,
-            count,
-            sub_second_interval,
-            verbose,
-            stored,
-        )
+        try:
+            return self.dataview_get_data_pd(
+                namespace_id,
+                dataview_id,
+                start_index,
+                end_index,
+                interval,
+                count,
+                sub_second_interval,
+                verbose,
+                stored,
+            )
+        except GraphQLException as e:
+            raise e
 
     def dataview_get_data_pd(
         self,
@@ -552,17 +555,25 @@ class HubClient:
                     self.__dataview_next_page = None
                     break
                 print("+", end="", flush=True)
+            except HTTPError as e:
+                if "502" in str(e):
+                    print("@", end="")
+                    continue
             except Exception as e:
                 if not any(
-                    ss in str(e) for ss in ["408:", "503:", "504:", "409:", "502:"]
+                    ss in str(e).lower() for ss in ["408", "503", "504", "409", "502", "unauthenticated"]
                 ):
                     raise e
-                if "409:" in str(e):
+                if "unauthenticated" in str(e).lower():
+                    raise GraphQLException(
+                        "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
+                )
+                if "409" in str(e):
                     print("#", end="")
                     continue
-                if "408:" not in str(e):
+                if "408" not in str(e):
                     print(f"[restart-{str(e)[3:6]}]", end="")
-                    raise Exception("408")
+                    raise GraphQLException("Got 408")
                 df = pd.DataFrame()
                 next_page = None
                 if count is None:
@@ -601,6 +612,8 @@ class HubClient:
                 resume=resume,
                 max_stored_rows=max_rows,
             )
+        except GraphQLException as e:
+            raise e
         except Exception as e:
             if "404" in str(e):
                 print(
@@ -641,7 +654,7 @@ class HubClient:
 jwt = {"access_token": "none"}
 
 
-def hub_login(force_login=False, gw_url=None):
+def hub_login(force_login=False, gw_url=None, this_jwt=None):
     if force_login:
         delete_jwt()
     hub = HubClient()
@@ -680,9 +693,12 @@ Follow the 5 steps below:
         else:
             return False
 
-    restore_previous_jwt(hub.session_id())
-    time.sleep(1)
-    jwt = get_previous_jwt(hub.session_id())
+    if this_jwt is None:
+        restore_previous_jwt(hub.session_id())
+        time.sleep(1)
+        jwt = get_previous_jwt(hub.session_id())
+    else:
+        jwt = this_jwt
     login_status = "--undefined--"
     try:
         if set_token_and_check(jwt, gw_url):
