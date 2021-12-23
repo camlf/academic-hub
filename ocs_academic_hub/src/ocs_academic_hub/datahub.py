@@ -137,7 +137,7 @@ class HubClient:
         debug: bool = False,
     ):
         self.__authenticated = False
-        self.__jwt = {}
+        self.__jwt = {"access_token": "none"}
         self.__session_id = str(uuid.uuid4())
         self.__graphql_transport = None
         self.__graphql_client = None
@@ -146,7 +146,7 @@ class HubClient:
         self.__debug = debug
         data_file = hub_data if os.path.isfile(hub_data) else default_hub_data
         self.__default_data = data_file == default_hub_data
-        if debug and (self.__default_data):
+        if debug and self.__default_data:
             print(f"@ Hub data file: {data_file}")
         self.__gqlh, self.__current_db, self.__db_index = initialize_hub_data(data_file)
         self.__current_db_index = 0
@@ -160,6 +160,10 @@ class HubClient:
     @typechecked
     def session_id(self) -> str:
         return self.__session_id
+
+    @typechecked
+    def get_jwt(self) -> dict:
+        return self.__jwt
 
     @typechecked
     def set_jwt(self, jwt: dict, gw_url):
@@ -561,13 +565,14 @@ class HubClient:
                     continue
             except Exception as e:
                 if not any(
-                    ss in str(e).lower() for ss in ["408", "503", "504", "409", "502", "unauthenticated"]
+                    ss in str(e).lower()
+                    for ss in ["408", "503", "504", "409", "502", "unauthenticated"]
                 ):
                     raise e
                 if "unauthenticated" in str(e).lower():
                     raise GraphQLException(
                         "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
-                )
+                    )
                 if "409" in str(e):
                     print("#", end="")
                     continue
@@ -651,10 +656,25 @@ class HubClient:
         return self.__graphql_client.execute(query, variable_values=variable_values)
 
 
-jwt = {"access_token": "none"}
+def set_token_and_check(hub, jwt, custom_url):
+    hub.set_jwt(jwt, custom_url)
+    reply = hub.graphql_query(q_endpoint_check)
+    if reply.get("databases", False):
+        hub.set_authenticated()
+        return True
+    else:
+        return False
 
 
-def hub_login(force_login=False, gw_url=None, this_jwt=None):
+def hub_connect(jwt: dict, gw_url: str = None):
+    hub = HubClient()
+    if set_token_and_check(hub, jwt, gw_url):
+        return hub
+    else:
+        raise GraphQLException("@@ Got bad JWT")
+
+
+def hub_login(force_login: bool = False, gw_url: str = None):
     if force_login:
         delete_jwt()
     hub = HubClient()
@@ -684,24 +704,12 @@ Follow the 5 steps below:
         icon="cloud-download",
     )
 
-    def set_token_and_check(jwt, custom_url):
-        hub.set_jwt(jwt, custom_url)
-        reply = hub.graphql_query(q_endpoint_check)
-        if reply.get("databases", False):
-            hub.set_authenticated()
-            return True
-        else:
-            return False
-
-    if this_jwt is None:
-        restore_previous_jwt(hub.session_id())
-        time.sleep(1)
-        jwt = get_previous_jwt(hub.session_id())
-    else:
-        jwt = this_jwt
+    restore_previous_jwt(hub.session_id())
+    time.sleep(1)
+    jwt = get_previous_jwt(hub.session_id())
     login_status = "--undefined--"
     try:
-        if set_token_and_check(jwt, gw_url):
+        if set_token_and_check(hub, jwt, gw_url):
             default_data_indicator = "+" if not hub.default_data() else ""
             login_status = f"OK, you can proceed+{default_data_indicator}"
     except GraphQLException:
@@ -720,15 +728,13 @@ Follow the 5 steps below:
     )
 
     def button_confirm(_):
-        global jwt
         r = requests.get(
             f"{AUTH_ENDPOINT}/token?jwt=1",
             headers={"hub-id": hub.session_id()},
             verify=False,
         )
         if 200 == r.status_code:
-            if set_token_and_check(eval(r.text), gw_url):
-                jwt = eval(r.text)
+            if set_token_and_check(hub, eval(r.text), gw_url):
                 status.value = "OK, you can proceed"
             else:
                 status.value = "ERROR: Hub endpoint failed, go to Step 1"
@@ -739,10 +745,9 @@ Follow the 5 steps below:
     output = widgets.Output()
 
     def on_value_change(change):
-        global jwt
         with output:
             if "OK" in change["new"]:
-                save_jwt(jwt)
+                save_jwt(hub.get_jwt())
 
     status.observe(on_value_change, names="value")
 

@@ -163,9 +163,11 @@ class HubClient(OCSClient):
                 data_file
             )
             self.__current_db_index = 0
-            self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-                self.__gqlh, self.__db_index, self.__current_db
-            )
+            (
+                self.__assets,
+                self.__assets_metadata,
+                self.__dv_column_key,
+            ) = assets_and_metadata(self.__gqlh, self.__db_index, self.__current_db)
             self.__dataview_next_page = None
 
         except SdsError as e:
@@ -220,9 +222,11 @@ class HubClient(OCSClient):
             if self.__gqlh["Database"][j]["name"] == dataset:
                 self.__current_db_index = j
                 self.__current_db = self.__gqlh["Database"][j]["asset_db"]
-                self.__assets, self.__assets_metadata, self.__dv_column_key = assets_and_metadata(
-                    self.__gqlh, self.__db_index, self.__current_db
-                )
+                (
+                    self.__assets,
+                    self.__assets_metadata,
+                    self.__dv_column_key,
+                ) = assets_and_metadata(self.__gqlh, self.__db_index, self.__current_db)
                 break
 
     @typechecked
