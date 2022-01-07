@@ -15063,6 +15063,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb1"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15118,6 +15137,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb1"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15136,6 +15174,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb1"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15154,6 +15211,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb1"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15172,6 +15248,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb10"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15227,6 +15322,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb10"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15245,6 +15359,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb10"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15263,6 +15396,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb10"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15281,6 +15433,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb2"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15336,6 +15507,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb2"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15354,6 +15544,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb2"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15372,6 +15581,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb2"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15390,6 +15618,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb3"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15408,6 +15655,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb3"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15426,6 +15692,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb3"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15444,6 +15729,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb3"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15536,6 +15840,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb4"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15554,6 +15877,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb4"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15572,6 +15914,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb4"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15590,6 +15951,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb4"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15645,6 +16025,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb5"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15663,6 +16062,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb5"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15681,6 +16099,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb5"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15699,6 +16136,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb5"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15717,6 +16173,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb6"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15772,6 +16247,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb6"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15790,6 +16284,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb6"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15808,6 +16321,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb6"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15826,6 +16358,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb7"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15844,6 +16395,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb7"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -15862,6 +16432,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb7"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -15880,6 +16469,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb7"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -15972,6 +16580,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb8"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -15990,6 +16617,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb8"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -16008,6 +16654,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb8"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         },
@@ -16026,6 +16691,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb8"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -16044,6 +16728,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster2.turb9"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster2 Assets",
+              "id": "wind.farms_cluster2",
+              "asset_id": [
+                "cluster2.turb1",
+                "cluster2.turb2",
+                "cluster2.turb3",
+                "cluster2.turb4",
+                "cluster2.turb5",
+                "cluster2.turb6",
+                "cluster2.turb7",
+                "cluster2.turb8",
+                "cluster2.turb9",
+                "cluster2.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster2"
             }
           ]
         },
@@ -16062,6 +16765,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster1.turb9"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster1 Assets",
+              "id": "wind.farms_cluster1",
+              "asset_id": [
+                "cluster1.turb1",
+                "cluster1.turb2",
+                "cluster1.turb3",
+                "cluster1.turb4",
+                "cluster1.turb5",
+                "cluster1.turb6",
+                "cluster1.turb7",
+                "cluster1.turb8",
+                "cluster1.turb9",
+                "cluster1.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster1"
             }
           ]
         },
@@ -16117,6 +16839,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster3.turb9"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster3 Assets",
+              "id": "wind.farms_cluster3",
+              "asset_id": [
+                "cluster3.turb1",
+                "cluster3.turb2",
+                "cluster3.turb3",
+                "cluster3.turb4",
+                "cluster3.turb5",
+                "cluster3.turb6",
+                "cluster3.turb7",
+                "cluster3.turb8",
+                "cluster3.turb9",
+                "cluster3.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster3"
             }
           ]
         },
@@ -16135,6 +16876,25 @@
               ],
               "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
               "ocs_column_key": "cluster5.turb9"
+            },
+            {
+              "name": "Default+",
+              "description": "Hub DV for Cluster5 Assets",
+              "id": "wind.farms_cluster5",
+              "asset_id": [
+                "cluster5.turb1",
+                "cluster5.turb2",
+                "cluster5.turb3",
+                "cluster5.turb4",
+                "cluster5.turb5",
+                "cluster5.turb6",
+                "cluster5.turb7",
+                "cluster5.turb8",
+                "cluster5.turb9",
+                "cluster5.turb10"
+              ],
+              "columns": "['Ambient Temperature', 'Drivetrain Gearbox Temp IMSDE', 'Drivetrain Gearbox Temp IMSNDE', 'Drivetrain Mainbearing Temp', 'Drivetrain vibration', 'Nacelle Temp', 'Pitch Angle', 'Power To Grid', 'Relative Wind Direction', 'Rotor Speed', 'State', 'Wind Speed', 'Yaw Angle']",
+              "ocs_column_key": "cluster5"
             }
           ]
         }

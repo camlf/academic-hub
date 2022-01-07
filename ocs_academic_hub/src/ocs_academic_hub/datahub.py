@@ -680,24 +680,26 @@ def hub_login(force_login: bool = False, gw_url: str = None):
     hub = HubClient()
     new_tab = 'target="_blank"'
     registration_link = f'(<a {new_tab} href="{REGISTRATION_URL}"><font color="blue">register here</font></a>)'
-    step1 = '<font color="orange"><b>Step 1. Click here to initiate login sequence on new tab</b></font>'
+    step1 = '<font color="purple"><b>Click here to initiate login sequence on new tab</b></font>'
     login_md = f"""<b>Academic Hub Login {registration_link}, version {__version__}</b> 
 
-Follow the 5 steps below:
+Follow the steps below:
 
 <ol start="0">
-  <li><b>If Login status is "OK", your previous login still works, skip Steps 1 to 4</b></li>
-  <li>Click on the Step 1 link below will open a new browser tab</li>
-  <li>Enter "academic-hub" when asked for the organization</li>
-  <li>Select your Google account and enter your credentials</li>
-  <li>Upon successful login with Google, come back here and press the "Click me" button (Step 4)</li>
+  <li><b>If Login status is "OK" (at bottom of this cell), you can continue with the rest of the notebook</b></li>
+  <li>Click on the purple link to open a new browser tab and:</li>
+  <ol type="a">
+     <li>Enter "academic-hub" when asked for the organization</li>
+     <li>Select your Google account and enter your credentials</li>
+     <li>When successfully logged in with AVEVA authentication web page, come back to this notebook</li>
+     <li> <a {new_tab} href="{AUTH_ENDPOINT}/login?hub-id={hub.session_id()}">{step1}</a> </li>
+  </ol>
+  <li>Complete authentication procedure by the clicking button below</li>
 </ol>
-
-&nbsp;&nbsp;&nbsp;&nbsp;<a {new_tab} href="{AUTH_ENDPOINT}/login?hub-id={hub.session_id()}">{step1}</a>
 """
     html = markdown.markdown(login_md)
     button = widgets.Button(
-        description="Step 4. Click me",
+        description="Click me",
         disabled=False,
         button_style="warning",
         tooltip="Click me when Google login is successful",
@@ -710,7 +712,8 @@ Follow the 5 steps below:
     login_status = "--undefined--"
     try:
         if set_token_and_check(hub, jwt, gw_url):
-            default_data_indicator = "+" if not hub.default_data() else ""
+            default_data_indicator = "!" if not hub.default_data() else ""
+            default_data_indicator += "@" if jwt.get("creds", None) else ""
             login_status = f"OK, you can proceed+{default_data_indicator}"
     except GraphQLException:
         pass
