@@ -1,5 +1,5 @@
 #
-from .util import timer, hub_authenticated
+from .util import timer, hub_authenticated, HubException
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 from requests.structures import CaseInsensitiveDict
@@ -97,10 +97,6 @@ def assets_and_metadata(gqlh, db_index, current_db):
     return assets, metadata, dv_column_key
 
 
-class GraphQLError409(Exception):
-    pass
-
-
 class GraphQLException(Exception):
     pass
 
@@ -183,7 +179,7 @@ class HubClient:
     def _id_token(self) -> str:
         token = self.__jwt.get("id_token", None)
         if token is None:
-            raise GraphQLException("@@@ Please (re)start Hub login sequence")
+            raise HubException("@@@ Please (re)start Hub login sequence")
         return token
 
     @typechecked
@@ -205,10 +201,10 @@ class HubClient:
     @typechecked
     def asset_metadata(self, asset: str):
         if asset.lower() not in self.__assets:
-            print(
+            raise HubException(
                 f"@@ error: asset {asset} not in dataset asset list, check hub.assets()"
             )
-            return
+
         return self.__assets_metadata[asset]
 
     def all_assets_metadata(self):
@@ -240,13 +236,12 @@ class HubClient:
         return f"{version} (status: {status})"
 
     @hub_authenticated
-    @typechecked
     def set_dataset(self, dataset: str):
-        try:
-            hub_db_namespaces[dataset]
-        except KeyError:
-            print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
-            return
+        if not isinstance(dataset, str):
+            raise HubException(f"@@ Dataset most be a string, please check hub.datasets()")
+        if hub_db_namespaces.get(dataset, None) is None:
+            raise HubException(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+
         for j in range(len(self.__gqlh["Database"])):
             if self.__gqlh["Database"][j]["name"] == dataset:
                 self.__current_db_index = j
@@ -259,12 +254,13 @@ class HubClient:
                 break
 
     @hub_authenticated
-    @typechecked
     def namespace_of(self, dataset: str):
-        try:
-            return hub_db_namespaces[dataset]
-        except KeyError:
-            print(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+        if not isinstance(dataset, str):
+            raise HubException(f"@@ Dataset most be a string, please check hub.datasets()")
+        if hub_db_namespaces.get(dataset, None) is None:
+            raise HubException(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+        return hub_db_namespaces[dataset]
+
 
     @hub_authenticated
     @typechecked
@@ -289,10 +285,10 @@ class HubClient:
     ) -> Union[None, List[str]]:
         if len(asset) > 0:
             if asset.lower() not in self.__assets:
-                print(
+                raise HubException(
                     f"@@ error: asset {asset} not in dataset asset list, check hub.assets()"
                 )
-                return
+
         if not multiple_asset:
 
             def len_test(li):
@@ -360,6 +356,8 @@ class HubClient:
             q_resolved,
             {"id": dataview_id, "namespace": namespace_id, "queryId": "Asset_value"},
         )
+        if len(data_items["dataview"]) == 0:
+            raise HubException(f"@@ Bad namespace ({namespace_id}) and/or dataview ID ({dataview_id})")
         v2_column_key = self.__dv_column_key.get(dataview_id, None)
         column_key = (
             "column_name" if v2_column_key is None else f"{v2_column_key}|column"
@@ -417,7 +415,7 @@ class HubClient:
             ),
         )
         if len(reply["dataview"]) == 0:
-            print("@@ NO DATA: Check dataview_id and/or date range")
+            print("@@ NO DATA: Check namespace_id, dataview_id and/or date range")
             return None, [], None
         result = reply["dataview"][0]["data"]
         return result["nextPage"], result["data"], result["firstPage"]
@@ -576,9 +574,13 @@ class HubClient:
                 if "409" in str(e):
                     print("#", end="")
                     continue
+                if "502" in str(e):
+                    print("[@]", end="")
+                    continue
                 if "408" not in str(e):
-                    print(f"[restart-{str(e)[3:6]}]", end="")
-                    raise GraphQLException("Got 408")
+                    print(f"[restart-{str(e)}]", end="")
+                    raise GraphQLException(f"Got: {str(e)}")
+
                 df = pd.DataFrame()
                 next_page = None
                 if count is None:
@@ -674,18 +676,26 @@ def hub_connect(jwt: dict, gw_url: str = None):
         raise GraphQLException("@@ Got bad JWT")
 
 
-def hub_login(force_login: bool = False, gw_url: str = None):
-    if force_login:
+def login_state(hub, jwt: dict, found_jwt: bool = False):
+    status = "+" if found_jwt else ""
+    status += "@" if not hub.default_data() else ""
+    status += "#" if jwt.get("creds", None) else ""
+    return status
+
+
+def hub_login(force: bool = False, gw_url: str = None):
+    if force:
         delete_jwt()
     hub = HubClient()
     new_tab = 'target="_blank"'
     registration_link = f'(<a {new_tab} href="{REGISTRATION_URL}"><font color="blue">register here</font></a>)'
     step1 = '<font color="purple"><b>Click here to initiate login sequence on new tab</b></font>'
-    login_md = f"""<b>Academic Hub Login {registration_link}, version {__version__}</b> 
+    login_md = f"""![AVEVA banner](https://academichub.blob.core.windows.net/images/aveva-banner.png)<br>
+    <b>Academic Hub Login {registration_link}, version {__version__}</b> 
 
 Follow the steps below:
 
-<ol start="0">
+<ol>
   <li><b>If Login status is "OK" (at bottom of this cell), you can continue with the rest of the notebook</b></li>
   <li>Click on the purple link to open a new browser tab and:</li>
   <ol type="a">
@@ -709,13 +719,13 @@ Follow the steps below:
     restore_previous_jwt(hub.session_id())
     time.sleep(1)
     jwt = get_previous_jwt(hub.session_id())
-    login_status = "--undefined--"
+    login_status = "-- not logged in --"
     try:
         if set_token_and_check(hub, jwt, gw_url):
             default_data_indicator = "!" if not hub.default_data() else ""
             default_data_indicator += "@" if jwt.get("creds", None) else ""
-            login_status = f"OK, you can proceed+{default_data_indicator}"
-    except GraphQLException:
+            login_status = f"OK, you can proceed {login_state(hub, jwt, True)}"
+    except HubException:
         pass
     except Exception as e:
         if "unauthenticated" in str(e).lower():
@@ -738,7 +748,7 @@ Follow the steps below:
         )
         if 200 == r.status_code:
             if set_token_and_check(hub, eval(r.text), gw_url):
-                status.value = "OK, you can proceed"
+                status.value = f"OK, you can proceed {login_state(hub, eval(r.text))}"
             else:
                 status.value = "ERROR: Hub endpoint failed, go to Step 1"
         else:

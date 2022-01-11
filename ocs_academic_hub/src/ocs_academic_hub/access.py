@@ -19,11 +19,8 @@ def jss(session_id):
         }},
         // mode: 'no-cors'
     }}; 
-    console.log(`t: ${{t}}`);
     fetch('{AUTH_ENDPOINT}/previous_token', options) 
     .then(function (response) {{
-        // console.log(`response: ${{response.text()}}`); 
-        console.log('session: {session_id}'); 
         return response.text();
     }})
     .catch(function (error) {{

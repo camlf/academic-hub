@@ -5,7 +5,12 @@ import logging
 from http.client import HTTPConnection
 import pandas as pd
 
-last_time = 0.0
+
+class HubException(Exception):
+    pass
+
+
+last_runtime = 0.0
 
 
 def get_last_runtime():
@@ -55,7 +60,7 @@ def hub_authenticated(func):
     @functools.wraps(func)
     def wrapper_hub(*args, **kwargs):
         if not args[0].authenticated():
-            raise Exception("@@ You should authenticate with Hub first (cell with hub_login() )")
+            raise HubException("@@ You should authenticate with Hub first (cell with hub_login() )")
         value = func(*args, **kwargs)
         return value
 
