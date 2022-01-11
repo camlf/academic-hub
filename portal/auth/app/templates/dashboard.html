@@ -14,7 +14,7 @@
                     <h2 id="logo"><img src="https://academichub.blob.core.windows.net/images/aveva-logo_v2.png" /></h2>
 		    <!-- <img class="avatar" src="{{userinfo['picture']}}"/> -->
                     <h3>Welcome {{userinfo['name'].split(' ')[0]}} to the Academic Hub</h3>
-		    <h4><b>You can return now to the Hub Portal browser tab</b></h4>
+		    <h4><b>You can return now to the Hub Data Portal or Jupyter notebook browser tab and close this one</b></h4>
 		    <h4>Applications/roles assigned to you</h4>
                     <pre>{{userinfo_pretty}}</pre>
 		    {% if debug %}
@@ -22,8 +22,8 @@
 		    {% endif %}
                     <!--
                     <a id="qsLogoutBtn" class="btn btn-primary btn-lg btn-logout btn-block" href="/auth/logout">Logout</a>
-                    -->
                     <a id="qsLegacyBtn" class="btn btn-primary btn-lg btn-logout btn-block" href="/auth/legacy-access">MATLAB?</a>
+                    -->
                 </div>
             </div>
         </div>
