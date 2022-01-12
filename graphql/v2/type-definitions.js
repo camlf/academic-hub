@@ -66,7 +66,6 @@ async function get_data_view(kind, _source, _args, _context) {
          endIndex: _args.endIndex
       };
       if (kind === "stored") {
-         // params["form"] = "tableh";
          dv_id_extra = "_narrow";
       } else {  // "interpolated"
          params["form"] = "csvh";
@@ -74,7 +73,9 @@ async function get_data_view(kind, _source, _args, _context) {
          dv_id_extra = "";
       }
       if (_args.count) {
-         params["count"] = _args.count;
+         if (_args.count > 0) {
+            params["count"] = _args.count;
+         }
       }
       url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
       url.search = new URLSearchParams(params).toString();
