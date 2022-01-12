@@ -568,6 +568,7 @@ class HubClient:
                 ):
                     raise e
                 if "unauthenticated" in str(e).lower():
+                    self.__authenticated = False
                     raise GraphQLException(
                         "@@@ Please (re)start Hub login sequence (cell with hub_login() )"
                     )
