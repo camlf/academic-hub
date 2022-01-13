@@ -412,6 +412,7 @@ class HubClient:
                 endIndex=end_index,
                 interpolation=interval,
                 nextPage=next_page,
+                count=count,
             ),
         )
         if len(reply["dataview"]) == 0:
@@ -439,6 +440,7 @@ class HubClient:
                 startIndex=start_index,
                 endIndex=end_index,
                 nextPage=next_page,
+                count=count,
             ),
         )
         if len(reply["dataview"]) == 0:
@@ -448,9 +450,12 @@ class HubClient:
         return result["nextPage"], result["data"], result["firstPage"]
 
     @hub_authenticated
-    @typechecked
     def remaining_data(self) -> bool:
         return False if self.__dataview_next_page is None else True
+
+    @hub_authenticated
+    def reset_remaining_data(self) -> bool:
+        self.__dataview_next_page = None
 
     @timer
     @hub_authenticated
@@ -462,7 +467,7 @@ class HubClient:
         start_index: str,
         end_index: str,
         interval: str,
-        count: int = None,
+        count: int = 0,
         sub_second_interval: bool = False,
         verbose: bool = False,
         stored: bool = False,
@@ -489,7 +494,7 @@ class HubClient:
         start_index: str,
         end_index: str,
         interval: str,
-        count: int = None,
+        count: int = 0,
         sub_second_interval: bool = False,
         verbose: bool = False,
         stored: bool = False,
@@ -584,7 +589,7 @@ class HubClient:
 
                 df = pd.DataFrame()
                 next_page = None
-                if count is None:
+                if count == 0:
                     count = UXIE_CONSTANT // self.dataview_columns(
                         namespace_id, dataview_id
                     )
@@ -604,7 +609,7 @@ class HubClient:
         dataview_id: str,
         start_index: str,
         end_index: str,
-        count: int = None,
+        count: int = 0,
         resume: bool = False,
         max_rows=MAX_STORED_DV_ROWS,
     ):

@@ -43,6 +43,7 @@ query stored(
   $startIndex: String!
   $endIndex: String!
   $nextPage: String
+  $count: Int
 ) {
   dataview: dataViews(where: { id: $id }) {
     id
@@ -51,6 +52,7 @@ query stored(
       startIndex: $startIndex
       endIndex: $endIndex
       nextPage: $nextPage 
+      count: $count
     ) {
       nextPage
       data
@@ -68,6 +70,7 @@ query interpolated(
   $endIndex: String!
   $interpolation: String!
   $nextPage: String
+  $count: Int
 ) {
   dataview: dataViews(where: { id: $id }) {
     id
@@ -77,6 +80,7 @@ query interpolated(
       endIndex: $endIndex
       interpolation: $interpolation
       nextPage: $nextPage
+      count: $count
     ) {
       nextPage
       data
