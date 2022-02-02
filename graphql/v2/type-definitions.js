@@ -2,6 +2,7 @@
 const { ApolloError } = require('apollo-server-errors');
 const { gql } = require('graphql-tag');
 const fetch = require('node-fetch');
+const { v4: uuidv4 } = require('uuid');
 
 const base_url = "https://dat-b.osisoft.com";
 const token_url = `${base_url}/identity/connect/token`;
@@ -33,12 +34,20 @@ async function getToken() {
     return ocs_jwt["access_token"]
 }
 
+function checkNamespaceId(id) {
+   if (id === undefined) {
+      console.log("@@error: namespace is not defined (add id field)")
+      throw new ApolloError('Add id field to query', 'NO_NAMESPACE_ID');
+   }
+}
+
 function checkDataviewId(id) {
    if (id === undefined) {
       console.log("@@error: dataview_id not defined (add id field)")
       throw new ApolloError('Add id field to query', 'NO_DATAVIEW_ID');
    }
 }
+
 
 async function customGraphQLError(url, reply) {
    let body = await reply.text();
@@ -118,24 +127,16 @@ async function get_data_view(kind, _source, _args, _context) {
    }
 }
 
-async function get_data_items(_source, _args, _context) {
-
-   checkDataviewId(_source.id);
-
-   let params = {
-      count: "1000",
-      cache: "refresh",
-   };
-   const url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
-   url.search = new URLSearchParams(params).toString();
-
+async function get_data_reply(url) {
+   let req_id = uuidv4();
+   console.log(`${req_id} url: ${String(url)}`);
    let ocs_token = await getToken();
    let reply = await fetch(url, {
       headers: {
          'Authorization': `Bearer ${ocs_token}`
       }
    });
-   console.log(`status: ${reply.status}`);
+   console.log(`${req_id} status: ${reply.status}`);
 
    if (reply.status === 200) {
       return reply.json();
@@ -152,7 +153,72 @@ async function get_data_items(_source, _args, _context) {
    }
 }
 
+async function get_data_items(_source, _args, _context) {
+
+   checkDataviewId(_source.id);
+
+   let params = {
+      count: "1000",
+      cache: "refresh",
+   };
+   const url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
+   url.search = new URLSearchParams(params).toString();
+
+   return await get_data_reply(url);
+}
+
+async function get_streams(kind, _source, _args, _context) {
+
+   checkNamespaceId(_source.id);
+
+   let stream_url = '';
+   let params = {};
+   if (kind === 'many') {
+      params['count'] = 1000;
+      if (_args.skip) {
+         params['skip'] = _args.skip;
+      }
+      if (_args.count) {
+         params['count'] = _args.count;
+      }
+      if (_args.query) {
+         params['query'] = _args.query;
+      }
+   } else {
+      stream_url = `/${_args.stream_id}/Data`;
+   }
+   if (kind === 'last') {
+      stream_url += '/Last';
+   } else if (kind == 'first') {
+      stream_url += '/First'
+   }
+
+   const url = new URL(`${ocs_url}/${_source.id}/Streams${stream_url}`);
+   url.search = new URLSearchParams(params).toString();
+
+   return await get_data_reply(url);
+}
+
+async function get_window_values(_source, _args, _context) {
+   checkNamespaceId(_source.id);
+   let params = {
+      startIndex: _args.start,
+      endIndex: _args.end
+   };
+   const url = new URL(`${ocs_url}/${_source.id}/Streams/${_args.stream_id}/Data`);
+   url.search = new URLSearchParams(params).toString();
+
+   return await get_data_reply(url);
+}
+
 const resolvers = {
+   Namespace: {
+      getStreams: async (_source, _args, _context) => await get_streams("many", _source, _args, _context),
+      getStream: async (_source, _args, _context) => await get_streams("one", _source, _args, _context),
+      getWindowValues: async (_source, _args, _context) => await get_window_values(_source, _args, _context),
+      getLastValue: async (_source, _args, _context) => await get_streams("last", _source, _args, _context),
+      getFirstValue: async (_source, _args, _context) => await get_streams("first", _source, _args, _context),
+   },
    DataView: {
       stored: async (_source, _args, _context) => await get_data_view("stored", _source, _args, _context),
       interpolated: async (_source, _args, _context) => await get_data_view("interpolated", _source, _args, _context),
@@ -165,9 +231,43 @@ const typeDefs = gql`
 scalar JSON
 scalar JSONObject
 
-interface AuthReadOnly @auth(rules: [{operations: [READ], isAuthenticated: true }]) 
+interface AuthReadOnly @auth(rules: [{operations: [READ], roles: ["hub:read"] }]) 
    @exclude(operations: [CREATE, UPDATE, DELETE]) {
    id: ID!
+}
+
+
+"""
+Namespace - DataHub 
+"""
+
+type Namespace implements AuthReadOnly {
+   "identifier" 
+   id: ID!
+   "Retrieves a list of streams associated with namespace_id under the current tenant"
+   getStreams(   
+      query: String
+      skip: Int
+      count: Int
+   ): JSONObject @ignore
+   "Retrieves a stream specified by stream_id from the Sds Service" 
+   getStream(   
+        stream_id: String!
+   ): JSONObject @ignore
+   "Retrieves JSON object representing a window of values from the stream specified by stream_id"
+   getWindowValues(
+      stream_id: String!
+      start: String!
+      end: String!
+   ): JSONObject @ignore  
+   "Retrieves JSON object from Sds Service the last value to be added to the stream specified by stream_id"
+   getLastValue(
+      stream_id: String!
+   ): JSONObject @ignore 
+   "Retrieves JSON object from Sds Service the first value to be added to the stream specified by stream_id"
+   getFirstValue(
+      stream_id: String!
+   ): JSONObject @ignore   
 }
 
 """
@@ -199,7 +299,7 @@ type Database implements AuthReadOnly {
    has_element: [Element] @relationship(type: "HAS_ELEMENT", direction: OUT)
    "all assets (elements) with data views are linked here"
    asset_with_dv: [Element] @relationship(type: "ASSET_WITH_DV", direction: OUT)
-    
+       
    # "source PI server node"
    # servers: [Server] @relation(name: "HAS_DATABASE", direction: "IN")
    # "extracted AF template - unused"
@@ -207,11 +307,6 @@ type Database implements AuthReadOnly {
    "all assets (elements) with no children element"
    leaf_elements: [Element]! @cypher (statement: "MATCH (this)-[:HAS_ELEMENT*]->(e:Element) WHERE NOT ((e)-[:HAS_ELEMENT]->()) RETURN DISTINCT e ORDER BY e.name")
 }
- 
-# extend type Database
-#  @auth(rules: [{ operations: [READ], isAuthenticated: true }])
-
-  # @exclude(operations: [CREATE, UPDATE, DELETE])  
 
 """
 AF elements from source PI

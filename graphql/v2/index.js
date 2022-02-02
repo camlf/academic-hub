@@ -23,8 +23,8 @@ const neoSchema = new Neo4jGraphQL({
     config: {
         jwt: {
             jwksEndpoint: "https://dev-f0ejox1i.auth0.com/.well-known/jwks.json",
-            rolesPath: "https://data.academic.osisoft.com/roles",
-            noVerify: false,
+            rolesPath: "https://data\\.academic\\.osisoft\\.com/roles",
+            noVerify: true,
         }
     }
 });
