@@ -128,7 +128,7 @@ async function get_data_view(kind, _source, _args, _context) {
 }
 
 async function get_data_reply(url) {
-   let req_id = uuidv4();
+   let req_id = uuidv4().split("-")[0];
    console.log(`${req_id} url: ${String(url)}`);
    let ocs_token = await getToken();
    let reply = await fetch(url, {
