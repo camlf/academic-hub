@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: hub-v2-graphql
-        image: academicpi.azurecr.io/hub-v2-graphql:v6
+        image: academicpi.azurecr.io/hub-v2-graphql:v10
         envFrom:
         - secretRef:
             name: hub-v2-graphql-secret-hfc9dg298t

@@ -129,14 +129,14 @@ async function get_data_view(kind, _source, _args, _context) {
 
 async function get_data_reply(url) {
    let req_id = uuidv4().split("-")[0];
-   console.log(`${req_id} url: ${String(url)}`);
+   console.log(`${req_id}|- url: ${String(url)}`);
    let ocs_token = await getToken();
    let reply = await fetch(url, {
       headers: {
          'Authorization': `Bearer ${ocs_token}`
       }
    });
-   console.log(`${req_id} status: ${reply.status}`);
+   console.log(`${req_id}|- status: ${reply.status}`);
 
    if (reply.status === 200) {
       return reply.json();
@@ -173,24 +173,38 @@ async function get_streams(kind, _source, _args, _context) {
 
    let stream_url = '';
    let params = {};
-   if (kind === 'many') {
-      params['count'] = 1000;
-      if (_args.skip) {
-         params['skip'] = _args.skip;
-      }
-      if (_args.count) {
-         params['count'] = _args.count;
-      }
-      if (_args.query) {
-         params['query'] = _args.query;
-      }
-   } else {
-      stream_url = `/${_args.stream_id}/Data`;
+   switch(kind) {
+      case 'many':
+         params['count'] = 1000;
+         if (_args.skip) {
+            params['skip'] = _args.skip;
+         }
+         if (_args.count) {
+            params['count'] = _args.count;
+         }
+         if (_args.query) {
+            params['query'] = _args.query;
+         }
+         break;
+      case 'first':
+      case 'last':
+      case 'one':
+         stream_url = `/${_args.stream_id}/Data`;
+         break;
    }
-   if (kind === 'last') {
-      stream_url += '/Last';
-   } else if (kind == 'first') {
-      stream_url += '/First'
+   switch (kind) {
+      case 'last':
+         stream_url += '/Last';
+         break;
+      case 'first':
+         stream_url += '/First';
+         break;
+      case 'metadata':
+         stream_url += `/${_args.stream_id}/Metadata`;
+         break;
+      case 'tags':
+         stream_url += `/${_args.stream_id}/Tags`;
+         break;
    }
 
    const url = new URL(`${ocs_url}/${_source.id}/Streams${stream_url}`);
@@ -218,6 +232,8 @@ const resolvers = {
       getWindowValues: async (_source, _args, _context) => await get_window_values(_source, _args, _context),
       getLastValue: async (_source, _args, _context) => await get_streams("last", _source, _args, _context),
       getFirstValue: async (_source, _args, _context) => await get_streams("first", _source, _args, _context),
+      metadata: async (_source, _args, _context) => await get_streams("metadata", _source, _args, _context),
+      tags : async (_source, _args, _context) => await get_streams("tags", _source, _args, _context),
    },
    DataView: {
       stored: async (_source, _args, _context) => await get_data_view("stored", _source, _args, _context),
@@ -268,6 +284,12 @@ type Namespace implements AuthReadOnly {
    getFirstValue(
       stream_id: String!
    ): JSONObject @ignore   
+   metadata(
+      stream_id: String!
+   ): JSONObject @ignore
+   tags(
+      stream_id: String!
+   ): JSONObject @ignore
 }
 
 """
@@ -411,7 +433,7 @@ type DataView implements AuthReadOnly {
    resolvedDataItems(
         namespace: String!
         queryId: String!
-   ): JSONObject @ignore 
+   ): JSONObject @ignore
 }
 `;
 
