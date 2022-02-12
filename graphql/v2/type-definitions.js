@@ -89,7 +89,8 @@ async function get_data_view(kind, _source, _args, _context) {
       url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
       url.search = new URLSearchParams(params).toString();
    }
-   console.log(`url: ${String(url)}`);
+   let req_id = uuidv4().split("-")[0];
+   console.log(`|${req_id}|+ url: ${String(url)}`);
 
    let ocs_token = await getToken();
    let reply = await fetch(url, {
@@ -97,7 +98,7 @@ async function get_data_view(kind, _source, _args, _context) {
          'Authorization': `Bearer ${ocs_token}`
       }
    });
-   console.log(`status: ${reply.status}`);
+   console.log(`|${req_id}|+ status: ${reply.status}`);
 
    if (reply.status === 200) {
       let s = reply.headers.get('link');
@@ -129,14 +130,14 @@ async function get_data_view(kind, _source, _args, _context) {
 
 async function get_data_reply(url) {
    let req_id = uuidv4().split("-")[0];
-   console.log(`${req_id}|- url: ${String(url)}`);
+   console.log(`|${req_id}|- url: ${String(url)}`);
    let ocs_token = await getToken();
    let reply = await fetch(url, {
       headers: {
          'Authorization': `Bearer ${ocs_token}`
       }
    });
-   console.log(`${req_id}|- status: ${reply.status}`);
+   console.log(`|${req_id}|- status: ${reply.status}`);
 
    if (reply.status === 200) {
       return reply.json();
@@ -186,18 +187,14 @@ async function get_streams(kind, _source, _args, _context) {
             params['query'] = _args.query;
          }
          break;
-      case 'first':
-      case 'last':
       case 'one':
-         stream_url = `/${_args.stream_id}/Data`;
-         break;
-   }
-   switch (kind) {
-      case 'last':
-         stream_url += '/Last';
+         stream_url = `/${_args.stream_id}`;
          break;
       case 'first':
-         stream_url += '/First';
+         stream_url = `/${_args.stream_id}/Data/First`;
+         break;
+      case 'last':
+         stream_url = `/${_args.stream_id}/Data/Last`;
          break;
       case 'metadata':
          stream_url += `/${_args.stream_id}/Metadata`;
@@ -206,7 +203,6 @@ async function get_streams(kind, _source, _args, _context) {
          stream_url += `/${_args.stream_id}/Tags`;
          break;
    }
-
    const url = new URL(`${ocs_url}/${_source.id}/Streams${stream_url}`);
    url.search = new URLSearchParams(params).toString();
 
