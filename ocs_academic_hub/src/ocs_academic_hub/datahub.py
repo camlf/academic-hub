@@ -58,6 +58,7 @@ stream_queries = {
     "stream": q_stream,
     "data": q_stream_data,
     "ends": q_stream_ends,
+    "interpolated": q_stream_interpolated,
 }
 
 
@@ -721,9 +722,35 @@ class HubClient:
         )
         df = pd.DataFrame(reply["namespaces"][0]["data"])
         if len(df) > 0:
-            df["Time"] = pd.to_datetime(df["Time"])
+            time_column = list(df.columns)[0]
+            df[time_column] = pd.to_datetime(df[time_column])
             if column_name:
-                df.columns = ["Time", column_name]
+                df.columns = [time_column, column_name]
+        return df
+
+    @hub_authenticated
+    @typechecked
+    def stream_interpolated_pd(
+        self, namespace: str, stream_id, start: str, end: str, interval: str, column_name: str = "", raw: bool = False
+    ):
+        try:
+            t_interval = datetime.strptime(interval, "%H:%M:%S")
+            delta = t_interval - parse("1900-01-01")
+            count = int((parse(end) - parse(start)) / delta) + 1
+        except ValueError as e:
+            raise GraphQLException(f"@Error: start, end or interval (HH:MM:SS) has invalid format: {e}") from None
+
+        reply = self.__stream_ops(
+            "interpolated", namespace, stream_id, dict(start=start, end=end, count=count)
+        )
+        df = pd.DataFrame(reply["namespaces"][0]["data"])
+        if len(df) > 0:
+            time_column = list(df.columns)[0]
+            df[time_column] = pd.to_datetime(df[time_column])
+            if not raw:
+                df = df.drop(df.columns[2:], axis=1)
+            if column_name:
+                df.columns = [df.columns[0], column_name] + list(df.columns[2:])
         return df
 
     @hub_authenticated

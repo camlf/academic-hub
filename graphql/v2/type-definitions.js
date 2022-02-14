@@ -221,11 +221,25 @@ async function get_window_values(_source, _args, _context) {
    return await get_data_reply(url);
 }
 
+async function get_interpolated_values(_source, _args, _context) {
+   checkNamespaceId(_source.id);
+   let params = {
+      startIndex: _args.start,
+      endIndex: _args.end,
+      count: _args.count
+   };
+   const url = new URL(`${ocs_url}/${_source.id}/Streams/${_args.stream_id}/Data/Interpolated`);
+   url.search = new URLSearchParams(params).toString();
+
+   return await get_data_reply(url);
+}
+
 const resolvers = {
    Namespace: {
       getStreams: async (_source, _args, _context) => await get_streams("many", _source, _args, _context),
       getStream: async (_source, _args, _context) => await get_streams("one", _source, _args, _context),
       getWindowValues: async (_source, _args, _context) => await get_window_values(_source, _args, _context),
+      getInterpolatedValues: async (_source, _args, _context) => await get_interpolated_values(_source, _args, _context),
       getLastValue: async (_source, _args, _context) => await get_streams("last", _source, _args, _context),
       getFirstValue: async (_source, _args, _context) => await get_streams("first", _source, _args, _context),
       metadata: async (_source, _args, _context) => await get_streams("metadata", _source, _args, _context),
@@ -271,6 +285,13 @@ type Namespace implements AuthReadOnly {
       stream_id: String!
       start: String!
       end: String!
+   ): JSONObject @ignore  
+   "Retrieves JSON object representing a interpolated values for a stream"
+   getInterpolatedValues(
+      stream_id: String!
+      start: String!
+      end: String!
+      count: Int!
    ): JSONObject @ignore  
    "Retrieves JSON object from Sds Service the last value to be added to the stream specified by stream_id"
    getLastValue(

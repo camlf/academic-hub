@@ -132,6 +132,21 @@ query getWindowValues(
 }
 """
 
+q_stream_interpolated = """
+query getInterpolatedValues(
+  $namespace: ID!
+  $stream_id: String!
+  $start: String!
+  $end: String!
+  $count: Int!
+) {
+  namespaces(where: { id: $namespace }) {
+    id
+    data: getInterpolatedValues(stream_id: $stream_id, start: $start, end: $end, count: $count)
+  }
+}
+"""
+
 q_stream_ends = """
 query getFirstLastValues(
   $namespace: ID!
