@@ -187,18 +187,14 @@ async function get_streams(kind, _source, _args, _context) {
             params['query'] = _args.query;
          }
          break;
-      case 'first':
-      case 'last':
       case 'one':
-         stream_url = `/${_args.stream_id}/Data`;
-         break;
-   }
-   switch (kind) {
-      case 'last':
-         stream_url += '/Last';
+         stream_url = `/${_args.stream_id}`;
          break;
       case 'first':
-         stream_url += '/First';
+         stream_url = `/${_args.stream_id}/Data/First`;
+         break;
+      case 'last':
+         stream_url = `/${_args.stream_id}/Data/Last`;
          break;
       case 'metadata':
          stream_url += `/${_args.stream_id}/Metadata`;
@@ -207,7 +203,6 @@ async function get_streams(kind, _source, _args, _context) {
          stream_url += `/${_args.stream_id}/Tags`;
          break;
    }
-
    const url = new URL(`${ocs_url}/${_source.id}/Streams${stream_url}`);
    url.search = new URLSearchParams(params).toString();
 

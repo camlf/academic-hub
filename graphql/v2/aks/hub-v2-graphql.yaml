@@ -30,10 +30,12 @@ spec:
     spec:
       containers:
       - name: hub-v2-graphql
-        image: academicpi.azurecr.io/hub-v2-graphql:v12
+        image: academicpi.azurecr.io/hub-v2-graphql:v14
         envFrom:
         - secretRef:
-            name: hub-v2-graphql-secret-hfc9dg298t
+            name: hub-v2-graphql-secret-698bfd2cb9
+            # name: hub-v2-graphql-secret-7k45gg982t
+            # name: hub-v2-graphql-secret-hfc9dg298t
             # name: hub-v2-graphql-secret-d8b576m6dc
         ports:
         - containerPort: 4000

@@ -98,6 +98,53 @@ query resolvedDataItems($id: ID, $namespace: String!, $queryId: String!) {
 }
 """
 
+q_streams = """
+query getStreams($namespace: ID!, $query: String, $skip: Int, $count: Int) {
+    namespaces(where: { id: $namespace }) {
+      id
+      streams: getStreams(query: $query, skip: $skip, count: $count)
+  }
+}
+"""
+
+q_stream = """
+query getStream($namespace: ID!, $stream_id: String!) {
+    namespaces(where: { id: $namespace }) {
+      id
+      stream: getStream(stream_id: $stream_id)
+      metadata(stream_id: $stream_id)
+      tags(stream_id: $stream_id)
+  }
+}
+"""
+
+q_stream_data = """
+query getWindowValues(
+  $namespace: ID!
+  $stream_id: String!
+  $start: String!
+  $end: String!
+) {
+  namespaces(where: { id: $namespace }) {
+    id
+    data: getWindowValues(stream_id: $stream_id, start: $start, end: $end)
+  }
+}
+"""
+
+q_stream_ends = """
+query getFirstLastValues(
+  $namespace: ID!
+  $stream_id: String!
+) {
+  namespaces(where: { id: $namespace }) {
+    id
+    first: getFirstValue(stream_id: $stream_id)
+    last: getLastValue(stream_id: $stream_id)
+  }
+}
+"""
+
 q_endpoint_check = """
 query { 
   databases(where: {name: "Wind_Farms"}) {

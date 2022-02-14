@@ -27,6 +27,7 @@ from .access import save_jwt, delete_jwt, restore_previous_jwt, get_previous_jwt
 from urllib.parse import urlparse, parse_qs
 from urllib3.exceptions import HTTPError
 import time
+import ast
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -51,6 +52,13 @@ ocstype2hub = {
 resource_package = __name__
 resource_path = "/".join((".", "hub_datasets.json"))
 default_hub_data = pkg_resources.resource_filename(resource_package, resource_path)
+
+stream_queries = {
+    "streams": q_streams,
+    "stream": q_stream,
+    "data": q_stream_data,
+    "ends": q_stream_ends,
+}
 
 
 def asset_id_fix(gqlh):
@@ -238,9 +246,13 @@ class HubClient:
     @hub_authenticated
     def set_dataset(self, dataset: str):
         if not isinstance(dataset, str):
-            raise HubException(f"@@ Dataset most be a string, please check hub.datasets()")
+            raise HubException(
+                f"@@ Dataset most be a string, please check hub.datasets()"
+            )
         if hub_db_namespaces.get(dataset, None) is None:
-            raise HubException(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+            raise HubException(
+                f"@@ Dataset {dataset} does not exist, please check hub.datasets()"
+            )
 
         for j in range(len(self.__gqlh["Database"])):
             if self.__gqlh["Database"][j]["name"] == dataset:
@@ -256,11 +268,14 @@ class HubClient:
     @hub_authenticated
     def namespace_of(self, dataset: str):
         if not isinstance(dataset, str):
-            raise HubException(f"@@ Dataset most be a string, please check hub.datasets()")
+            raise HubException(
+                f"@@ Dataset most be a string, please check hub.datasets()"
+            )
         if hub_db_namespaces.get(dataset, None) is None:
-            raise HubException(f"@@ Dataset {dataset} does not exist, please check hub.datasets()")
+            raise HubException(
+                f"@@ Dataset {dataset} does not exist, please check hub.datasets()"
+            )
         return hub_db_namespaces[dataset]
-
 
     @hub_authenticated
     @typechecked
@@ -346,10 +361,10 @@ class HubClient:
             "Column_Name",
             "Stream_Type",
             "Stream_UOM",
-            "OCS_Stream_Name",
+            "Stream_Name",
         ]
         if stream_id:
-            columns += ["OCS_Stream_Id"]
+            columns += ["Stream_Id"]
         df = pd.DataFrame(columns=columns)
 
         data_items = self.graphql_query(
@@ -357,7 +372,9 @@ class HubClient:
             {"id": dataview_id, "namespace": namespace_id, "queryId": "Asset_value"},
         )
         if len(data_items["dataview"]) == 0:
-            raise HubException(f"@@ Bad namespace ({namespace_id}) and/or dataview ID ({dataview_id})")
+            raise HubException(
+                f"@@ Bad namespace ({namespace_id}) and/or dataview ID ({dataview_id})"
+            )
         v2_column_key = self.__dv_column_key.get(dataview_id, None)
         column_key = (
             "column_name" if v2_column_key is None else f"{v2_column_key}|column"
@@ -530,6 +547,7 @@ class HubClient:
         dataview_f = self.__get_data_stored if stored else self.__get_data_interpolated
         dataview_id = remap_campus_dataview_id(dataview_id)
 
+        delay_502 = 1
         while True:
             try:
                 # print(f"[{next_page}]", end="")
@@ -582,6 +600,10 @@ class HubClient:
                     continue
                 if "502" in str(e):
                     print("[@]", end="")
+                    time.sleep(delay_502)
+                    delay_502 *= 2
+                    if delay_502 > 8:
+                        raise e
                     continue
                 if "408" not in str(e):
                     print(f"[restart-{str(e)}]", end="")
@@ -639,6 +661,71 @@ class HubClient:
                 raise e
         return result
 
+    def __stream_ops(self, kind, namespace, stream_id="", extra_args=None):
+        q_values = dict(namespace=namespace, stream_id=stream_id)
+        if extra_args:
+            q_values.update(extra_args)
+        try:
+            reply = self.graphql_query(stream_queries[kind], q_values)
+        except Exception as e:
+            ed = ast.literal_eval(str(e))
+            if "404:" in ed["message"] or "400:" in ed["message"]:
+                raise GraphQLException(ed["extensions"]["message"]) from None
+            else:
+                raise e from None
+
+        if len(reply["namespaces"]) == 0:
+            raise GraphQLException(
+                f"@@@ Namespace `{namespace}` not found (check hub.datasets())"
+            )
+
+        return reply
+
+    @hub_authenticated
+    @typechecked
+    def get_streams(self, namespace: str, query: str = "", count: int = 0, skip: int = 0):
+        args = dict(count=2000)
+        if query:
+            args["query"] = query
+        if count:
+            args["count"] = count
+        if skip:
+            args["skip"] = skip
+        reply = self.__stream_ops("streams", namespace, "", args)
+        return reply["namespaces"][0]["streams"]
+
+    @hub_authenticated
+    @typechecked
+    def get_stream(self, namespace: str, stream_id):
+        reply = self.__stream_ops("stream", namespace, stream_id)["namespaces"][0]
+        return reply["stream"], reply["metadata"], reply["tags"]
+
+    @hub_authenticated
+    @typechecked
+    def get_stream_ends(self, namespace: str, stream_id):
+        reply = self.__stream_ops("ends", namespace, stream_id)["namespaces"][0]
+        return (
+            parse(reply["first"]["Timestamp"]),
+            reply["first"].get("Value", None),
+            parse(reply["last"]["Timestamp"]),
+            reply["last"].get("Value", None),
+        )
+
+    @hub_authenticated
+    @typechecked
+    def stream_window_pd(
+        self, namespace: str, stream_id, start: str, end: str, column_name: str = ""
+    ):
+        reply = self.__stream_ops(
+            "data", namespace, stream_id, dict(start=start, end=end)
+        )
+        df = pd.DataFrame(reply["namespaces"][0]["data"])
+        if len(df) > 0:
+            df["Time"] = pd.to_datetime(df["Time"])
+            if column_name:
+                df.columns = ["Time", column_name]
+        return df
+
     @hub_authenticated
     @typechecked
     def refresh_datasets(
@@ -661,7 +748,13 @@ class HubClient:
         if variable_values is None:
             variable_values = {}
         query = gql(query_string)
-        return self.__graphql_client.execute(query, variable_values=variable_values)
+        try:
+            reply = self.__graphql_client.execute(
+                query, variable_values=variable_values
+            )
+        except Exception as e:
+            raise e
+        return reply
 
 
 def set_token_and_check(hub, jwt, custom_url):
@@ -689,7 +782,7 @@ def login_state(hub, jwt: dict, found_jwt: bool = False):
     return status
 
 
-def hub_login(force: bool = False, gw_url: str = None):
+def hub_login(force: bool = False, gw_url: str = None, quiet=False):
     if force:
         delete_jwt()
     hub = HubClient()
@@ -728,9 +821,9 @@ Follow the steps below:
     login_status = "-- not logged in --"
     try:
         if set_token_and_check(hub, jwt, gw_url):
-            default_data_indicator = "!" if not hub.default_data() else ""
-            default_data_indicator += "@" if jwt.get("creds", None) else ""
             login_status = f"OK, you can proceed {login_state(hub, jwt, True)}"
+            if "#" in login_status:
+                quiet = True
     except HubException:
         pass
     except Exception as e:
@@ -770,4 +863,5 @@ Follow the steps below:
 
     status.observe(on_value_change, names="value")
 
-    return [widgets.VBox([HTML(html), button, status, output]), hub]
+    to_display = [status, output] if quiet else [HTML(html), button, status, output]
+    return widgets.VBox(to_display), hub
