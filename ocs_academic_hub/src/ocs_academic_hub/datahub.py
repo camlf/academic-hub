@@ -1,33 +1,33 @@
 #
-from .util import timer, hub_authenticated, HubException
-from dateutil.parser import parse
-from datetime import datetime, timedelta
-from requests.structures import CaseInsensitiveDict
-from gql import gql, Client
-from gql.transport.requests import RequestsHTTPTransport
+import ast
 import io
 import json
 import os
+import time
+import uuid
+from datetime import datetime, timedelta
+from math import nan
+from typing import List, Union
+from urllib.parse import parse_qs, urlparse
+
+import ipywidgets as widgets
+import markdown
 import numpy as np
 import pandas as pd
-from typeguard import typechecked
-from typing import List, Union
 import pkg_resources
 import requests
-from math import nan
-
-import markdown
-import ipywidgets as widgets
+from dateutil.parser import parse
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
 from ipywidgets import HTML
-import uuid
-from . import __version__
-
-from .queries import *
-from .access import save_jwt, delete_jwt, restore_previous_jwt, get_previous_jwt
-from urllib.parse import urlparse, parse_qs
+from requests.structures import CaseInsensitiveDict
+from typeguard import typechecked
 from urllib3.exceptions import HTTPError
-import time
-import ast
+
+from . import __version__
+from .access import delete_jwt, get_previous_jwt, restore_previous_jwt, save_jwt
+from .queries import *
+from .util import HubException, hub_authenticated, timer
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -684,7 +684,9 @@ class HubClient:
 
     @hub_authenticated
     @typechecked
-    def get_streams(self, namespace: str, query: str = "", count: int = 0, skip: int = 0):
+    def get_streams(
+        self, namespace: str, query: str = "", count: int = 0, skip: int = 0
+    ):
         args = dict(count=2000)
         if query:
             args["query"] = query
@@ -731,17 +733,29 @@ class HubClient:
     @hub_authenticated
     @typechecked
     def stream_interpolated_pd(
-        self, namespace: str, stream_id, start: str, end: str, interval: str, column_name: str = "", raw: bool = False
+        self,
+        namespace: str,
+        stream_id,
+        start: str,
+        end: str,
+        interval: str,
+        column_name: str = "",
+        raw: bool = False,
     ):
         try:
             t_interval = datetime.strptime(interval, "%H:%M:%S")
             delta = t_interval - parse("1900-01-01")
             count = int((parse(end) - parse(start)) / delta) + 1
         except ValueError as e:
-            raise GraphQLException(f"@Error: start, end or interval (HH:MM:SS) has invalid format: {e}") from None
+            raise GraphQLException(
+                f"@Error: start, end or interval (HH:MM:SS) has invalid format: {e}"
+            ) from None
 
         reply = self.__stream_ops(
-            "interpolated", namespace, stream_id, dict(start=start, end=end, count=count)
+            "interpolated",
+            namespace,
+            stream_id,
+            dict(start=start, end=end, count=count),
         )
         df = pd.DataFrame(reply["namespaces"][0]["data"])
         if len(df) > 0:

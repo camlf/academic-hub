@@ -1,29 +1,31 @@
 #
-from .util import timer
 import configparser
-from dateutil.parser import parse
-from datetime import datetime, timedelta
-import requests
-from requests.structures import CaseInsensitiveDict
-from gql import gql, Client
-from gql.transport.requests import RequestsHTTPTransport
 import io
 import json
+import logging
 import os
+from datetime import datetime, timedelta
+from math import nan
+from typing import List, Union
+
+import backoff
 import numpy as np
 import pandas as pd
-from typeguard import typechecked
-from typing import List, Union
 import pkg_resources
+import requests
 import urllib3
-import backoff
-import logging
-from math import nan
+from dateutil.parser import parse
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
+from requests.structures import CaseInsensitiveDict
+from typeguard import typechecked
+
+from .util import timer
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-from ocs_sample_library_preview import OCSClient, DataView, SdsError
+from ocs_sample_library_preview import DataView, OCSClient, SdsError
 
 GRAPHQL_ENDPOINT = "https://data.academic.osisoft.com/graphql"
 MAX_STORED_DV_ROWS = 2000000

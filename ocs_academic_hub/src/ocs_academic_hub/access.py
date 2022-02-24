@@ -1,7 +1,8 @@
-from IPython.display import display, Javascript
-import requests
 import json
 import os
+
+import requests
+from IPython.display import Javascript, display
 
 HUB_BASE_URL = "https://data.academic.osisoft.com"
 AUTH_ENDPOINT = f"{HUB_BASE_URL}/auth"
