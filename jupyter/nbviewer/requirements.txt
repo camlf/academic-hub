@@ -10,3 +10,4 @@ pycurl
 pylibmc
 statsd
 tornado>=6.0
+mistune<2.0.0

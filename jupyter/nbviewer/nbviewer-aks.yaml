@@ -8,7 +8,7 @@ spec:
   selector:
     app: nbviewer 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nbviewer 
@@ -19,6 +19,9 @@ spec:
       maxSurge: 1
       maxUnavailable: 1
   minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: nbviewer
   template:
     metadata:
       labels:
@@ -26,7 +29,7 @@ spec:
     spec:
       containers:
       - name: nbviewer 
-        image: academicpi.azurecr.io/nbviewer:v16
+        image: academicpi.azurecr.io/nbviewer:v20
         ports:
         - containerPort: 8080
         resources:
