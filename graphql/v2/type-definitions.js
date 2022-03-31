@@ -4,9 +4,12 @@ const { gql } = require('graphql-tag');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
 
-const base_url = "https://dat-b.osisoft.com";
-const token_url = `${base_url}/identity/connect/token`;
-const ocs_url = `${base_url}/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces`;
+// Current OCS Hub - osisoft-academia tenant - prior to ADH migration
+const OCS_TOKEN_URL = "https://dat-b.osisoft.com/identity/connect/token";
+const OCS_NAMESPACES_URL = "https://dat-b.osisoft.com/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces"
+
+const token_url = process.env.ADH_TOKEN_URL || OCS_TOKEN_URL;
+const ocs_url = process.env.ADH_NAMESPACES_URL || OCS_NAMESPACES_URL;
 
 let ocs_jwt = {};
 let ocs_jwt_exp = 1;
