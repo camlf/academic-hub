@@ -29,7 +29,7 @@ const neoSchema = new Neo4jGraphQL({
     }
 });
 
-const graphql_path = "/graphql2"
+const graphql_path = process.env.GRAPHQL_PATH || "graphql"
 
 
 async function startApolloServer() {
@@ -52,7 +52,7 @@ async function startApolloServer() {
     server.applyMiddleware({app, path: graphql_path});
     app.use(bodyParser.json({limit: '50mb'}));
     await new Promise(resolve => httpServer.listen({port: 4000, host: "0.0.0.0"}, resolve));
-    console.log(`@neo4j/graphql API ready at http://0.0.0.0:4000${graphql_path}`);
+    console.log(`@neo4j/graphql API ready at http://0.0.0.0:4000/${graphql_path}`);
     return {server, app};
 }
 

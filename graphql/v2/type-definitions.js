@@ -9,10 +9,10 @@ const OCS_TOKEN_URL = "https://dat-b.osisoft.com/identity/connect/token";
 const OCS_NAMESPACES_URL = "https://dat-b.osisoft.com/api/v1/Tenants/65292b6c-ec16-414a-b583-ce7ae04046d4/namespaces"
 
 const token_url = process.env.ADH_TOKEN_URL || OCS_TOKEN_URL;
-const ocs_url = process.env.ADH_NAMESPACES_URL || OCS_NAMESPACES_URL;
+const adh_url = process.env.ADH_NAMESPACES_URL || OCS_NAMESPACES_URL;
 
-let ocs_jwt = {};
-let ocs_jwt_exp = 1;
+let adh_jwt = {};
+let adh_jwt_exp = 1;
 
 async function getOCSToken(url) {
    const response = await fetch(url, {
@@ -28,13 +28,13 @@ async function getOCSToken(url) {
 }
 
 async function getToken() {
-   let delta = ocs_jwt_exp - Date.now()
+   let delta = adh_jwt_exp - Date.now()
    // console.log(`delta: ${delta}`)
     if (delta <= 5*60*1000) {
-        ocs_jwt = await getOCSToken(token_url);
-        ocs_jwt_exp = Date.now() + 1000*ocs_jwt["expires_in"]
+        adh_jwt = await getOCSToken(token_url);
+        adh_jwt_exp = Date.now() + 1000*adh_jwt["expires_in"]
     }
-    return ocs_jwt["access_token"]
+    return adh_jwt["access_token"]
 }
 
 function checkNamespaceId(id) {
@@ -89,7 +89,7 @@ async function get_data_view(kind, _source, _args, _context) {
             params["count"] = _args.count;
          }
       }
-      url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
+      url = new URL(`${adh_url}/${_args.namespace}/dataviews/${_source.id}${dv_id_extra}/data/${kind}`);
       url.search = new URLSearchParams(params).toString();
    }
    let req_id = uuidv4().split("-")[0];
@@ -165,7 +165,7 @@ async function get_data_items(_source, _args, _context) {
       count: "1000",
       cache: "refresh",
    };
-   const url = new URL(`${ocs_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
+   const url = new URL(`${adh_url}/${_args.namespace}/dataviews/${_source.id}/Resolved/DataItems/${_args.queryId}`);
    url.search = new URLSearchParams(params).toString();
 
    return await get_data_reply(url);
@@ -206,7 +206,7 @@ async function get_streams(kind, _source, _args, _context) {
          stream_url += `/${_args.stream_id}/Tags`;
          break;
    }
-   const url = new URL(`${ocs_url}/${_source.id}/Streams${stream_url}`);
+   const url = new URL(`${adh_url}/${_source.id}/Streams${stream_url}`);
    url.search = new URLSearchParams(params).toString();
 
    return await get_data_reply(url);
@@ -218,7 +218,7 @@ async function get_window_values(_source, _args, _context) {
       startIndex: _args.start,
       endIndex: _args.end
    };
-   const url = new URL(`${ocs_url}/${_source.id}/Streams/${_args.stream_id}/Data`);
+   const url = new URL(`${adh_url}/${_source.id}/Streams/${_args.stream_id}/Data`);
    url.search = new URLSearchParams(params).toString();
 
    return await get_data_reply(url);
@@ -231,7 +231,7 @@ async function get_interpolated_values(_source, _args, _context) {
       endIndex: _args.end,
       count: _args.count
    };
-   const url = new URL(`${ocs_url}/${_source.id}/Streams/${_args.stream_id}/Data/Interpolated`);
+   const url = new URL(`${adh_url}/${_source.id}/Streams/${_args.stream_id}/Data/Interpolated`);
    url.search = new URLSearchParams(params).toString();
 
    return await get_data_reply(url);

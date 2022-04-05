@@ -14,7 +14,7 @@ kind: Deployment
 metadata:
   name: hub-v2-graphql
 spec:
-  replicas: 2 
+  replicas: 1 
   strategy:
     rollingUpdate:
       maxSurge: 1
