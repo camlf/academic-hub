@@ -33,9 +33,10 @@ from .util import HubException, hub_authenticated, timer
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 HUB_BASE_URL = "https://data.academic.osisoft.com"
-AUTH_ENDPOINT = f"{HUB_BASE_URL}/auth"
-GRAPHQL_ENDPOINT = f"{HUB_BASE_URL}/graphql2"
 REGISTRATION_URL = "https://academic.osisoft.com/register"
+AUTH_ENDPOINT = "https://academichub-auth.azurewebsites.net/auth"
+GRAPHQL_ENDPOINT = "https://academichub-gw.azurewebsites.net/graphql"
+
 MAX_STORED_DV_ROWS = 2000000
 UXIE_CONSTANT = 100 * 1000
 
@@ -548,7 +549,7 @@ class HubClient:
         dataview_f = self.__get_data_stored if stored else self.__get_data_interpolated
         dataview_id = remap_campus_dataview_id(dataview_id)
 
-        delay_502 = 1
+        delay_50x = 1
         while True:
             try:
                 # print(f"[{next_page}]", end="")
@@ -599,11 +600,11 @@ class HubClient:
                 if "409" in str(e):
                     print("#", end="")
                     continue
-                if "502" in str(e):
+                if "502" in str(e): #  or "504" in str(e):
                     print("[@]", end="")
-                    time.sleep(delay_502)
-                    delay_502 *= 2
-                    if delay_502 > 8:
+                    time.sleep(delay_50x)
+                    delay_50x *= 2
+                    if delay_50x > 8:
                         raise e
                     continue
                 if "408" not in str(e):
