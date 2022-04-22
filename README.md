@@ -1,4 +1,7 @@
-[![CircleCI](https://circleci.com/gh/cfoisy-osisoft/academic-hub.svg?style=shield&circle-token=fa23649df6cea73a7665de9d600d30a8a7fa5804)](https://circleci.com/gh/cfoisy-osisoft/academic-hub?circle-token=fa23649df6cea73a7665de9d600d30a8a7fa5804)
+[![CircleCI](https://circleci.com/gh/academic-hub/academic-hub.svg?style=shield&circle-token=a9c5133fb2697b518238c3afc2a85fc99a5cb762)](https://circleci.com/gh/academic-hub/academic-hub?circle-token=a9c5133fb2697b518238c3afc2a85fc99a5cb762)
 
-# osisoft-academic
-OSIsoft Academic Hub official content 
+# AVEVA Academic Hub repo
+
+* `portal/auth`: code for the auth portal container sitting at http://academichub-auth.azurewebsites.net/auth/
+* `graph/v2`: code for GraphQL gateway sitting at http://academichub-gw.azurewebsites.net/graphql/
+
